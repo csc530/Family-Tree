@@ -1,2 +1,3 @@
 # Famliy-Tree
-The continous and final assginment for (2022W) COMP-3025G-WAB - Mobile and Pervasive Computing. A family tree app for android.
+## App Overview
+  <iframe src="Family Tree - Android App Overview.pdf.pdf" width="100%" height="500px">
