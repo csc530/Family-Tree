@@ -22,6 +22,7 @@
 - [ ] Implement basic functionality
 - [ ]  Add bonus gentic funcitonality
 - [ ] Polish design and code
+- [ ] Finalize name for the app
 - [ ] Upload to play store
 
 
