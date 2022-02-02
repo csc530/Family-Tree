@@ -2,7 +2,13 @@
 
 ## Overview
 
-![pdf](../App-Overview.pdf "PDF of App-Overview")
+<object data="../App-Overview.pdf" type="application/pdf" width="100%"> 
+</object>
+
+<embed src="../App-Overview.pdf" type="application/pdf" />
+
+
+[Full PDF of App Overview](../App-Overview.pdf "PDF of App-Overview")
 
 ## Design Prototype
 
