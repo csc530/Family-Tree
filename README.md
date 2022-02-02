@@ -1,3 +1,9 @@
 # Famliy-Tree
-<a href="Family Tree - Android App Overview.pdf"><h2>App Overview</h2></a>
+
+## [App Overview](./App design prototype/index.html)
+
 [App overview google doc](https://docs.google.com/document/d/1YoZtlbw-A3m3nJ0dHQaSwPESYHQ7FWfYHzUs6CHGT84/edit?usp=sharing)
+
+## Design Prototype
+
+[JUSTINMIND prototype](./App design prototype/index.html)
