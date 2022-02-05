@@ -6,6 +6,6 @@
 
 ## Design Prototype
 
-[JUSTINMIND prototype](design-prototype/index.html)
+[JUSTINMIND prototype](https://csc530.github.io/Family-Tree/design-prototype/index.html)
 
 ## [GitHub pages](https://csc530.github.io/Family-Tree/)
