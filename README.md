@@ -6,7 +6,7 @@
 
 ## Design Prototype
 
-[JUSTINMIND prototype](https://csc530.github.io/Family-Tree/design-prototype/index.html)
+[JUSTINMIND prototype](https://csc530.github.io/Family-Tree/design-prototype/index.html)\
 Ironically recommended you view in desktop environment
 
 ## [GitHub pages](https://csc530.github.io/Family-Tree/)
