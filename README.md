@@ -14,4 +14,4 @@ Please visit [my GitHub page](https://csc530.github.io/Family-Tree/) for more de
 
 Or you may visit the assignment details branch (`assignment-tasks`) [README](/../../assignment-tasks/README.md) in the for more information on required and met criteria on COMP3025 final (and continuous) project
 
-TODO: Add privacy policy as per google anyltics from fire base https://www.google.com/analytics/terms/us.html
+TODO: Add privacy policy as per google analytics from [Firebase](https://www.google.com/analytics/terms/us.html)
