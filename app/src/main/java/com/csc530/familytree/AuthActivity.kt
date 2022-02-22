@@ -31,7 +31,7 @@ class AuthActivity : AppCompatActivity() {
 		/* ? The prebuilt login flow */
 		val actionCodeSettings = ActionCodeSettings.newBuilder()
 			.setAndroidPackageName( /* yourPackageName= */
-				"com.csc530.familytree",  /* installIfNotAvailable= */
+				"...",  /* installIfNotAvailable= */
 				true,  /* minimumVersion= */
 				null)
 			.setHandleCodeInApp(true) // This must be set to true
