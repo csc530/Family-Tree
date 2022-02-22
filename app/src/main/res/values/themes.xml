@@ -12,6 +12,9 @@
 		<!-- Status bar color. -->
 		<item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
 		<!-- Customize your theme here. -->
+		<!-- Remove the {ugly} title/label bar at the top of the app activities. -->
+		<item name="windowNoTitle">true</item>
+		<item name="windowActionBar">false</item>
 		<!--TODO: Add style to generalize a large font size and all caps for text-->
 	</style>
 </resources>
