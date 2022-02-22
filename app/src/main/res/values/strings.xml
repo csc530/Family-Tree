@@ -11,4 +11,6 @@
 	<string name="sign_up">Sign up</string>
 	<string name="or">or</string>
 	<string name="log_in">Log in</string>
+	<string name="logout">Logout</string>
+	<string name="iIcon_cntDesc">icon for more information, an \'i\'</string>
 </resources>

@@ -2,6 +2,8 @@ package com.csc530.familytree
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityLaunchBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -17,17 +19,16 @@ class LaunchActivity : AppCompatActivity() {
 		binding = ActivityLaunchBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		
-		// ? Remove the login and sign up text with a log out button if they are signed in
 		auth = Firebase.auth
+		// ? Remove the login and sign up text with a log out button if they are signed in
 		if(auth.currentUser != null) {
-			//TODO: remove login and sign up options
-			//Todo add logout button
-			binding.vllAuth.removeAllViews()
+			binding.txtLogin.visibility = TextView.GONE
+			binding.txtOr.visibility = TextView.GONE
+			binding.txtSignup.visibility = TextView.GONE
 		}
-		binding.vllAuth.removeAllViewsInLayout()
+		else //? remove logout button if they are not signed in
+			binding.btnLogout.visibility = Button.GONE
 		
-		binding = ActivityLaunchBinding.inflate(layoutInflater)
-		setContentView(binding.root)
 		//Switch intents on button click
 		binding.btnNewTree.setOnClickListener {
 			val intent = Intent(this, TreeActivity::class.java)
