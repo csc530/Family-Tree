@@ -1,3 +1,11 @@
 <resources>
 	<string name="app_name">Family Tree</string>
+	<string name="load_tree">Load tree</string>
+	<string name="create_a_new_tree">Create a new tree</string>
+	<string name="familyTree_logo_cntDesc">A family tree logo</string>
+	
+	<!--Twitter application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+	<!--Not set up-->
+	<string name="twitter_application_id" translatable="false">YOUR_APP_ID</string>
+	<string name="twitter_login_protocol_scheme" translatable="false">fbYOUR_APP_ID</string>
 </resources>

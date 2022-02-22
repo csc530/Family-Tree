@@ -4,7 +4,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".MainActivity">
+	tools:context=".AuthActivity">
 	
 	<TextView
 		android:id="@+id/txtTitle"
@@ -23,7 +23,7 @@
 		android:layout_width="@dimen/btnMdW"
 		android:layout_height="@dimen/btnMdH"
 		android:layout_marginTop="45dp"
-		android:text="Load tree"
+		android:text="@string/load_tree"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/btnNewTree"
 		app:layout_constraintTop_toBottomOf="@+id/imgLogo" />
@@ -32,7 +32,7 @@
 		android:id="@+id/btnNewTree"
 		android:layout_width="@dimen/btnMdW"
 		android:layout_height="@dimen/btnMdH"
-		android:text="Create a new tree"
+		android:text="@string/create_a_new_tree"
 		app:layout_constraintBottom_toBottomOf="@+id/btnLoadTree"
 		app:layout_constraintEnd_toStartOf="@+id/btnLoadTree"
 		app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +46,7 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-		tools:srcCompat="@tools:sample/avatars" />
+		tools:srcCompat="@tools:sample/avatars"
+		android:contentDescription="@string/familyTree_logo_cntDesc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
