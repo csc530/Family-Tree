@@ -8,4 +8,7 @@
 	<!--Not set up-->
 	<string name="twitter_application_id" translatable="false">YOUR_APP_ID</string>
 	<string name="twitter_login_protocol_scheme" translatable="false">fbYOUR_APP_ID</string>
+	<string name="sign_up">Sign up</string>
+	<string name="or">or</string>
+	<string name="log_in">Log in</string>
 </resources>
