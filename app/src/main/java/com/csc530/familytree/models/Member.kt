@@ -1,4 +1,4 @@
-package com.csc530.familytree
+package com.csc530.familytree.models
 
 import android.media.Image
 import android.os.Build

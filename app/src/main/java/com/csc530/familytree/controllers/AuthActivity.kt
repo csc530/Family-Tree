@@ -1,8 +1,7 @@
-package com.csc530.familytree
+package com.csc530.familytree.controllers
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityAuthBinding
 import com.firebase.ui.auth.AuthUI
@@ -24,17 +23,6 @@ class AuthActivity : AppCompatActivity() {
 	private lateinit var binding: ActivityAuthBinding
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		
-		/*//? On back button go to the start page and not an empty middle man (page/activity)
-		binding = ActivityAuthBinding.inflate(layoutInflater)
-		this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-			override fun handleOnBackPressed() {
-				val intent = Intent(this@AuthActivity, LaunchActivity::class.java)
-				this.remove()
-				startActivity(intent)
-			}
-		})*/
-		
 		/* ? The prebuilt login flow */
 		val actionCodeSettings = ActionCodeSettings.newBuilder()
 			.setAndroidPackageName(
@@ -95,7 +83,7 @@ class AuthActivity : AppCompatActivity() {
 		if(result.resultCode == RESULT_OK) {
 			// Successfully signed in
 			val user = FirebaseAuth.getInstance().currentUser
-			// ...
+			startActivity(Intent(this, LaunchActivity::class.java))
 		}
 		else {
 			// Sign in failed.

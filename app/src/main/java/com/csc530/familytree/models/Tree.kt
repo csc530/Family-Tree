@@ -1,4 +1,4 @@
-package com.csc530.familytree
+package com.csc530.familytree.models
 
 class Tree(
 		var name: String,

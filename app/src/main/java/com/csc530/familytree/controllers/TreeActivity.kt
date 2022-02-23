@@ -1,4 +1,4 @@
-package com.csc530.familytree
+package com.csc530.familytree.controllers
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

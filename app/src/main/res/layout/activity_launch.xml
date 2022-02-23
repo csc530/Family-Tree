@@ -4,7 +4,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".LaunchActivity">
+	tools:context=".controllers.LaunchActivity">
 	
 	<TextView
 		android:id="@+id/txtTitle"
@@ -41,7 +41,7 @@
 	<ImageView
 		android:id="@+id/imgLogo"
 		android:layout_width="0dp"
-		android:layout_height="300dp"
+		android:layout_height="380dp"
 		android:layout_marginTop="32dp"
 		android:contentDescription="@string/familyTree_logo_cntDesc"
 		android:scaleType="fitCenter"

@@ -7,9 +7,10 @@
 		android:icon="@mipmap/ic_launcher"
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
+		android:label="@string/app_name"
 		android:theme="@style/Theme.FamilyTree">
 		<activity
-			android:name=".LaunchActivity"
+			android:name=".controllers.LaunchActivity"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -18,13 +19,13 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".AuthActivity"
+			android:name=".controllers.AuthActivity"
 			android:exported="false" />
 		<activity
-			android:name=".LoadTreeActivity"
+			android:name=".controllers.LoadTreeActivity"
 			android:exported="false" />
 		<activity
-			android:name=".TreeActivity"
+			android:name=".controllers.TreeActivity"
 			android:exported="false" />
 	</application>
 
