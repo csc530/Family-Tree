@@ -15,6 +15,7 @@
 		<!-- Remove the {ugly} title/label bar at the top of the app activities. -->
 		<item name="windowNoTitle">true</item>
 		<item name="windowActionBar">false</item>
+		<item name="windowActionBarOverlay">false</item>
 		<!--TODO: Add style to generalize a large font size and all caps for text-->
 	</style>
 </resources>

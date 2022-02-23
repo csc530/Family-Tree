@@ -23,6 +23,9 @@
 		<activity
 			android:name=".LoadTreeActivity"
 			android:exported="false" />
+		<activity
+			android:name=".TreeActivity"
+			android:exported="false" />
 	</application>
 
 </manifest>
