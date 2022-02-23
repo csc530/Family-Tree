@@ -15,9 +15,11 @@
 		
 		<ImageView
 			android:id="@+id/imageView"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			app:srcCompat="@drawable/dad" />
+			android:layout_width="350dp"
+			android:layout_height="550dp"
+			android:foreground="@drawable/circle"
+			android:scaleType="fitEnd"
+			app:srcCompat="@drawable/daughter" />
 	
 	</LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
