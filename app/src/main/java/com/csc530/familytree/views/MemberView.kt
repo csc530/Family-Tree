@@ -1,41 +1,44 @@
 package com.csc530.familytree.views
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.drawable.Drawable
+import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
+import android.view.View
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import com.csc530.familytree.R
 
-/**
- * TODO: document your custom view class.
- */
-class MemberView : LinearLayout {
+class MemberView : View {
 	
+	private val DEFAULT_FONT_SIZE: Float = 25f;
+	private val DEFAULT_FONT_COLOUR: Int = Color.BLACK
+	private val DEFAULT_PORTRAIT = R.drawable.user
+	
+	private var portrait: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.user)
+		set(value) {
+			field = value
+			postInvalidate()
+		}
 	private lateinit var textPaint: TextPaint
 	private var textWidth: Float = 0f
 	private var textHeight: Float = 0f
 	
 	/**
-	 * The text to draw
+	 * The text to draw; member's first name
 	 */
 	var firstName: String? = "Talon"
 		set(value) {
 			field = value
-			invalidateTextPaintAndMeasurements()
+			postInvalidate()
 		}
 	
 	/**
-	 * The font color
+	 * The font color of all text
 	 */
 	var fontColour: Int = R.color.colorPrimary
 		set(value) {
 			field = value
-			invalidateTextPaintAndMeasurements()
+			postInvalidate()
 		}
 	
 	/**
@@ -44,14 +47,10 @@ class MemberView : LinearLayout {
 	var fontSize: Float = 25f
 		set(value) {
 			field = value
-			invalidateTextPaintAndMeasurements()
+			postInvalidate()
 		}
 	
-	/**
-	 * In the example view, this drawable is drawn above the text.
-	 */
-	var exampleDrawable: Drawable? = null
-	
+	// * BELOW - necessary parent constructors form View class
 	constructor(context: Context) : super(context) {
 		init(null, 0)
 	}
@@ -64,26 +63,33 @@ class MemberView : LinearLayout {
 		init(attrs, defStyle)
 	}
 	
-	private fun init(attrs: AttributeSet?, defStyle: Int) {
-		// Load attributes
+	private fun init(attributeSet: AttributeSet?, defStyle: Int) {
+		// Load attributes//TODO change view class name to MemberView same as declarableStyle name
 		val a = context.obtainStyledAttributes(
-			attrs, R.styleable.MemberView, defStyle, 0)
+			attributeSet, R.styleable.MemberView, defStyle, 0)
 		
 		firstName = a.getString(
-			R.styleable.MemberView_exampleString)
+			R.styleable.MemberView_firstName)
 		fontColour = a.getColor(
-			R.styleable.MemberView_exampleColor,
-			fontColour)
+			R.styleable.MemberView_fontColour,
+			DEFAULT_FONT_COLOUR)
 		// Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
 		// values that should fall on pixel boundaries.
 		fontSize = a.getDimension(
-			R.styleable.MemberView_exampleDimension,
-			fontSize)
+			R.styleable.MemberView_fontSize,
+			DEFAULT_FONT_SIZE)
 		
-		if(a.hasValue(R.styleable.MemberView_exampleDrawable)) {
-			exampleDrawable = a.getDrawable(
-				R.styleable.MemberView_exampleDrawable)
-			exampleDrawable?.callback = this
+		if(a.hasValue(R.styleable.MemberView_portrait)) {
+			val drawable = a.getResourceId(R.styleable.MemberView_portrait, DEFAULT_PORTRAIT)
+			portrait = BitmapFactory.decodeResource(resources, drawable)
+			/*? This is to set the portrait size to be within the view's bounds (height&width)
+			? Necessary because within the init it hasn't drawn (know) it's dimensions*/
+			viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+				override fun onGlobalLayout() {
+					viewTreeObserver.removeOnGlobalLayoutListener(this)
+					portrait = resizeBitmap(portrait, width.toFloat(), height.toFloat())
+				}
+			})
 		}
 		
 		a.recycle()
@@ -93,52 +99,41 @@ class MemberView : LinearLayout {
 			flags = Paint.ANTI_ALIAS_FLAG
 			textAlign = Paint.Align.LEFT
 		}
-		
 		// Update TextPaint and text measurements from attributes
-		invalidateTextPaintAndMeasurements()
+		postInvalidate()
 	}
 	
-	private fun invalidateTextPaintAndMeasurements() {
-		textPaint.let {
-			it.textSize = fontSize
-			it.color = fontColour
-			textWidth = it.measureText(firstName)
-			textHeight = it.fontMetrics.bottom
-		}
-		//redraw the view, assign that values are old so redo them basically
-		invalidate()
+	private fun resizeBitmap(bitmap: Bitmap, width: Float, height: Float): Bitmap {
+		//? Thank you to Coderz Geek - https://youtu.be/BxBcs1ddEn8?t=350
+		val matrix = Matrix()
+		val src = RectF(0F, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
+		val dst = RectF(0f, 0f, width, height)
+		println(matrix.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER))
+		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 	}
 	
-	override fun onDraw(canvas: Canvas) {
+	override fun onDraw(canvas: Canvas?) {
 		super.onDraw(canvas)
 		
-		// TODO: consider storing these as member variables to reduce
-		// allocations per draw cycle.
-		val paddingLeft = paddingLeft
-		val paddingTop = paddingTop
-		val paddingRight = paddingRight
-		val paddingBottom = paddingBottom
 		
 		val contentWidth = width - paddingLeft - paddingRight
 		val contentHeight = height - paddingTop - paddingBottom
 		
 		firstName?.let {
 			// Draw the text.
-			canvas.drawText(it,
-			                paddingLeft + (contentWidth - textWidth) / 2,
-			                paddingTop + (contentHeight + textHeight) / 2,
-			                textPaint)
+			canvas?.drawText(it,
+			                 paddingLeft + (contentWidth - textWidth) / 2,
+			                 paddingTop + (contentHeight + textHeight) / 2,
+			                 textPaint)
 		}
 		
-		// Draw the example drawable on top of the text.
-		exampleDrawable?.let {
-			it.setBounds(paddingLeft, paddingTop,
-			             paddingLeft + contentWidth, paddingTop + contentHeight)
-			it.draw(canvas)
-		}
-	}
-	
-	override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-		TODO("Not yet implemented")
+		/*	// Draw the example drawable on top of the text.
+			portrait?.let {
+				it.(paddingLeft, paddingTop,
+							 paddingLeft + contentWidth, paddingTop + contentHeight)
+				it.draw(canvas)
+			}*/
+		portrait = resizeBitmap(portrait, width.toFloat(), height / 2f)
+		canvas?.drawBitmap(portrait, 0f, 0f, null)
 	}
 }
