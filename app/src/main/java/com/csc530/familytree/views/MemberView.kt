@@ -10,7 +10,7 @@ import com.csc530.familytree.R
 
 class MemberView : View {
 	
-	private val DEFAULT_FONT_SIZE: Float = 25f;
+	private val DEFAULT_FONT_SIZE: Float = 25f
 	private val DEFAULT_FONT_COLOUR: Int = Color.BLACK
 	private val DEFAULT_PORTRAIT = R.drawable.user
 	
@@ -29,15 +29,18 @@ class MemberView : View {
 	var firstName: String? = "Talon"
 		set(value) {
 			field = value
+			//			updateTextPaint()
 			postInvalidate()
 		}
 	
 	/**
 	 * The font color of all text
 	 */
-	var fontColour: Int = R.color.colorPrimary
+	var fontColour: Int = R.color.black
+		//TODO: change to colour on primary
 		set(value) {
 			field = value
+			//			updateTextPaint()
 			postInvalidate()
 		}
 	
@@ -47,8 +50,18 @@ class MemberView : View {
 	var fontSize: Float = 25f
 		set(value) {
 			field = value
+			//			updateTextPaint()
 			postInvalidate()
 		}
+	
+	private fun updateTextPaint() {
+		textPaint.let {
+			it.textSize = fontSize
+			it.color = fontColour
+			textWidth = it.measureText(firstName)
+			textHeight = it.fontMetrics.bottom
+		}
+	}
 	
 	// * BELOW - necessary parent constructors form View class
 	constructor(context: Context) : super(context) {
@@ -116,16 +129,8 @@ class MemberView : View {
 		super.onDraw(canvas)
 		
 		
-		val contentWidth = width - paddingLeft - paddingRight
-		val contentHeight = height - paddingTop - paddingBottom
-		
-		firstName?.let {
-			// Draw the text.
-			canvas?.drawText(it,
-			                 paddingLeft + (contentWidth - textWidth) / 2,
-			                 paddingTop + (contentHeight + textHeight) / 2,
-			                 textPaint)
-		}
+		val contentWidth: Float = (width - paddingLeft - paddingRight).toFloat()
+		val contentHeight: Float = (height - paddingTop - paddingBottom).toFloat()
 		
 		/*	// Draw the example drawable on top of the text.
 			portrait?.let {
@@ -133,7 +138,22 @@ class MemberView : View {
 							 paddingLeft + contentWidth, paddingTop + contentHeight)
 				it.draw(canvas)
 			}*/
-		portrait = resizeBitmap(portrait, width.toFloat(), height / 2f)
-		canvas?.drawBitmap(portrait, 0f, 0f, null)
+		portrait = resizeBitmap(portrait, contentWidth, contentHeight / 2f)
+		if(portrait.width.toFloat() != contentWidth) {
+			val centerX: Float = (paddingLeft + contentWidth / 2f) - portrait.width/2f
+			canvas?.drawBitmap(portrait, centerX, paddingTop.toFloat(), null)
+		}
+		else
+			canvas?.drawBitmap(portrait, paddingLeft.toFloat(), paddingTop.toFloat(), null)
+		firstName?.let {
+			// Draw the text.
+			canvas?.drawText(it,
+			                 paddingLeft + (contentWidth - textWidth) / 2,
+				// ? place text below the image
+				             paddingTop + (contentHeight + portrait.height + textHeight) / 2,
+				             textPaint)
+		}
+		
+		
 	}
 }
