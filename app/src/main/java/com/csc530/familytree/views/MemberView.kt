@@ -150,6 +150,7 @@ class MemberView : View {
 		textPaint.let {
 			it.textSize = fontSize
 			it.color = fontColour
+			//TODO: explore breakText to see if you can wrap text
 			textWidth = it.measureText(firstName)
 			textHeight = it.fontMetrics.bottom
 		}
