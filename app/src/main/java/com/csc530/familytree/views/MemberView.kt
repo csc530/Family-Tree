@@ -19,9 +19,6 @@ class MemberView : View {
 			field = value
 			postInvalidate()
 		}
-	private lateinit var textPaint: TextPaint
-	private var textWidth: Float = 0f
-	private var textHeight: Float = 0f
 	
 	/**
 	 * The text to draw; member's first name
@@ -29,9 +26,19 @@ class MemberView : View {
 	var firstName: String? = "Talon"
 		set(value) {
 			field = value
-			//			updateTextPaint()
+			textWidth = textPaint.measureText(field)
+			textHeight = textPaint.fontMetrics.bottom
 			postInvalidate()
 		}
+	
+	// Set up a default TextPaint object
+	private var textPaint: TextPaint = TextPaint().apply {
+		flags = Paint.ANTI_ALIAS_FLAG
+		textAlign = Paint.Align.LEFT
+	}
+	private var textWidth: Float = textPaint.measureText(firstName)
+	private var textHeight: Float = textPaint.fontMetrics.bottom
+	
 	
 	/**
 	 * The font color of all text
@@ -40,7 +47,7 @@ class MemberView : View {
 		//TODO: change to colour on primary
 		set(value) {
 			field = value
-			//			updateTextPaint()
+			textPaint.color = field
 			postInvalidate()
 		}
 	
@@ -50,18 +57,10 @@ class MemberView : View {
 	var fontSize: Float = 25f
 		set(value) {
 			field = value
-			//			updateTextPaint()
+			textPaint.textSize = field
 			postInvalidate()
 		}
 	
-	private fun updateTextPaint() {
-		textPaint.let {
-			it.textSize = fontSize
-			it.color = fontColour
-			textWidth = it.measureText(firstName)
-			textHeight = it.fontMetrics.bottom
-		}
-	}
 	
 	// * BELOW - necessary parent constructors form View class
 	constructor(context: Context) : super(context) {
@@ -107,11 +106,6 @@ class MemberView : View {
 		
 		a.recycle()
 		
-		// Set up a default TextPaint object
-		textPaint = TextPaint().apply {
-			flags = Paint.ANTI_ALIAS_FLAG
-			textAlign = Paint.Align.LEFT
-		}
 		// Update TextPaint and text measurements from attributes
 		postInvalidate()
 	}
@@ -128,19 +122,14 @@ class MemberView : View {
 	override fun onDraw(canvas: Canvas?) {
 		super.onDraw(canvas)
 		
-		
+		//? set the width that content can take up
 		val contentWidth: Float = (width - paddingLeft - paddingRight).toFloat()
 		val contentHeight: Float = (height - paddingTop - paddingBottom).toFloat()
 		
-		/*	// Draw the example drawable on top of the text.
-			portrait?.let {
-				it.(paddingLeft, paddingTop,
-							 paddingLeft + contentWidth, paddingTop + contentHeight)
-				it.draw(canvas)
-			}*/
+		updateTextPaint()
 		portrait = resizeBitmap(portrait, contentWidth, contentHeight / 2f)
 		if(portrait.width.toFloat() != contentWidth) {
-			val centerX: Float = (paddingLeft + contentWidth / 2f) - portrait.width/2f
+			val centerX: Float = (paddingLeft + contentWidth / 2f) - portrait.width / 2f
 			canvas?.drawBitmap(portrait, centerX, paddingTop.toFloat(), null)
 		}
 		else
@@ -148,12 +137,21 @@ class MemberView : View {
 		firstName?.let {
 			// Draw the text.
 			canvas?.drawText(it,
-			                 paddingLeft + (contentWidth - textWidth) / 2,
+			                 (paddingLeft + contentWidth/2) - textWidth/2f,
 				// ? place text below the image
 				             paddingTop + (contentHeight + portrait.height + textHeight) / 2,
 				             textPaint)
 		}
 		
 		
+	}
+	
+	private fun updateTextPaint() {
+		textPaint.let {
+			it.textSize = fontSize
+			it.color = fontColour
+			textWidth = it.measureText(firstName)
+			textHeight = it.fontMetrics.bottom
+		}
 	}
 }
