@@ -6,4 +6,5 @@ class Tree(
 		var contributors: Array<String>,
 		var members: List<Member>
 ) {
+
 }
