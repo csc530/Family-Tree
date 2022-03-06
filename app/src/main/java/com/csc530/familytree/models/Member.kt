@@ -1,5 +1,6 @@
 package com.csc530.familytree.models
 
+import android.graphics.drawable.Drawable
 import android.media.Image
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -14,7 +15,7 @@ class Member(
 		var birthday: LocalDate? = null,
 		var deathDate: LocalDate? = null,
 		var comments: Array<String>? = null,
-		var image: Image? = null
+		var image: Drawable? = null,
 ) {
 	lateinit var parents: List<Member>
 	lateinit var kids: TreeSet<Member>
