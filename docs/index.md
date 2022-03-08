@@ -2,7 +2,9 @@
 
 ## Overview
 
-[Full PDF of App Overview](../App-Overview.pdf "PDF of App-Overview")
+[Full PDF (t4chnical) of App Overview](../App-Overview.pdf "PDF of App-Overview")
+
+I created this app using Google and IntelliJ's Android studio IDE and a whole lot blood, sweat, and debuggin with my tears😭
 
 ## Design Prototype
 
