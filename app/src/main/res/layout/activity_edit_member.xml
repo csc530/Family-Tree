@@ -6,15 +6,6 @@
 	android:layout_height="match_parent"
 	tools:context=".controllers.EditMemberActivity">
 	
-	<TextView
-		android:id="@+id/txtEdtTitle"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-		tools:text="Edit or Add Family Member" />
-	
 	<TableLayout
 		android:id="@+id/tblMemberFrm"
 		android:layout_width="match_parent"
@@ -66,6 +57,7 @@
 				android:ems="10"
 				android:hint="Bupponoc"
 				android:inputType="textPersonName" />
+		
 		</TableRow>
 		
 		<TableRow
@@ -84,7 +76,9 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:ems="10"
-				android:inputType="date" />
+				android:enabled="false"
+				android:inputType="date"
+				android:textAlignment="center" />
 		
 		</TableRow>
 		
@@ -104,10 +98,33 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:ems="10"
-				android:inputType="date|none" />
+				android:enabled="false"
+				android:inputType="date|none"
+				android:textAlignment="center" />
 		
 		</TableRow>
 	</TableLayout>
+	
+	<DatePicker
+		android:id="@+id/datePicker"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="#FFFFFF"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
+	
+	<TextView
+		android:id="@+id/txtEdtTitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="Edit or Add Family Member" />
 	
 	<Button
 		android:id="@+id/btnCnfm"

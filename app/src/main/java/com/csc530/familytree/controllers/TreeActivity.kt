@@ -1,7 +1,7 @@
 package com.csc530.familytree.controllers
 
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
@@ -18,12 +18,8 @@ class TreeActivity : AppCompatActivity()
 		super.onCreate(savedInstanceState)
 		binding = ActivityTreeBinding.inflate(layoutInflater)
 		setContentView(binding.root)
-		binding.imgbtnAdd.setOnClickListener { btn ->
-			val member = MemberView(this)
-			member.firstName = "New name"
-			member.fontColour = Color.BLACK
-			familyTree.add(member)
-			binding.root.addView(member)
+		binding.imgbtnAdd.setOnClickListener {
+			startActivity(Intent(this, EditMemberActivity::class.java))
 		}
 		//		//connect RecyclerView with FirestoreDB via the ViewModel
 		//		val viewModel: MemberViewModel by viewModels()
