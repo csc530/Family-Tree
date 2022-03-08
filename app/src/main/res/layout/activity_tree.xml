@@ -4,4 +4,22 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".controllers.TreeActivity" />
+	tools:context=".controllers.TreeActivity" >
+	
+	<ImageButton
+		android:id="@+id/imgbtnAdd"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:srcCompat="@drawable/fui_ic_anonymous_white_24dp" />
+	
+	<com.csc530.familytree.views.MemberView
+		android:id="@+id/memberView2"
+		android:layout_width="150dp"
+		android:layout_height="wrap_content"
+		app:firstName="Christofer"
+		tools:layout_editor_absoluteX="0dp"
+		tools:layout_editor_absoluteY="0dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
