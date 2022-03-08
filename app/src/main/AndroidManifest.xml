@@ -10,6 +10,9 @@
 		android:supportsRtl="true"
 		android:theme="@style/Theme.FamilyTree">
 		<activity
+			android:name=".controllers.EditMemberActivity"
+			android:exported="false" />
+		<activity
 			android:name=".controllers.EditDetailsActivity"
 			android:exported="false" />
 		<activity
