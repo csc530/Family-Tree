@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.csc530.familytree.models.Member
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import java.lang.reflect.Member
 
 class MemberViewModel: ViewModel() {
 	private val members = MutableLiveData<List<Member>>()
@@ -49,7 +49,7 @@ class MemberViewModel: ViewModel() {
 			}
 	}
 	
-	fun getProjects() : LiveData<List<Member>>
+	fun getMembers() : LiveData<List<Member>>
 	{
 		return members
 	}

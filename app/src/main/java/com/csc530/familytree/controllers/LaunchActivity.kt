@@ -51,13 +51,9 @@ class LaunchActivity : AppCompatActivity() {
 		// Check if user is signed in (non-null) and update UI accordingly.
 		val currentUser = auth.currentUser
 		if(currentUser != null) {
-			//TODO: add reload method that will get rid of the log in or sign up prompt/controls
-			reload()
+			//TODO: display user infor and related data somewhere
 		}
 	}
 	
-	/**
-	 * Reloads the page to not display the sign in options but a logout button.
-	 */
-	fun reload() {}
+	
 }

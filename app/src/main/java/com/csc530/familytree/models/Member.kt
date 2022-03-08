@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.math.roundToInt
 
-@RequiresApi(Build.VERSION_CODES.O)
+//@RequiresApi(Build.VERSION_CODES.O)
 class Member(
 		var firstName: String,
 		var lastName: String? = "",

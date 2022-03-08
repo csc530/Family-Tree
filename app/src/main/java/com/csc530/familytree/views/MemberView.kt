@@ -29,7 +29,15 @@ class MemberView : View
 		set(value)
 		{
 			field = value
-			textWidth = textPaint.measureText(field)
+			textWidth = textPaint.measureText("$field $lastName")
+			textHeight = textPaint.fontMetrics.bottom
+			postInvalidate()
+		}
+	var lastName: String = "Box"
+		set(value)
+		{
+			field = value
+			textWidth = textPaint.measureText("$firstName $field")
 			textHeight = textPaint.fontMetrics.bottom
 			postInvalidate()
 		}
@@ -112,7 +120,7 @@ class MemberView : View
 					{
 						override fun onGlobalLayout()
 						{
-							if(width < portrait.width || height < portrait.height) return;
+							if(width < portrait.width || height < portrait.height) return
 							viewTreeObserver.removeOnGlobalLayoutListener(this)
 							portrait = resizeBitmap(portrait, width.toFloat(), height.toFloat())
 						}
@@ -151,13 +159,12 @@ class MemberView : View
 		}
 		else
 			canvas?.drawBitmap(portrait, paddingLeft.toFloat(), paddingTop.toFloat(), null)
-		firstName?.let {
-			// Draw the text.
-			canvas?.drawText(it, (paddingLeft + contentWidth / 2) - textWidth / 2f,
-					// ? place text below the image
-					         paddingTop + (contentHeight + portrait.height + textHeight) / 2,
-					         textPaint)
-		}
+		// Draw the text.
+		val name = "$firstName $lastName"
+		canvas?.drawText(name, (paddingLeft + contentWidth / 2) - textWidth / 2f,
+						  // ? place text below the image
+				         paddingTop + (contentHeight + portrait.height + textHeight) / 2,
+				         textPaint)
 	}
 	
 	private fun updateTextPaint()
@@ -166,7 +173,7 @@ class MemberView : View
 			it.textSize = fontSize
 			it.color = fontColour
 			//TODO: explore breakText to see if you can wrap text
-			textWidth = it.measureText(firstName)
+			textWidth = it.measureText("$firstName $lastName")
 			textHeight = it.fontMetrics.bottom
 		}
 	}
