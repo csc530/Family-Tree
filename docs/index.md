@@ -18,9 +18,13 @@
 ## Deployed App
 
 - [x] Create/Start project
-- [ ] Create activities
+- [x] Create Google play developer profile
+- [ ] Have developer profile verifed (so I can finally upload an app cha!)
+- [x] Create activities
 - [ ] Implement basic functionality
-- [ ]  Add bonus gentic funcitonality
+- [ ] Have congruent DB CRUD operations and sync
+- [ ] Add bonus sync across user functionality
+- [ ]  Add bonus genetic funcitonality
 - [ ] Polish design and code
 - [ ] Finalize name for the app
 - [ ] Upload to play store
