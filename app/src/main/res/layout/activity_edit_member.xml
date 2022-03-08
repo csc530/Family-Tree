@@ -5,5 +5,131 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	tools:context=".controllers.EditMemberActivity">
+	
+	<TextView
+		android:id="@+id/txtEdtTitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="Edit or Add Family Member" />
+	
+	<TableLayout
+		android:id="@+id/tblMemberFrm"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="1dp"
+		android:gravity="center"
+		android:orientation="vertical"
+		app:layout_constraintBottom_toTopOf="@+id/btnCnfm"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/txtEdtTitle">
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:orientation="horizontal">
+			
+			<TextView
+				android:id="@+id/txtFName"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="First Name: " />
+			
+			<EditText
+				android:id="@+id/edtFName"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:ems="10"
+				android:hint="Kylar"
+				android:inputType="textPersonName" />
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:id="@+id/txtLName"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Last name:" />
+			
+			<EditText
+				android:id="@+id/edtLName"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:ems="10"
+				android:hint="Bupponoc"
+				android:inputType="textPersonName" />
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:id="@+id/txtBD"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Birthdate:" />
+			
+			<EditText
+				android:id="@+id/edtBD"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:ems="10"
+				android:inputType="date" />
+		
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:id="@+id/txtDD"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Deathdate:" />
+			
+			<EditText
+				android:id="@+id/edtDD"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:ems="10"
+				android:inputType="date|none" />
+		
+		</TableRow>
+	</TableLayout>
+	
+	<Button
+		android:id="@+id/btnCnfm"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="Confirm"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toEndOf="@+id/btnCncl" />
+	
+	<Button
+		android:id="@+id/btnCncl"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="Cancel"
+		app:layout_constraintBottom_toBottomOf="@+id/btnCnfm"
+		app:layout_constraintEnd_toStartOf="@+id/btnCnfm"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="@+id/btnCnfm" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

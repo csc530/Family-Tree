@@ -7,7 +7,7 @@
 	tools:context=".controllers.LaunchActivity">
 	
 	<TextView
-		android:id="@+id/txtTitle"
+		android:id="@+id/txtAppTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="25dp"
@@ -47,7 +47,7 @@
 		android:scaleType="fitCenter"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+		app:layout_constraintTop_toBottomOf="@+id/txtAppTitle"
 		app:srcCompat="@drawable/family_tree" />
 	
 	<LinearLayout
