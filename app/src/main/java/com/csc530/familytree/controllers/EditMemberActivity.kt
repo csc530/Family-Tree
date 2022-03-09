@@ -10,8 +10,10 @@ import com.csc530.familytree.databinding.ActivityEditMemberBinding
 import com.csc530.familytree.models.Member
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.time.LocalDate
+import org.joda.time.DateTime
+import org.joda.time.LocalDate
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class EditMemberActivity : AppCompatActivity()
@@ -38,8 +40,8 @@ class EditMemberActivity : AppCompatActivity()
 		binding.btnCnfm.setOnClickListener {
 			val firstName = binding.edtFName.text.toString()
 			val lastName = binding.edtLName.text.toString()
-			val birthdate = LocalDate.parse(binding.edtBD.text)
-			val deathDate = LocalDate.parse(binding.edtDD.text)
+			val birthdate = DateTime.parse(binding.edtBD.text.toString())
+			val deathDate = DateTime.parse(binding.edtDD.text.toString())
 			val comments = binding.taOther.text.toString()
 			val member = Member(firstName, lastName, birthdate, deathDate)
 			val intent = Intent(this, TreeActivity::class.java)
@@ -51,7 +53,7 @@ class EditMemberActivity : AppCompatActivity()
 				val collection = firebase.collection("Trees")
 				//? check if they are updating a predefined member in the tree
 				val memberID = this.intent.getStringExtra("memberID")
-				if(memberID == null)
+				if(memberID != null)
 				{
 					val values = HashMap<String, Any>()
 					values["firstName"] = firstName
@@ -62,7 +64,7 @@ class EditMemberActivity : AppCompatActivity()
 					val query = collection.document().update(values)
 				}
 				else
-					collection
+					collection.add(member)
 			}
 			//TODO: write to file if not logged in and read from file on scene change
 			//			intent.putExtra("member", member)
@@ -73,14 +75,14 @@ class EditMemberActivity : AppCompatActivity()
 	private fun setDate(value: EditText, title: String)
 	{
 		val date = DatePickerDialog(this)
-		date.updateDate(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
+		date.updateDate(LocalDate.now().year, LocalDate.now().monthOfYear, LocalDate.now().dayOfMonth)
 		date.setTitle(title)
 		date.datePicker.maxDate = Date().toInstant().toEpochMilli()
 		date.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm") { _, _ ->
 			val year = date.datePicker.year
 			val month = date.datePicker.month
 			val day = date.datePicker.dayOfMonth
-			value.setText(LocalDate.of(year, month, day).toString())
+			value.setText(org.joda.time.LocalDate.parse("$year-$month-$day").toString())
 		}
 		date.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear") { _, _ ->
 			value.text = null
