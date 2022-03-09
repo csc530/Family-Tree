@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityEditMemberBinding
 import com.csc530.familytree.models.Member
@@ -43,7 +44,7 @@ class EditMemberActivity : AppCompatActivity()
 			val birthdate = DateTime.parse(binding.edtBD.text.toString())
 			val deathDate = DateTime.parse(binding.edtDD.text.toString())
 			val comments = binding.taOther.text.toString()
-			val member = Member(firstName, lastName, birthdate, deathDate)
+			val member = Member(firstName, lastName, birthdate, deathDate, uid = auth.currentUser!!.uid)
 			val intent = Intent(this, TreeActivity::class.java)
 			// TODO:  find a way to transfer the new member information across intents
 			//? write to db if logged in
@@ -61,10 +62,17 @@ class EditMemberActivity : AppCompatActivity()
 					values["birthdate"] = birthdate
 					values["deathdate"] = deathDate
 					values["comments"] = comments
-					val query = collection.document().update(values)
+					collection.document().update(values)
 				}
 				else
-					collection.add(member)
+				{
+					member.id = collection.document().id
+					collection.add(member).addOnSuccessListener{
+						println(it)
+					}.addOnFailureListener {
+						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+					}
+				}
 			}
 			//TODO: write to file if not logged in and read from file on scene change
 			//			intent.putExtra("member", member)

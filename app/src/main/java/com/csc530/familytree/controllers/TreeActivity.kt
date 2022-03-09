@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.Member
 import com.csc530.familytree.views.MemberView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class TreeActivity : AppCompatActivity()
 {
@@ -20,15 +22,11 @@ class TreeActivity : AppCompatActivity()
 		setContentView(binding.root)
 		binding.imgbtnAdd.setOnClickListener {
 			startActivity(Intent(this, EditMemberActivity::class.java))
+			val auth = FirebaseAuth.getInstance().currentUser
+			if(auth != null)
+			{
+				//TODO: load family members from firebase
+			}
 		}
-		//		//connect RecyclerView with FirestoreDB via the ViewModel
-		//		val viewModel: MemberViewModel by viewModels()
-		//		viewModel.getProjects().observe(this) {
-		//			binding.recyclerView.adapter = MemberAdapter(this, it)
-		//		}
-		//		binding.button2.setOnClickListener {
-		//			val db = FirebaseFirestore.getInstance().collection("tests")
-		//			db.add(Member("pop", "dsa", null, null, null, null))
-		//		}
 	}
 }
