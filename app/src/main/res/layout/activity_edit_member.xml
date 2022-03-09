@@ -36,7 +36,7 @@
 				android:layout_height="wrap_content"
 				android:ems="10"
 				android:hint="Kylar"
-				android:inputType="textPersonName" />
+				android:inputType="textPersonName|text" />
 		</TableRow>
 		
 		<TableRow
@@ -76,7 +76,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:ems="10"
-				android:enabled="false"
+				android:enabled="true"
+				android:hint="2020-12-15"
 				android:inputType="date"
 				android:textAlignment="center" />
 		
@@ -88,7 +89,7 @@
 			android:gravity="center">
 			
 			<TextView
-				android:id="@+id/txtDD"
+				android:id="@+id/txtDeathDate"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Deathdate:" />
@@ -98,11 +99,30 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:ems="10"
-				android:enabled="false"
+				android:enabled="true"
+				android:hint="2022-03-08"
 				android:inputType="date|none"
 				android:textAlignment="center" />
 		
-		</TableRow>
+		</TableRow>	<TableRow
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center">
+		
+		<TextView
+			android:id="@+id/txtOther"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Other:" />
+		
+		<MultiAutoCompleteTextView
+			android:id="@+id/taOther"
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
+			android:inputType="textShortMessage|textLongMessage|none|text"
+			android:textAlignment="viewStart" />
+	
+	</TableRow>
 	</TableLayout>
 	
 	<DatePicker

@@ -10,8 +10,8 @@ import kotlin.math.roundToInt
 
 //@RequiresApi(Build.VERSION_CODES.O)
 class Member(
-		var firstName: String,
-		var lastName: String? = "",
+		var firstName: String? = "????",
+		var lastName: String? = "????",
 		var birthday: LocalDate? = null,
 		var deathDate: LocalDate? = null,
 		var comments: Array<String>? = null,
