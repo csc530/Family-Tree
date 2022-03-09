@@ -53,6 +53,10 @@ class LaunchActivity : AppCompatActivity()
 			val intent = Intent(this, AuthActivity::class.java)
 			startActivity(intent)
 		}
+		binding.btnLogout.setOnClickListener {
+			FirebaseAuth.getInstance().signOut()
+			this.recreate()
+		}
 		
 	}
 	
