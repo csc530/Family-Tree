@@ -6,22 +6,26 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityLaunchBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-class LaunchActivity : AppCompatActivity() {
+class LaunchActivity : AppCompatActivity()
+{
 	private lateinit var auth: FirebaseAuth
 	private lateinit var binding: ActivityLaunchBinding
 	
-	override fun onCreate(savedInstanceState: Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?)
+	{
 		super.onCreate(savedInstanceState)
 		binding = ActivityLaunchBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		
 		auth = Firebase.auth
 		// ? Remove the login and sign up text with a log out button if they are signed in
-		if(auth.currentUser != null) {
+		if(auth.currentUser != null)
+		{
 			binding.txtLogin.visibility = TextView.GONE
 			binding.txtOr.visibility = TextView.GONE
 			binding.txtSignup.visibility = TextView.GONE
@@ -31,8 +35,14 @@ class LaunchActivity : AppCompatActivity() {
 		
 		//Switch intents on button click
 		binding.btnNewTree.setOnClickListener {
-			val intent = Intent(this, TreeActivity::class.java)
-			startActivity(intent)
+			//!!! temporary until I learn to make local saves of family trees
+			if(auth.currentUser == null)
+				Snackbar.make(this, binding.root, "Please log in or signup to continue", Snackbar.LENGTH_SHORT).show()
+			else
+			{
+				val intent = Intent(this, TreeActivity::class.java)
+				startActivity(intent)
+			}
 		}
 		binding.btnLoadTree.setOnClickListener {
 			val intent = Intent(this, LoadTreeActivity::class.java)
@@ -46,11 +56,13 @@ class LaunchActivity : AppCompatActivity() {
 		
 	}
 	
-	public override fun onStart() {
+	public override fun onStart()
+	{
 		super.onStart()
 		// Check if user is signed in (non-null) and update UI accordingly.
 		val currentUser = auth.currentUser
-		if(currentUser != null) {
+		if(currentUser != null)
+		{
 			//TODO: display user infor and related data somewhere
 		}
 	}
