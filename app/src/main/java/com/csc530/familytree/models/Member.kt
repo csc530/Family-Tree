@@ -3,52 +3,59 @@ package com.csc530.familytree.models
 import android.graphics.drawable.Drawable
 import java.time.LocalDate
 import java.time.Period
-import java.util.*
 
-class Member(
+data class Member(
 		var firstName: String? = "????",
 		var lastName: String? = "????",
-		private var birthEpochDay: Long? = null,
-		private var deathEpochDay: Long? = null,
+		private var birthdate: LocalDate? = null,
+		private var deathdate: LocalDate? = null,
 		var comments: Array<String>? = null,
 		var image: Drawable? = null,
 		var uid: String? = null
-) {
+)
+{
 	lateinit var id: String
-	var birthdate: LocalDate? = null
-		set(value) {
-			birthEpochDay = value?.toEpochDay()
-			age = Period.between(birthdate, deathdate).toTotalMonths()
+	var birthEpochDay: Long? = null
+		set(value)
+		{
+			if(value != null)
+				birthdate = LocalDate.ofEpochDay(value)
 			field = value
 		}
-	var deathdate: LocalDate? = null
-		set(value) {
-			deathEpochDay = value?.toEpochDay()
-			age = Period.between(birthdate, deathdate).toTotalMonths()
+	var deathEpochDay: Long? = null
+		set(value)
+		{
+			if(value != null)
+				deathdate = LocalDate.ofEpochDay(value)
 			field = value
 		}
+	
 	var parents: ArrayList<Member> = ArrayList<Member>()
 	var kids: ArrayList<Member> = ArrayList<Member>()
 	var partners: ArrayList<Member> = ArrayList<Member>()
-	private var age: Long = -1
 	
-	init {
-		if (birthEpochDay != null)
-			birthdate = LocalDate.ofEpochDay(birthEpochDay!!)
-		if (deathEpochDay != null)
-			deathdate = LocalDate.ofEpochDay(deathEpochDay!!)
-		age = Period.between(birthdate, deathdate).toTotalMonths()
+	init
+	{
+		if(birthdate != null)
+			birthEpochDay = birthdate!!.toEpochDay()
+		if(deathdate != null)
+			deathEpochDay = deathdate!!.toEpochDay()
 	}
 	
-	fun getAgePeriod(): Period {
-		return Period.between(birthdate, deathdate)
+	fun getAgePeriod(): Period?
+	{
+		if(birthdate == null) return null
+		return Period.between(birthdate, deathdate ?: LocalDate.now())
 	}
 	
-	fun getAge(): Int {
-		return Period.between(birthdate, deathdate).years
+	fun getAge(): Int
+	{
+		if(birthdate == null) return -1
+		return Period.between(birthdate, deathdate ?: LocalDate.now()).years
 	}
 	
-	fun isDead(): Boolean {
+	fun isDead(): Boolean
+	{
 		return deathdate != null
 	}
 }
