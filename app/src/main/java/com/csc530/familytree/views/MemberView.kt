@@ -11,7 +11,7 @@ import com.csc530.familytree.R
 class MemberView : View
 {
 	
-	private val DEFAULT_FONT_SIZE: Float = 25f
+	private val DEFAULT_FONT_SIZE: Float = 35f
 	private val DEFAULT_FONT_COLOUR: Int = Color.BLACK
 	private val DEFAULT_PORTRAIT = R.drawable.user
 	
