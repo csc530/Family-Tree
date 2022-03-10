@@ -1,41 +1,54 @@
 package com.csc530.familytree.models
 
-import android.app.DatePickerDialog
 import android.graphics.drawable.Drawable
-import org.joda.time.DateTime
-import org.joda.time.LocalDate
-import org.joda.time.LocalDateTime
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.DateTimePrinter
+import java.time.LocalDate
+import java.time.Period
 import java.util.*
-import kotlin.collections.ArrayList
-
 
 class Member(
 		var firstName: String? = "????",
 		var lastName: String? = "????",
 		var birthEpochDay: Long? = null,
-		var deathEpochDay: Long? = -1,
+		var deathEpochDay: Long? = null,
 		var comments: Array<String>? = null,
 		var image: Drawable? = null,
-		var uid: String?=null
-)
-{
+		var uid: String? = null
+) {
 	lateinit var id: String
-	lateinit var birthdate: LocalDate
-	lateinit var deathdate: org.joda.time.LocalDate
+	var birthdate: LocalDate? = null
+		set(value) {
+			birthEpochDay = value?.toEpochDay()
+			age = Period.between(birthdate, deathdate).toTotalMonths()
+			field = value
+		}
+	var deathdate: LocalDate? = null
+		set(value) {
+			deathEpochDay = value?.toEpochDay()
+			age = Period.between(birthdate, deathdate).toTotalMonths()
+			field = value
+		}
 	var parents: ArrayList<Member> = ArrayList<Member>()
 	var kids: ArrayList<Member> = ArrayList<Member>()
 	var partners: ArrayList<Member> = ArrayList<Member>()
-	var age: Int = -1
+	var age: Long = -1
 	
-	init
-	{
-		birthdate = LocalDate.parse(birthEpochDay)
+	init {
+		if (birthEpochDay != null)
+			birthdate = LocalDate.ofEpochDay(birthEpochDay!!)
+		if (deathEpochDay != null)
+			deathdate = LocalDate.ofEpochDay(deathEpochDay!!)
+		age = Period.between(birthdate, deathdate).toTotalMonths()
 	}
 	
-	fun isDead(): Boolean
-	{
-		return deathDate != null
+	fun getAgePeriod(): Period {
+		return Period.between(birthdate, deathdate)
+	}
+	
+	fun getAge(): Int {
+		return Period.between(birthdate, deathdate).years
+	}
+	
+	fun isDead(): Boolean {
+		return deathdate != null
 	}
 }
