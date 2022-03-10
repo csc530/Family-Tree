@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityEditMemberBinding
 import com.csc530.familytree.models.Member
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 import java.util.*
@@ -57,7 +58,10 @@ class EditMemberActivity : AppCompatActivity() {
 					values["birthdate"] = birthdate
 					values["deathdate"] = deathDate
 					values["comments"] = comments
-					collection.document().update(values)
+					val docPath = this.intent.getStringExtra("docPath")!!
+					for (field in values)
+						collection.document(docPath)
+							.update(FieldPath.of("members", field.key), field.value)
 				}
 				else {
 					member.id = collection.document().id
