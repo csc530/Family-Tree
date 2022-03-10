@@ -9,16 +9,17 @@ import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.Member
 import com.csc530.familytree.models.Tree
 import com.csc530.familytree.views.MemberView
-import com.csc530.familytree.views.MemberViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class TreeActivity : AppCompatActivity() {
+class TreeActivity : AppCompatActivity()
+{
 	private lateinit var binding: ActivityTreeBinding
 	private lateinit var familyTree: Tree
 	private val treeViews = ArrayList<MemberView>()
-	override fun onCreate(savedInstanceState: Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?)
+	{
 		super.onCreate(savedInstanceState)
 		binding = ActivityTreeBinding.inflate(layoutInflater)
 		setContentView(binding.root)
@@ -27,30 +28,31 @@ class TreeActivity : AppCompatActivity() {
 		val treeName = this.intent.getStringExtra("treeName")!!
 		
 		//create new family tree if no tree name is given
-		if (auth.currentUser != null) {
+		if(auth.currentUser != null)
+		{
 			firebase.whereEqualTo("creator", auth.currentUser!!.uid).whereEqualTo("name", treeName)
 				.limit(1)
 				.get().addOnSuccessListener { querySnap ->
-					if (querySnap.documents[0] != null)
+					if(querySnap.documents.isNotEmpty())
 						with(querySnap.documents[0]) {
 							val name: String? = this.getString("name")
 							val creator: String? = this.getString("creator")
-							val members = this.get("members") as ArrayList<Member>?
+							val members = this.get("members") as ArrayList<Member>
 							val created: Timestamp = this.getTimestamp("created")!!
 							familyTree = Tree(name!!, creator!!, members = members, lastModified = Timestamp.now(), created = created)
 							//? add view for each family member
-							if (familyTree.members != null)
-								for (member in familyTree.members!!) {
-									val view = MemberView(this@TreeActivity)
-									view.firstName = member.firstName ?: "????"
-									view.lastName = member.lastName ?: "?????"
-									view.layoutParams.height = 150
-									view.layoutParams.width = 150
-								}
+							for(member in familyTree.members)
+							{
+								val view = MemberView(this@TreeActivity)
+								view.firstName = member.firstName ?: "????"
+								view.lastName = member.lastName ?: "?????"
+								view.layoutParams.height = 150
+								view.layoutParams.width = 150
+							}
 						}
-					else {
-						familyTree = Tree(treeName!!, auth.currentUser!!.uid, null, null, Timestamp
-							.now(), Timestamp.now())
+					else
+					{
+						familyTree = Tree(treeName, auth.currentUser!!.uid, null, created = Timestamp.now(), lastModified = Timestamp.now())
 						firebase.add(familyTree).addOnFailureListener {
 							println(it)
 						}

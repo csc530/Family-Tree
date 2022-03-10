@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityEditMemberBinding
 import com.csc530.familytree.models.Member
+import com.csc530.familytree.models.Tree
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -51,40 +53,54 @@ class EditMemberActivity : AppCompatActivity()
 			val comments = binding.taOther.text.toString()
 			val member = Member(firstName, lastName, birthdate, deathDate, uid = auth.currentUser!!.uid)
 			val intent = Intent(this, TreeActivity::class.java)
-			// TODO:  find a way to transfer the new member information across intents
 			//? write to db if logged in
 			if(auth.currentUser != null)
 			{
 				val firebase = FirebaseFirestore.getInstance()
 				val collection = firebase.collection("Trees")
-				//? check if they are updating a predefined member in the tree
-				val memberID = this.intent.getStringExtra("memberID")
-				if(memberID != null)
-				{
-					val values = HashMap<String, Any?>()
-					values["firstName"] = firstName
-					values["lastName"] = lastName
-					values["birthdate"] = birthdate
-					values["deathdate"] = deathDate
-					values["comments"] = comments
-					val docPath = this.intent.getStringExtra("docPath")!!
-					for(field in values)
-						collection.document(docPath)
-							.update(FieldPath.of("members", field.key), field.value)
-				}
-				else
-				{
-					member.id = collection.document().id
-					collection.add(member).addOnSuccessListener {
-						println(it)
-					}.addOnFailureListener {
-						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+				val docPath = this.intent.getStringExtra("docPath")!!
+				firebase.document(docPath).get().addOnSuccessListener {
+					println(it.toString())
+					println(it.data.toString())
+					val familyTree = it.toObject(Tree::class.javaObjectType)!!
+					
+					//Update last modified timestamp
+					familyTree.lastModified = Timestamp.now()
+					
+					//? check if they are updating a predefined member in the tree
+					val memberID = this.intent.getStringExtra("memberID")
+					if(memberID != null)
+					{
+						val values = HashMap<String, Any?>()
+						values["firstName"] = firstName
+						values["lastName"] = lastName
+						values["birthdate"] = birthdate
+						values["deathdate"] = deathDate
+						values["comments"] = comments
+						for(field in values)
+							collection.document(docPath)
+								.update(FieldPath.of("members", field.key), field.value)
 					}
+					else
+					{
+						member.id = collection.document().id
+						familyTree.members.add(member)
+						firebase.document(docPath)
+							.update("members", familyTree.members, "lastModified", familyTree.lastModified)
+							.addOnFailureListener { e ->
+								Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+								println(e)
+							}
+					}
+					intent.putExtra("treeName", familyTree.name)
+					startActivity(intent)
 				}
 			}
-			//TODO: write to file if not logged in and read from file on scene change
-			//			intent.putExtra("member", member)
-			startActivity(intent)
+			else
+			{
+				//TODO: write to file if not logged in and read from file on scene change
+				//			intent.putExtra("member", member)
+			}
 		}
 	}
 	
