@@ -1,10 +1,14 @@
 package com.csc530.familytree.controllers
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.csc530.familytree.databinding.ActivityLaunchBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -40,8 +44,38 @@ class LaunchActivity : AppCompatActivity()
 				Snackbar.make(this, binding.root, "Please log in or signup to continue", Snackbar.LENGTH_SHORT).show()
 			else
 			{
-				val intent = Intent(this, TreeActivity::class.java)
-				startActivity(intent)
+				val getName = AlertDialog.Builder(this)
+					.setTitle("Name family tree")
+					.setMessage("What would you like to call this family tree?")
+					.create()
+				//TODO refactor using with/or something
+				val editTxtFamTreeName = EditText(getName.context)
+				editTxtFamTreeName.hint = "The Johnson's"
+				editTxtFamTreeName.setSingleLine()
+				editTxtFamTreeName.inputType = InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE
+				editTxtFamTreeName.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
+				getName.setView(editTxtFamTreeName)
+				getName.setButton(AlertDialog.BUTTON_POSITIVE, "Create") { dialogInterface, button ->
+//					? ensure that a family tree name is entered
+					if(editTxtFamTreeName.text.toString().isEmpty())
+					{
+						AlertDialog.Builder(getName.context)
+							//							.setIcon(R.drawable.warning/)
+							.setTitle("Name Required")
+							.setMessage("Please enter a name for the family tree")
+							.setNeutralButton("OK"){dialogInterface,_->
+								dialogInterface.dismiss()
+								getName.show()
+							}
+							.show()
+						return@setButton
+					}
+					dialogInterface.dismiss()
+					val intent = Intent(this, TreeActivity::class.java)
+					intent.putExtra("treeName", editTxtFamTreeName.text.toString())
+					startActivity(intent)
+				}
+				getName.show()
 			}
 		}
 		binding.btnLoadTree.setOnClickListener {
