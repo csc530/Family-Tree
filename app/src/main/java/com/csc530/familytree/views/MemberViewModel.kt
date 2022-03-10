@@ -10,47 +10,43 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
-class MemberViewModel: ViewModel() {
+class MemberViewModel : ViewModel() {
 	private val members = MutableLiveData<List<Member>>()
-	private var auth : FirebaseAuth
+	private var auth: FirebaseAuth
 	
 	/**
 	 * This is called after the constructor runs and can be used to setup our live data
 	 */
-	init{
-		auth= Firebase.auth
+	init {
+		auth = Firebase.auth
 		val userID = auth.currentUser?.uid
 		
 		//query the DB to get all the Projects for a specific user
-		val db = FirebaseFirestore.getInstance().collection("tests")
+		val db = FirebaseFirestore.getInstance().collection("Trees")
 			.whereEqualTo("uid", userID)
-			.orderBy("name")
-			.addSnapshotListener{ documents, exception ->
-				if (exception != null)
-				{
+			.addSnapshotListener { documents, exception ->
+				if (exception != null) {
 					Log.w("DB_Response", "Listen Failed ${exception.code}")
 					return@addSnapshotListener
 				}
 				
 				Log.i("DB_Response", "# of documents = ${documents!!.size()}")
 				//loop over the documents and create Project objects
-				documents?.let{
-					val MemberList = ArrayList<Member>()
-					for (document in documents)
-					{
+				documents.let {
+					val membersList = ArrayList<Member>()
+					for (document in documents) {
 						Log.i("DB_Response", "${document.data}")
 						
 						//convert the JSON document into a Project object
 						val project = document.toObject(Member::class.java)
-						MemberList.add(project)
+						membersList.add(project)
 					}
-					members.value = MemberList
+					members.value = membersList
 				}
 			}
 	}
 	
-	fun getMembers() : LiveData<List<Member>>
-	{
+	fun getMembers(): LiveData<List<Member>> {
 		return members
 	}
 }
