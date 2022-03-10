@@ -14,13 +14,14 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 import java.util.*
-import kotlin.collections.HashMap
 
 
-class EditMemberActivity : AppCompatActivity() {
+class EditMemberActivity : AppCompatActivity()
+{
 	private lateinit var binding: ActivityEditMemberBinding
 	private val locale = Locale.getDefault();
-	override fun onCreate(savedInstanceState: Bundle?) {
+	override fun onCreate(savedInstanceState: Bundle?)
+	{
 		val auth = FirebaseAuth.getInstance()
 		super.onCreate(savedInstanceState)
 		binding = ActivityEditMemberBinding.inflate(layoutInflater)
@@ -28,42 +29,51 @@ class EditMemberActivity : AppCompatActivity() {
 		//? show datepicker when birth or date date is selected
 		binding.edtDD.setOnFocusChangeListener { deathDate, hasFocus ->
 			deathDate.isEnabled = !hasFocus
-			if (hasFocus)
+			if(hasFocus)
 				setDate(deathDate as EditText, "Death date")
 		}
 		binding.edtBD.setOnFocusChangeListener { birthDate, hasFocus ->
 			birthDate.isEnabled = !hasFocus
-			if (hasFocus)
+			if(hasFocus)
 				setDate(birthDate as EditText, "Birth date")
 		}
 		binding.btnCnfm.setOnClickListener {
 			val firstName = binding.edtFName.text.toString()
 			val lastName = binding.edtLName.text.toString()
-			val birthdate = LocalDate.parse(binding.edtBD.text.toString()).toEpochDay()
-			val deathDate = LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
+			val birthdate = if(binding.edtBD.text.toString().isNotEmpty())
+				LocalDate.parse(binding.edtBD.text.toString())
+			else
+				null
+			val deathDate = if(binding.edtDD.text.toString().isNotEmpty())
+				LocalDate.parse(binding.edtDD.text.toString())
+			else
+				null
 			val comments = binding.taOther.text.toString()
 			val member = Member(firstName, lastName, birthdate, deathDate, uid = auth.currentUser!!.uid)
 			val intent = Intent(this, TreeActivity::class.java)
 			// TODO:  find a way to transfer the new member information across intents
 			//? write to db if logged in
-			if (auth.currentUser != null) {
+			if(auth.currentUser != null)
+			{
 				val firebase = FirebaseFirestore.getInstance()
 				val collection = firebase.collection("Trees")
 				//? check if they are updating a predefined member in the tree
 				val memberID = this.intent.getStringExtra("memberID")
-				if (memberID != null) {
-					val values = HashMap<String, Any>()
+				if(memberID != null)
+				{
+					val values = HashMap<String, Any?>()
 					values["firstName"] = firstName
 					values["lastName"] = lastName
 					values["birthdate"] = birthdate
 					values["deathdate"] = deathDate
 					values["comments"] = comments
 					val docPath = this.intent.getStringExtra("docPath")!!
-					for (field in values)
+					for(field in values)
 						collection.document(docPath)
 							.update(FieldPath.of("members", field.key), field.value)
 				}
-				else {
+				else
+				{
 					member.id = collection.document().id
 					collection.add(member).addOnSuccessListener {
 						println(it)
@@ -78,18 +88,22 @@ class EditMemberActivity : AppCompatActivity() {
 		}
 	}
 	
-	private fun setDate(value: EditText, title: String) {
+	private fun setDate(value: EditText, title: String)
+	{
 		val date = DatePickerDialog(this)
+		var setDate: LocalDate = LocalDate.now()
 		date.updateDate(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
 		date.setTitle(title)
 		date.datePicker.maxDate = Date().toInstant().toEpochMilli()
-		date.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm") { _, _ ->
-			val year = date.datePicker.year
-			val month = date.datePicker.month
-			val day = date.datePicker.dayOfMonth
-			value.setText(LocalDate.parse("$year-$month-$day").toString())
+		date.setOnDateSetListener { view, year, month, dayOfMonth ->
+			setDate = LocalDate.of(year, month, dayOfMonth)
 		}
-		date.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear") { _, _ -> value.text = null }
+		date.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm") { _, _ ->
+			value.setText(setDate.toString())
+		}
+		date.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear") { _, _ ->
+			value.text = null
+		}
 		date.setOnDismissListener { value.clearFocus() }
 		date.show()
 	}
