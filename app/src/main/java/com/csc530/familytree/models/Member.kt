@@ -8,8 +8,8 @@ import java.util.*
 class Member(
 		var firstName: String? = "????",
 		var lastName: String? = "????",
-		var birthEpochDay: Long? = null,
-		var deathEpochDay: Long? = null,
+		private var birthEpochDay: Long? = null,
+		private var deathEpochDay: Long? = null,
 		var comments: Array<String>? = null,
 		var image: Drawable? = null,
 		var uid: String? = null
@@ -30,7 +30,7 @@ class Member(
 	var parents: ArrayList<Member> = ArrayList<Member>()
 	var kids: ArrayList<Member> = ArrayList<Member>()
 	var partners: ArrayList<Member> = ArrayList<Member>()
-	var age: Long = -1
+	private var age: Long = -1
 	
 	init {
 		if (birthEpochDay != null)
