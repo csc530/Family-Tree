@@ -107,15 +107,13 @@ class EditMemberActivity : AppCompatActivity()
 	private fun setDate(value: EditText, title: String)
 	{
 		val date = DatePickerDialog(this)
-		var setDate: LocalDate = LocalDate.now()
 		date.updateDate(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
 		date.setTitle(title)
 		date.datePicker.maxDate = Date().toInstant().toEpochMilli()
-		date.setOnDateSetListener { view, year, month, dayOfMonth ->
-			setDate = LocalDate.of(year, month, dayOfMonth)
-		}
 		date.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm") { _, _ ->
-			value.setText(setDate.toString())
+			val datepicker = date.datePicker
+			val selectedDate = LocalDate.of(datepicker.year, datepicker.month, datepicker.dayOfMonth)
+			value.setText(selectedDate.toString())
 		}
 		date.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear") { _, _ ->
 			value.text = null
