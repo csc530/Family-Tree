@@ -10,6 +10,8 @@
         <entry key="app/src/main/res/drawable/circle.xml" value="0.216" />
         <entry key="app/src/main/res/drawable/plus_button.xml" value="0.196" />
         <entry key="app/src/main/res/drawable/previous_back.xml" value="0.2885" />
+        <entry key="app/src/main/res/drawable/tree_border.xml" value="0.291" />
+        <entry key="app/src/main/res/layout/activity_edit_details.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_edit_member.xml" value="0.3507692307692308" />
         <entry key="app/src/main/res/layout/activity_launch.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/activity_load_tree.xml" value="0.35625" />
@@ -18,6 +20,7 @@
         <entry key="app/src/main/res/layout/ex.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/exampleOfCustomLayout.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/layout.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/load_tree.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_family_member.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_member_view.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_my_view.xml" value="0.16666666666666666" />
