@@ -32,8 +32,9 @@ class TreeActivity : AppCompatActivity()
 		{
 			if(docPath == null && treeName != null)
 			{
-				familyTree = FamilyTree(treeName, auth.currentUser!!.uid, null, created = Timestamp.now(), lastModified = Timestamp.now())
-				val docID = "$treeName-${auth.currentUser!!.displayName}-${collection.document().id}"
+				familyTree = FamilyTree(treeName, auth.currentUser!!.uid, created = Timestamp.now(), lastModified = Timestamp.now())
+				familyTree.id = collection.document().id
+				val docID = "$treeName-${auth.currentUser!!.uid}-${familyTree.id}"
 				collection.document(docID)
 					.set(familyTree)
 					.addOnSuccessListener {

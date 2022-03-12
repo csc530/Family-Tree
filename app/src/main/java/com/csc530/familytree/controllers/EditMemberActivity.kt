@@ -66,9 +66,7 @@ class EditMemberActivity : AppCompatActivity()
 			{
 				val docPath = this.intent.getStringExtra("docPath")!!
 				firebase.document(docPath).get().addOnSuccessListener {
-					println(it.toString())
-					println(it.data.toString())
-					val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
+				val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
 					
 					//Update last modified timestamp
 					familyTree.lastModified = Timestamp.now()

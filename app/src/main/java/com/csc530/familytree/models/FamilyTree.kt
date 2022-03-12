@@ -11,5 +11,6 @@ class FamilyTree(
 		var members: ArrayList<FamilyMember> = ArrayList<FamilyMember>(),
 		var created: Timestamp = Timestamp.now(),
 		var lastModified: Timestamp = Timestamp.now(),
-		var image: Drawable?
+		var image: Int?=null,
+		var id:String?=null
 ) {}
