@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
-import com.csc530.familytree.models.Member
 import com.csc530.familytree.models.Tree
 import com.csc530.familytree.views.MemberView
 import com.google.firebase.Timestamp
@@ -34,28 +33,28 @@ class TreeActivity : AppCompatActivity()
 				.limit(1)
 				.get().addOnSuccessListener { querySnap ->
 					if(querySnap.documents.isNotEmpty())
-						with(querySnap.documents[0]) {
-							val name: String? = this.getString("name")
-							val creator: String? = this.getString("creator")
-							val members = this.get("members") as ArrayList<Member>
-							val created: Timestamp = this.getTimestamp("created")!!
-							familyTree = Tree(name!!, creator!!, members = members, lastModified = Timestamp.now(), created = created)
+						for(document in querySnap)
+						{
+							familyTree = document.toObject(Tree::class.java) //!!!!
 							//? add view for each family member
 							for(member in familyTree.members)
 							{
 								val view = MemberView(this@TreeActivity)
 								view.firstName = member.firstName ?: "????"
 								view.lastName = member.lastName ?: "?????"
-								view.layoutParams.height = 150
-								view.layoutParams.width = 150
+								//								view.layoutParams.height = 150
+								//								view.layoutParams.width = 150
 							}
 						}
 					else
 					{
 						familyTree = Tree(treeName, auth.currentUser!!.uid, null, created = Timestamp.now(), lastModified = Timestamp.now())
-						firebase.add(familyTree).addOnFailureListener {
-							println(it)
-						}
+						firebase.document("$treeName-${auth.currentUser!!.displayName}-${firebase.document().id}")
+							.set(familyTree)
+							.addOnFailureListener {
+								//redirect back to homepage
+								startActivity(Intent(this, LaunchActivity::class.java))
+							}
 					}
 				}.addOnFailureListener { Log.e("Firebase", it.toString()) }
 		}
