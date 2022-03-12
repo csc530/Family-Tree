@@ -29,8 +29,9 @@ class EditMemberActivity : AppCompatActivity()
 		binding = ActivityEditMemberBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		binding.btnCncl.setOnClickListener {
+			val docPath = intent.getStringExtra("docPath")!!
 			val intent = Intent(this, TreeActivity::class.java)
-			intent.putExtra("docPath", this.intent.getStringExtra("docPath"))
+			intent.putExtra("docPath", docPath)
 			startActivity(intent)
 		}
 		//? show datepicker when birth or date date is selected
@@ -97,7 +98,7 @@ class EditMemberActivity : AppCompatActivity()
 								println(e)
 							}
 					}
-					intent.putExtra("treeName", familyTree.name)
+					intent.putExtra("docPath", docPath)
 					startActivity(intent)
 				}
 			}

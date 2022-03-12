@@ -24,49 +24,58 @@ class TreeActivity : AppCompatActivity()
 		setContentView(binding.root)
 		val auth = FirebaseAuth.getInstance()
 		val firebase = FirebaseFirestore.getInstance().collection("Trees")
-		val treeName = this.intent.getStringExtra("treeName")!!
-		
+		val treeName = this.intent.getStringExtra("treeName")
+		var docPath = intent.getStringExtra("docPath")
 		//create new family tree if no tree name is given
 		if(auth.currentUser != null)
 		{
-			firebase.whereEqualTo("creator", auth.currentUser!!.uid).whereEqualTo("name", treeName)
-				.limit(1)
-				.get().addOnSuccessListener { querySnap ->
-					if(querySnap.documents.isNotEmpty())
-						for(document in querySnap)
-						{
-							familyTree = document.toObject(Tree::class.java) //!!!!
-							//? add view for each family member
-							for(member in familyTree.members)
-							{
-								val view = MemberView(this@TreeActivity)
-								view.firstName = member.firstName ?: "????"
-								view.lastName = member.lastName ?: "?????"
-								//								view.layoutParams.height = 150
-								//								view.layoutParams.width = 150
-							}
-						}
-					else
-					{
-						familyTree = Tree(treeName, auth.currentUser!!.uid, null, created = Timestamp.now(), lastModified = Timestamp.now())
-						firebase.document("$treeName-${auth.currentUser!!.displayName}-${firebase.document().id}")
-							.set(familyTree)
-							.addOnFailureListener {
-								//redirect back to homepage
-								startActivity(Intent(this, LaunchActivity::class.java))
-							}
+			if(docPath == null && treeName != null)
+			{
+				familyTree = Tree(treeName, auth.currentUser!!.uid, null, created = Timestamp.now(), lastModified = Timestamp.now())
+				val docID = "$treeName-${auth.currentUser!!.displayName}-${firebase.document().id}"
+				firebase.document(docID)
+					.set(familyTree)
+					.addOnSuccessListener {
+						docPath = firebase.document(docID).path
+						intent.putExtra("docPath", docPath)
 					}
-				}.addOnFailureListener { Log.e("Firebase", it.toString()) }
-		}
-		binding.imgbtnAdd.setOnClickListener {
-			val intent = Intent(this, EditMemberActivity::class.java)
-			var path: String
-			firebase.whereEqualTo("creator", auth.currentUser?.uid)
-				.whereEqualTo("name", treeName).get().addOnSuccessListener {
-					path = it.documents[0].reference.path
-					intent.putExtra("docPath", path)
-					startActivity(intent)
+					.addOnFailureListener {
+						backToHome()
+					}
+			}
+			else if(docPath != null)
+				firebase.document(docPath!!).get().addOnSuccessListener { document ->
+					if(document == null)
+						backToHome()
+					familyTree = document.toObject(Tree::class.java)!! //!!!!
+					//? add view for each family member
+					for(member in familyTree.members)
+					{
+						val view = MemberView(this@TreeActivity)
+						view.firstName = member.firstName ?: "????"
+						view.lastName = member.lastName ?: "?????"
+						//								view.layoutParams.height = 150
+						//								view.layoutParams.width = 150
+					}
+				}.addOnFailureListener {
+					Log.e("Firebase", it.toString())
+					backToHome()
 				}
 		}
+		binding.fabAdd.setOnClickListener {
+			val intent = Intent(this, EditMemberActivity::class.java)
+			intent.putExtra("docPath", docPath)
+			startActivity(intent)
+		}
+	}
+	
+	/**
+	 * Redirects back to homepage
+	 * Back to home.
+	 */
+	private fun backToHome()
+	{
+		finish()
+		startActivity(Intent(this, LaunchActivity::class.java))
 	}
 }
