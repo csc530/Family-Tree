@@ -28,6 +28,11 @@ class EditMemberActivity : AppCompatActivity()
 		super.onCreate(savedInstanceState)
 		binding = ActivityEditMemberBinding.inflate(layoutInflater)
 		setContentView(binding.root)
+		binding.btnCncl.setOnClickListener {
+			val intent = Intent(this, TreeActivity::class.java)
+			intent.putExtra("docPath", this.intent.getStringExtra("docPath"))
+			startActivity(intent)
+		}
 		//? show datepicker when birth or date date is selected
 		binding.edtDD.setOnFocusChangeListener { deathDate, hasFocus ->
 			deathDate.isEnabled = !hasFocus
