@@ -23,8 +23,9 @@ class TreeActivity : AppCompatActivity()
 		binding = ActivityTreeBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		val auth = FirebaseAuth.getInstance()
-		val firebase = FirebaseFirestore.getInstance().collection("Trees")
+		val firebase = FirebaseFirestore.getInstance()
 		val treeName = this.intent.getStringExtra("treeName")
+		val collection = firebase.collection("Trees")
 		var docPath = intent.getStringExtra("docPath")
 		//create new family tree if no tree name is given
 		if(auth.currentUser != null)
@@ -32,11 +33,11 @@ class TreeActivity : AppCompatActivity()
 			if(docPath == null && treeName != null)
 			{
 				familyTree = Tree(treeName, auth.currentUser!!.uid, null, created = Timestamp.now(), lastModified = Timestamp.now())
-				val docID = "$treeName-${auth.currentUser!!.displayName}-${firebase.document().id}"
-				firebase.document(docID)
+				val docID = "$treeName-${auth.currentUser!!.displayName}-${collection.document().id}"
+				collection.document(docID)
 					.set(familyTree)
 					.addOnSuccessListener {
-						docPath = firebase.document(docID).path
+						docPath = collection.document(docID).path
 						intent.putExtra("docPath", docPath)
 					}
 					.addOnFailureListener {
