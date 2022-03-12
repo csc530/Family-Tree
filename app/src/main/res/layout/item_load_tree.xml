@@ -23,10 +23,20 @@
 		android:textAlignment="center"
 		android:textAllCaps="true"
 		android:textSize="34sp"
+		android:layout_marginTop="25dp"
 		android:textStyle="bold"
-		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/imgFamTreeImg"
 		tools:text="Family Tree Name" />
+	
+	<TextView
+		android:id="@+id/txtCreationDate"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="@+id/txtFamTreeName"
+		app:layout_constraintStart_toStartOf="@+id/txtFamTreeName"
+		app:layout_constraintTop_toBottomOf="@+id/txtFamTreeName"
+		tools:text="Created on: febuary 1, 2022" />
 </androidx.constraintlayout.widget.ConstraintLayout>
