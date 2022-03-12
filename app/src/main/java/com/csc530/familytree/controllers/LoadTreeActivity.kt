@@ -19,7 +19,9 @@ class LoadTreeActivity : AppCompatActivity() {
         familyTreeViewModel.getFamilyTrees().observe(this){ familyTrees->
             binding.recyclerTree.adapter = FamilyTreeAdapter(this, familyTrees){familyTree, view ->
                 val intent = Intent(this, TreeActivity::class.java)
-                intent.putExtra("docPath", "${familyTree.name}-${familyTree.creator}-${familyTree.id}")
+                val docPath = "Trees/${familyTree.name}-${familyTree.creator}-${familyTree.id}"
+                intent.putExtra("docPath", docPath)
+                startActivity(intent)
             }
         }
     }
