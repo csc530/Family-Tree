@@ -55,8 +55,9 @@ class TreeActivity : AppCompatActivity()
 						val view = MemberView(this@TreeActivity)
 						view.firstName = member.firstName ?: "????"
 						view.lastName = member.lastName ?: "?????"
-						//								view.layoutParams.height = 150
-						//								view.layoutParams.width = 150
+						view.layoutParams.height = 150
+						view.layoutParams.width = 150
+						binding.root.addView(view)
 					}
 				}.addOnFailureListener {
 					Log.e("Firebase", it.toString())
