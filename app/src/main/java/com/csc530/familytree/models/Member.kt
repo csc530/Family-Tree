@@ -7,28 +7,14 @@ import java.time.Period
 data class Member(
 		var firstName: String? = "????",
 		var lastName: String? = "????",
-		private var birthdate: LocalDate? = null,
-		private var deathdate: LocalDate? = null,
+		var birthEpochDay: Long? = null,
+		var deathEpochDay: Long? = null,
 		var comments: Array<String>? = null,
 		var image: Drawable? = null,
 		var uid: String? = null
 )
 {
 	lateinit var id: String
-	var birthEpochDay: Long? = null
-		set(value)
-		{
-			if(value != null)
-				birthdate = LocalDate.ofEpochDay(value)
-			field = value
-		}
-	var deathEpochDay: Long? = null
-		set(value)
-		{
-			if(value != null)
-				deathdate = LocalDate.ofEpochDay(value)
-			field = value
-		}
 	
 	var parents: ArrayList<Member> = ArrayList<Member>()
 	var kids: ArrayList<Member> = ArrayList<Member>()
@@ -36,26 +22,30 @@ data class Member(
 	
 	init
 	{
-		if(birthdate != null)
-			birthEpochDay = birthdate!!.toEpochDay()
-		if(deathdate != null)
-			deathEpochDay = deathdate!!.toEpochDay()
 	}
 	
-	fun getAgePeriod(): Period?
+	private fun getBirthDate(): LocalDate?
 	{
-		if(birthdate == null) return null
-		return Period.between(birthdate, deathdate ?: LocalDate.now())
+		if(birthEpochDay != null)
+			return LocalDate.ofEpochDay(birthEpochDay!!);
+		return null
 	}
-	
+
+	private fun getDeathDate(): LocalDate?
+	{
+		if(deathEpochDay != null)
+			return LocalDate.ofEpochDay(deathEpochDay!!);
+		return null
+	}
+
 	fun getAge(): Int
 	{
-		if(birthdate == null) return -1
-		return Period.between(birthdate, deathdate ?: LocalDate.now()).years
+		if(getBirthDate() == null) return -1
+		return Period.between(getBirthDate(), getDeathDate() ?: LocalDate.now()).years
 	}
 	
 	fun isDead(): Boolean
 	{
-		return deathdate != null
+		return getDeathDate() != null
 	}
 }

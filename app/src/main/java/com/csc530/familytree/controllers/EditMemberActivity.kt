@@ -43,11 +43,11 @@ class EditMemberActivity : AppCompatActivity()
 			val firstName = binding.edtFName.text.toString()
 			val lastName = binding.edtLName.text.toString()
 			val birthdate = if(binding.edtBD.text.toString().isNotEmpty())
-				LocalDate.parse(binding.edtBD.text.toString())
+				LocalDate.parse(binding.edtBD.text.toString()).toEpochDay()
 			else
 				null
 			val deathDate = if(binding.edtDD.text.toString().isNotEmpty())
-				LocalDate.parse(binding.edtDD.text.toString())
+				LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
 			else
 				null
 			val comments = binding.taOther.text.toString()
