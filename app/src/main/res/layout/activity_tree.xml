@@ -6,6 +6,17 @@
 	android:layout_height="match_parent"
 	tools:context=".controllers.TreeActivity" >
 	
+	<RelativeLayout
+		android:id="@+id/rel"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
+	
+	</RelativeLayout>
+	
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/fabAdd"
 		android:layout_width="77dp"
