@@ -11,10 +11,9 @@ data class Member(
 		var deathEpochDay: Long? = null,
 		var comments: Array<String>? = null,
 		var image: Drawable? = null,
-		var uid: String? = null
+		var id: String? = null
 )
 {
-	lateinit var id: String
 	
 	var parents: ArrayList<Member> = ArrayList<Member>()
 	var kids: ArrayList<Member> = ArrayList<Member>()

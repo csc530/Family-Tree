@@ -50,14 +50,14 @@ class EditMemberActivity : AppCompatActivity()
 				LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
 			else
 				null
+			val firebase = FirebaseFirestore.getInstance()
+			val collection = firebase.collection("Trees")
 			val comments = binding.taOther.text.toString()
-			val member = Member(firstName, lastName, birthdate, deathDate, uid = auth.currentUser!!.uid)
+			val member = Member(firstName, lastName, birthdate, deathDate, id = collection.document().id)
 			val intent = Intent(this, TreeActivity::class.java)
 			//? write to db if logged in
 			if(auth.currentUser != null)
 			{
-				val firebase = FirebaseFirestore.getInstance()
-				val collection = firebase.collection("Trees")
 				val docPath = this.intent.getStringExtra("docPath")!!
 				firebase.document(docPath).get().addOnSuccessListener {
 					println(it.toString())
