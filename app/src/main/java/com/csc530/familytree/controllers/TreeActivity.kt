@@ -50,14 +50,14 @@ class TreeActivity : AppCompatActivity()
 						backToHome()
 					familyTree = document.toObject(Tree::class.java)!! //!!!!
 					//? add view for each family member
-					for(member in familyTree.members)
+					for((i, member) in familyTree.members.withIndex())
 					{
 						val view = MemberView(this@TreeActivity)
+						binding.rel.addView(view, i)
 						view.firstName = member.firstName ?: "????"
 						view.lastName = member.lastName ?: "?????"
-						view.layoutParams.height = 150
-						view.layoutParams.width = 150
-						binding.root.addView(view)
+						view.layoutParams.height = 250
+						view.layoutParams.width = 250
 					}
 				}.addOnFailureListener {
 					Log.e("Firebase", it.toString())

@@ -9,7 +9,7 @@ data class Member(
 		var lastName: String? = "????",
 		var birthEpochDay: Long? = null,
 		var deathEpochDay: Long? = null,
-		var comments: Array<String>? = null,
+		var comments: String? = null,
 		var image: Drawable? = null,
 		var id: String? = null
 )
