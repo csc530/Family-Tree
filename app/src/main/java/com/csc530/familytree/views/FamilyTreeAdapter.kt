@@ -10,8 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.csc530.familytree.R
 import com.csc530.familytree.models.FamilyTree
 
-class FamilyTreeAdapter(val content: Context, val familyTrees: List<FamilyTree>) : RecyclerView.Adapter<FamilyTreeAdapter.FamilyTreeViewHolder>()
+class FamilyTreeAdapter(val content: Context,
+                        val familyTrees: List<FamilyTree>,
+                        val itemListener: (FamilyTree, View) -> Unit)
+	: RecyclerView.Adapter<FamilyTreeAdapter.FamilyTreeViewHolder>()
 {
+	
 	inner class FamilyTreeViewHolder(view: View) : RecyclerView.ViewHolder(view)
 	{
 		val image: ImageView = itemView.findViewById<ImageView>(R.id.imgFamTreeImg)
@@ -85,12 +89,12 @@ class FamilyTreeAdapter(val content: Context, val familyTrees: List<FamilyTree>)
 		val familyTree = familyTrees[position]
 		with(holder) {
 			//bind the properties of the family tree to the view
-			image.setImageDrawable(familyTree.image)
+			image.setImageResource(familyTree.image ?: R.drawable.family_tree_load)
 			title.text = familyTree.name
 			dateCreated.text = familyTree.created.toDate().toString()
-			//			itemView.setOnClickListener {
-			//				//create interface
-			//			}
+			itemView.setOnClickListener {
+				itemListener(familyTree, it)
+			}
 		}
 	}
 }
