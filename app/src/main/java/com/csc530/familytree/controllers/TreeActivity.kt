@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
-import com.csc530.familytree.models.Tree
-import com.csc530.familytree.views.MemberView
+import com.csc530.familytree.models.FamilyTree
+import com.csc530.familytree.views.FamilyMemberView
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,8 +15,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class TreeActivity : AppCompatActivity()
 {
 	private lateinit var binding: ActivityTreeBinding
-	private lateinit var familyTree: Tree
-	private val treeViews = ArrayList<MemberView>()
+	private lateinit var familyTree: FamilyTree
+	private val treeViews = ArrayList<FamilyMemberView>()
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
@@ -32,7 +32,7 @@ class TreeActivity : AppCompatActivity()
 		{
 			if(docPath == null && treeName != null)
 			{
-				familyTree = Tree(treeName, auth.currentUser!!.uid, null, created = Timestamp.now(), lastModified = Timestamp.now())
+				familyTree = FamilyTree(treeName, auth.currentUser!!.uid, null, created = Timestamp.now(), lastModified = Timestamp.now())
 				val docID = "$treeName-${auth.currentUser!!.displayName}-${collection.document().id}"
 				collection.document(docID)
 					.set(familyTree)
@@ -48,11 +48,11 @@ class TreeActivity : AppCompatActivity()
 				firebase.document(docPath!!).get().addOnSuccessListener { document ->
 					if(document == null)
 						backToHome()
-					familyTree = document.toObject(Tree::class.java)!! //!!!!
+					familyTree = document.toObject(FamilyTree::class.java)!! //!!!!
 					//? add view for each family member
 					for((i, member) in familyTree.members.withIndex())
 					{
-						val view = MemberView(this@TreeActivity)
+						val view = FamilyMemberView(this@TreeActivity)
 						binding.rel.addView(view, i)
 						view.firstName = member.firstName ?: "????"
 						view.lastName = member.lastName ?: "?????"

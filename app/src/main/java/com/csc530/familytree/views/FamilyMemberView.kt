@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import com.csc530.familytree.R
 
-class MemberView : View
+class FamilyMemberView : View
 {
 	
 	private val DEFAULT_FONT_SIZE: Float = 35f
@@ -93,7 +93,7 @@ class MemberView : View
 	
 	private fun init(attributeSet: AttributeSet?, defStyle: Int)
 	{
-		// Load attributes//TODO change view class name to MemberView same as declarableStyle name
+		// Load attributes//TODO change view class name to FamilyMemberView same as declarableStyle name
 		val a = context.obtainStyledAttributes(
 				attributeSet, R.styleable.MemberView, defStyle, 0)
 		

@@ -4,14 +4,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.csc530.familytree.models.Member
+import com.csc530.familytree.models.FamilyMember
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
-class MemberViewModel : ViewModel() {
-	private val members = MutableLiveData<List<Member>>()
+class FamilyMemberViewModel : ViewModel() {
+	private val members = MutableLiveData<List<FamilyMember>>()
 	private var auth: FirebaseAuth
 	
 	/**
@@ -33,12 +33,12 @@ class MemberViewModel : ViewModel() {
 				Log.i("DB_Response", "# of documents = ${documents!!.size()}")
 				//loop over the documents and create Project objects
 				documents.let {
-					val membersList = ArrayList<Member>()
+					val membersList = ArrayList<FamilyMember>()
 					for (document in documents) {
 						Log.i("DB_Response", "${document.data}")
 						
 						//convert the JSON document into a Project object
-						val project = document.toObject(Member::class.java)
+						val project = document.toObject(FamilyMember::class.java)
 						membersList.add(project)
 					}
 					members.value = membersList
@@ -46,7 +46,7 @@ class MemberViewModel : ViewModel() {
 			}
 	}
 	
-	fun getMembers(): LiveData<List<Member>> {
+	fun getMembers(): LiveData<List<FamilyMember>> {
 		return members
 	}
 }

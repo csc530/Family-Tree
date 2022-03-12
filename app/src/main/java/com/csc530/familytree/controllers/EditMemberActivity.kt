@@ -8,8 +8,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityEditMemberBinding
-import com.csc530.familytree.models.Member
-import com.csc530.familytree.models.Tree
+import com.csc530.familytree.models.FamilyMember
+import com.csc530.familytree.models.FamilyTree
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
@@ -59,7 +59,7 @@ class EditMemberActivity : AppCompatActivity()
 			val firebase = FirebaseFirestore.getInstance()
 			val collection = firebase.collection("Trees")
 			val comments = binding.taOther.text.toString()
-			val member = Member(firstName, lastName, birthdate, deathDate, id = collection.document().id)
+			val member = FamilyMember(firstName, lastName, birthdate, deathDate, id = collection.document().id)
 			val intent = Intent(this, TreeActivity::class.java)
 			//? write to db if logged in
 			if(auth.currentUser != null)
@@ -68,7 +68,7 @@ class EditMemberActivity : AppCompatActivity()
 				firebase.document(docPath).get().addOnSuccessListener {
 					println(it.toString())
 					println(it.data.toString())
-					val familyTree = it.toObject(Tree::class.javaObjectType)!!
+					val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
 					
 					//Update last modified timestamp
 					familyTree.lastModified = Timestamp.now()

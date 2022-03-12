@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable
 import java.time.LocalDate
 import java.time.Period
 
-data class Member(
+data class FamilyMember(
 		var firstName: String? = "????",
 		var lastName: String? = "????",
 		var birthEpochDay: Long? = null,
@@ -15,9 +15,9 @@ data class Member(
 )
 {
 	
-	var parents: ArrayList<Member> = ArrayList<Member>()
-	var kids: ArrayList<Member> = ArrayList<Member>()
-	var partners: ArrayList<Member> = ArrayList<Member>()
+	var parents: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
+	var kids: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
+	var partners: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
 	
 	init
 	{
