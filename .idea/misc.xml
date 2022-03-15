@@ -23,8 +23,10 @@
         <entry key="app/src/main/res/layout/layout.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/load_tree.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_family_member.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/sample_family_tree_view.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_member_view.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_my_view.xml" value="0.16666666666666666" />
+        <entry key="app/src/main/res/layout/sample_parent_view.xml" value="0.3411458333333333" />
         <entry key="app/src/main/res/xml/root_preferences.xml" value="0.35625" />
       </map>
     </option>

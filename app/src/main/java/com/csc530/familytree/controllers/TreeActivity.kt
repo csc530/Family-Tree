@@ -53,6 +53,7 @@ class TreeActivity : AppCompatActivity()
 					//? add view for each family member
 					for((i, member) in familyTree.members.withIndex())
 					{
+						//TODO: draw lines for connecting members and add member to page
 						val view = FamilyMemberView(this@TreeActivity)
 						binding.rel.addView(view, i)
 						view.firstName = member.firstName ?: "????"
