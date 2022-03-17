@@ -4,6 +4,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:padding="@dimen/containerPadding"
 	tools:context=".controllers.EditMemberActivity">
 	
 	<TableLayout
@@ -36,7 +37,9 @@
 				android:layout_height="wrap_content"
 				android:ems="10"
 				android:hint="Kylar"
-				android:inputType="textPersonName|text" />
+				android:inputType="textPersonName|text"
+				android:singleLine="true"
+				android:textAlignment="center" />
 		</TableRow>
 		
 		<TableRow
@@ -56,7 +59,9 @@
 				android:layout_height="wrap_content"
 				android:ems="10"
 				android:hint="Bupponoc"
-				android:inputType="textPersonName" />
+				android:inputType="textPersonName"
+				android:singleLine="true"
+				android:textAlignment="center" />
 		
 		</TableRow>
 		
@@ -104,25 +109,27 @@
 				android:inputType="date|none"
 				android:textAlignment="center" />
 		
-		</TableRow>	<TableRow
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:gravity="center">
+		</TableRow>
 		
-		<TextView
-			android:id="@+id/txtOther"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Other:" />
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:id="@+id/txtOther"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Biography:" />
+			
+			<MultiAutoCompleteTextView
+				android:id="@+id/taOther"
+				android:layout_width="wrap_content"
+				android:layout_height="100dp"
+				android:inputType="textShortMessage|textLongMessage|none|text"
+				android:textAlignment="viewStart" />
 		
-		<MultiAutoCompleteTextView
-			android:id="@+id/taOther"
-			android:layout_width="wrap_content"
-			android:layout_height="100dp"
-			android:inputType="textShortMessage|textLongMessage|none|text"
-			android:textAlignment="viewStart" />
-	
-	</TableRow>
+		</TableRow>
 	</TableLayout>
 	
 	<DatePicker
@@ -141,6 +148,9 @@
 		android:id="@+id/txtEdtTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:text="Edit or Add Family Member"
+		android:textAlignment="center"
+		android:textSize="@dimen/titleSize"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
@@ -152,6 +162,7 @@
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
 		android:text="Confirm"
+		android:layout_marginBottom="25dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.5"
@@ -166,7 +177,6 @@
 		app:layout_constraintBottom_toBottomOf="@+id/btnCnfm"
 		app:layout_constraintEnd_toStartOf="@+id/btnCnfm"
 		app:layout_constraintHorizontal_bias="0.5"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/btnCnfm" />
+		app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

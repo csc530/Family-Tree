@@ -4,6 +4,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:padding="@dimen/containerPadding"
 	tools:context=".controllers.LoadTreeActivity">
 	
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -13,16 +14,20 @@
 		android:layout_marginStart="5dp"
 		android:layout_marginTop="5dp"
 		android:clickable="true"
+		app:fabSize="auto"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@drawable/previous_back" />
+		app:maxImageSize="30dp"
+		app:srcCompat="@drawable/back" />
 	
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recyclerTree"
-		android:layout_width="0dp"
+		android:layout_width="wrap_content"
 		android:layout_height="0dp"
-		android:padding="45dp"
-		android:scrollbars="vertical"
+		android:clipChildren="false"
+		android:clipToPadding="false"
+		android:layoutDirection="locale"
+		android:padding="20dp"
 		app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
