@@ -11,4 +11,25 @@
 	<color name="light_blue_600">#FF039BE5</color>
 	<color name="gray_400">#FFBDBDBD</color>
 	<color name="gray_600">#FF757575</color>
+	<!--* colour scheme -->
+	<color name="blackPrimary">#EE131313</color>
+	<color name="Tea_Green" b="201" g="253" hex="dafdc9" r="218">#dafdc9</color>
+	<color name="Slimy_Green" b="19" g="164" hex="00a413" r="0">#00a413</color>
+	<color name="Pine_Tree" b="39" g="49" hex="223127" r="34">#223127</color>
+	<color name="Big_Dip_Oruby" b="56" g="13" hex="9c0d38" r="156">#9c0d38</color>
+	<color name="Cinnamon_Satin" b="116" g="83" hex="ce5374" r="206">#ce5374</color>
+	<color name="French_Sky_Blue">#85ADFF</color>
+	<color name="Blue_Crayola">#256EFF</color>
+	<color name="Blue_RYB">#0052F5</color>
+	<color name="Royal_Blue_Dark">#002266</color>
+	<color name="Jasmine">#FFDE85</color>
+	<color name="Orange_Yellow_Crayola">#FFD972</color>
+	<color name="Sunglow">#FFC933</color>
+	<color name="Goldenrod">#E0A500</color>
+	<!--* FROM: https://material.io/design/color/the-color-system.html#tools-for-picking-colors-->
+	<color name="a100">#B9F6CA</color>
+	<color name="a200">#69F0AE</color>
+	<color name="a400">#00E676</color>
+	<color name="a700">#00C853</color>
+
 </resources>

@@ -2,5 +2,7 @@
 <resources>
 	<dimen name="btnMdW">125dp</dimen>
 	<dimen name="btnMdH">75dp</dimen>
-	<dimen name="defFSize">45sp</dimen>
+	<dimen name="largeFont">20sp</dimen>
+	<dimen name="titleSize">40sp</dimen>
+	<dimen name="containerPadding">10dp</dimen>
 </resources>
