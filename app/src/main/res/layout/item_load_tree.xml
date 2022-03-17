@@ -4,11 +4,15 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="300dp"
 	android:layout_height="300dp"
+	android:layout_gravity="center"
+	android:layout_marginTop="10dp"
+	android:layout_marginBottom="5dp"
 	android:foreground="@drawable/tree_border"
 	android:gravity="center"
 	android:orientation="vertical"
-	android:padding="25dp"
-	android:visibility="visible">
+	android:padding="30dp"
+	android:visibility="visible"
+	app:layout_anchorGravity="center">
 	
 	<ImageView
 		android:id="@+id/imgFamTreeImg"
