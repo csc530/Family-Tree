@@ -11,9 +11,7 @@
 		android:id="@+id/rel"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"/>
 	
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -22,10 +20,11 @@
 		android:layout_height="74dp"
 		android:layout_margin="10dp"
 		android:clickable="true"
-		android:foreground="@drawable/plus_button"
+		android:tint="#00FFFFFF"
 		app:fabSize="normal"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
+		app:rippleColor="#00FFFFFF"
 		app:srcCompat="@drawable/plus_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

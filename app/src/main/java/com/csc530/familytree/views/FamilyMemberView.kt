@@ -1,24 +1,32 @@
 package com.csc530.familytree.views
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.ImageView
+import androidx.core.content.res.ResourcesCompat
 import com.csc530.familytree.R
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class FamilyMemberView : View
 {
 	
 	private val DEFAULT_FONT_SIZE: Float = 35f
 	private val DEFAULT_FONT_COLOUR: Int = Color.BLACK
-	private val DEFAULT_PORTRAIT = R.drawable.user
 	
-	private var portrait: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.user)
+	private lateinit var portraitFrame: ImageView
+	private var portrait: Drawable? = ResourcesCompat.getDrawable(resources, R.drawable.user, context.theme)
 		set(value)
 		{
 			field = value
+			requestLayout()
 			postInvalidate()
 		}
 	
@@ -31,6 +39,7 @@ class FamilyMemberView : View
 			field = value
 			textWidth = textPaint.measureText("$field $lastName")
 			textHeight = textPaint.fontMetrics.bottom
+			requestLayout()
 			postInvalidate()
 		}
 	var lastName: String = "Box"
@@ -39,6 +48,7 @@ class FamilyMemberView : View
 			field = value
 			textWidth = textPaint.measureText("$firstName $field")
 			textHeight = textPaint.fontMetrics.bottom
+			requestLayout()
 			postInvalidate()
 		}
 	
@@ -71,6 +81,7 @@ class FamilyMemberView : View
 		{
 			field = value
 			textPaint.textSize = field
+			requestLayout()
 			postInvalidate()
 		}
 	
@@ -94,77 +105,84 @@ class FamilyMemberView : View
 	private fun init(attributeSet: AttributeSet?, defStyle: Int)
 	{
 		// Load attributes//TODO change view class name to FamilyMemberView same as declarableStyle name
-		val a = context.obtainStyledAttributes(
-				attributeSet, R.styleable.MemberView, defStyle, 0)
+		val a = context.obtainStyledAttributes(attributeSet, R.styleable.FamilyMemberView, defStyle, 0)
 		
-		firstName = a.getString(
-				R.styleable.MemberView_firstName).toString()
-		fontColour = a.getColor(
-				R.styleable.MemberView_fontColour,
-				DEFAULT_FONT_COLOUR)
+		firstName = a.getString(R.styleable.FamilyMemberView_firstName).toString()
+		fontColour = a.getColor(R.styleable.FamilyMemberView_fontColour, DEFAULT_FONT_COLOUR)
 		// Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
 		// values that should fall on pixel boundaries.
-		fontSize = a.getDimension(
-				R.styleable.MemberView_fontSize,
-				DEFAULT_FONT_SIZE)
+		fontSize = a.getDimension(R.styleable.FamilyMemberView_fontSize, DEFAULT_FONT_SIZE)
 		
-		if(a.hasValue(R.styleable.MemberView_portrait))
-		{
-			val drawable = a.getResourceId(R.styleable.MemberView_portrait, DEFAULT_PORTRAIT)
-			portrait = BitmapFactory.decodeResource(resources, drawable)
-			/*? This is to set the portrait size to be within the view's bounds (height&width)
-			? Necessary because within the init it hasn't drawn (know) it's dimensions*/
-			viewTreeObserver.addOnGlobalLayoutListener(
-					// ? Resizes the image whenever the container's width or height changes to remain within it
-					object : OnGlobalLayoutListener
-					{
-						override fun onGlobalLayout()
-						{
-							if(width < portrait.width || height < portrait.height) return
-							viewTreeObserver.removeOnGlobalLayoutListener(this)
-							portrait = resizeBitmap(portrait, width.toFloat(), height.toFloat())
-						}
-					})
-		}
+		portrait = a.getDrawable(R.styleable.FamilyMemberView_portrait)
+		           ?: ResourcesCompat.getDrawable(resources, R.drawable.user, context.theme)
+		portraitFrame = ImageView(context, attributeSet, defStyle)
+		portraitFrame.setImageDrawable(portrait)
+		portraitFrame.scaleType = ImageView.ScaleType.CENTER_INSIDE
 		a.recycle()
-		
 		// Update TextPaint and text measurements from attributes
-		postInvalidate()
+//
+//		postInvalidate()
 	}
 	
-	private fun resizeBitmap(bitmap: Bitmap, width: Float, height: Float): Bitmap
+	
+	private var viewHeight: Int = 0
+	private var viewWidth: Int = 0
+	
+	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int)
 	{
-		//? Thank you to Coderz Geek - https://youtu.be/BxBcs1ddEn8?t=350
-		val matrix = Matrix()
-		val src = RectF(0F, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
-		val dst = RectF(0f, 0f, width, height)
-		println(matrix.setRectToRect(src, dst, Matrix.ScaleToFit.CENTER))
-		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+		val widthSpecMode = MeasureSpec.getMode(widthMeasureSpec)
+		val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
+		val resizeWidth = widthSpecMode != MeasureSpec.EXACTLY
+		val resizeHeight = heightSpecMode != MeasureSpec.EXACTLY
+		val measureSpecWidth = MeasureSpec.getSize(widthMeasureSpec)
+		val measureSpecHeight = MeasureSpec.getSize(heightMeasureSpec)
+		//updates the measurements oif each item in hte view
+		portraitFrame.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(measureSpecHeight / 2, heightSpecMode))
+		textWidth = textPaint.measureText("$firstName $lastName")
+		textHeight = textPaint.fontMetrics.bottom
+		//calculate the size of the view if it's resizeable else use given size from parent
+		viewHeight =
+				if(resizeHeight)
+					(paddingTop + portraitFrame.height + textHeight + paddingBottom).roundToInt()
+				else
+					measureSpecHeight
+		viewWidth =
+				if(resizeWidth)
+					(max(paddingLeft, paddingStart) + portraitFrame.width + textWidth + max(paddingEnd, paddingRight)).roundToInt()
+				else
+					measureSpecWidth
+		//set the dimension of the view
+		setMeasuredDimension(min(viewWidth, measureSpecWidth), min(viewHeight, measureSpecHeight))
 	}
 	
-	override fun onDraw(canvas: Canvas?)
+	private var contentWidth: Float = (width - paddingLeft - paddingRight).toFloat()
+	private var contentHeight: Float = (height - paddingTop - paddingBottom).toFloat()
+	override fun onDraw(canvas: Canvas)
 	{
 		super.onDraw(canvas)
 		
 		//? set the width that content can take up
-		val contentWidth: Float = (width - paddingLeft - paddingRight).toFloat()
-		val contentHeight: Float = (height - paddingTop - paddingBottom).toFloat()
+		contentWidth = (width - paddingLeft - paddingRight).toFloat()
+		contentHeight = (height - paddingTop - paddingBottom).toFloat()
 		
 		updateTextPaint()
-		portrait = resizeBitmap(portrait, contentWidth, contentHeight / 2f)
-		if(portrait.width.toFloat() != contentWidth)
-		{
-			val centerX: Float = (paddingLeft + contentWidth / 2f) - portrait.width / 2f
-			canvas?.drawBitmap(portrait, centerX, paddingTop.toFloat(), null)
-		}
+		portraitFrame.layout(paddingLeft, paddingTop, contentWidth.toInt(), (contentHeight / 2).toInt())
+		if(portraitFrame.isLaidOut)
+			portraitFrame.draw(canvas)
 		else
-			canvas?.drawBitmap(portrait, paddingLeft.toFloat(), paddingTop.toFloat(), null)
+			portrait?.let {
+				it.setBounds(paddingLeft, paddingTop, paddingLeft + contentWidth.toInt(), contentHeight.toInt() / 2)
+				it.draw(canvas)
+			}
+		
 		// Draw the text.
 		val name = "$firstName $lastName"
-		canvas?.drawText(name, (paddingLeft + contentWidth / 2) - textWidth / 2f,
-						  // ? place text below the image
-				         paddingTop + (contentHeight + portrait.height + textHeight) / 2,
-				         textPaint)
+		canvas.drawText(name, (paddingLeft + contentWidth / 2) - textWidth / 2f,
+				//       ? place text below the image
+				        paddingTop + (contentHeight + portraitFrame.height + textHeight) / 2,
+				        textPaint)
+		
 	}
 	
 	private fun updateTextPaint()

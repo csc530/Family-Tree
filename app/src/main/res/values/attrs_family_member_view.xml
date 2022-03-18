@@ -1,5 +1,5 @@
 <resources>
-	<declare-styleable name="MemberView">
+	<declare-styleable name="FamilyMemberView">
 		<attr name="firstName" format="string" />
 		<attr name="fontSize" format="dimension" />
 		<attr name="fontColour" format="color" />
