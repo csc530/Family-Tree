@@ -107,7 +107,7 @@ class FamilyMemberView : View
 		// Load attributes//TODO change view class name to FamilyMemberView same as declarableStyle name
 		val a = context.obtainStyledAttributes(attributeSet, R.styleable.FamilyMemberView, defStyle, 0)
 		
-		firstName = a.getString(R.styleable.FamilyMemberView_firstName).toString()
+		firstName = a.getString(R.styleable.FamilyMemberView_firstName) ?: firstName
 		fontColour = a.getColor(R.styleable.FamilyMemberView_fontColour, DEFAULT_FONT_COLOUR)
 		// Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
 		// values that should fall on pixel boundaries.
@@ -120,8 +120,8 @@ class FamilyMemberView : View
 		portraitFrame.scaleType = ImageView.ScaleType.CENTER_INSIDE
 		a.recycle()
 		// Update TextPaint and text measurements from attributes
-//
-//		postInvalidate()
+		//
+		//		postInvalidate()
 	}
 	
 	
@@ -140,7 +140,7 @@ class FamilyMemberView : View
 		//updates the measurements oif each item in hte view
 		portraitFrame.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(measureSpecHeight / 2, heightSpecMode))
 		textWidth = textPaint.measureText("$firstName $lastName")
-		textHeight = textPaint.fontMetrics.bottom
+		textHeight = textPaint.fontMetrics.bottom + -textPaint.fontMetrics.top
 		//calculate the size of the view if it's resizeable else use given size from parent
 		viewHeight =
 				if(resizeHeight)
@@ -153,7 +153,9 @@ class FamilyMemberView : View
 				else
 					measureSpecWidth
 		//set the dimension of the view
-		setMeasuredDimension(min(viewWidth, measureSpecWidth), min(viewHeight, measureSpecHeight))
+		val measuredWidth = resolveSizeAndState(viewWidth, measureSpecWidth,measuredState)
+		val measuredHeight = resolveSizeAndState(viewHeight, measureSpecHeight,measuredState)
+		setMeasuredDimension(measuredWidth, measuredHeight)
 	}
 	
 	private var contentWidth: Float = (width - paddingLeft - paddingRight).toFloat()
