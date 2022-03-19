@@ -53,34 +53,43 @@ class TreeActivity : AppCompatActivity()
 					}
 			}
 			else if(docPath != null)
-				firebase.document(docPath!!).get().addOnSuccessListener { document ->
-					if(document == null)
-						backToHome()
-					familyTree = document.toObject(FamilyTree::class.java)!! //!!!!
-					//? add view for each family member
-					val graph = Graph()
-					for((i, member) in familyTree.members.withIndex())
-					{
-						//TODO: draw lines for connecting members and add member to page consider webview
-						// with https://balkan.app/FamilyTreeJS/Docs/GettingStarted
-						//						val view = FamilyMemberView(this@TreeActivity)
-						//						binding.rel.addView(view, i)
-						//						view.firstName = member.firstName ?: "????"
-						//						view.lastName = member.lastName ?: "?????"
-						//						view.layoutParams.height = 250
-						//						view.layoutParams.width = 250
-						val node = Node(member)
-						graph.addNode(node)
-						Log.i("Node", node.toString())
+				firebase.document(docPath!!).get()
+					.addOnSuccessListener { document ->
+						if(document == null)
+							backToHome()
+						familyTree = document.toObject(FamilyTree::class.java)!! //!!!!
+						//? add view for each family member
+						val graph = Graph()
+						for(member in familyTree.members)
+						{
+							//TODO: draw lines for connecting members and add member to page consider webview
+							// with https://balkan.app/FamilyTreeJS/Docs/GettingStarted
+							//						val view = FamilyMemberView(this@TreeActivity)
+							//						binding.rel.addView(view, i)
+							//						view.firstName = member.firstName ?: "????"
+							//						view.lastName = member.lastName ?: "?????"
+							//						view.layoutParams.height = 250
+							//						view.layoutParams.width = 250
+							val node = Node(member)
+							if(member.parents.size == 0)
+								graph.addNode(node)
+							else
+								for(parent in member.parents)
+								{
+									val parentID = familyTree.findMemberByID(member.parents[0]) ?: continue
+									val parentNode = graph.getNodeAtPosition(parentID) ?: continue
+									graph.addEdge(parentNode, node)
+								}
+						}
+						println("${graph.nodeCount} + \n + $graph")
+						val adapter = FamilyTreeGraphAdapter()
+						binding.recycler.adapter = adapter
+						adapter.submitGraph(graph)
 					}
-					println("${graph.nodeCount} + \n + $graph")
-					val adapter = FamilyTreeGraphAdapter()
-					binding.recycler.adapter = adapter
-					adapter.submitGraph(graph)
-				}.addOnFailureListener {
-					Log.e("Firebase", it.toString())
-					backToHome()
-				}
+					.addOnFailureListener {
+						Log.e("Firebase", it.toString())
+						backToHome()
+					}
 		}
 		binding.fabAdd.setOnClickListener {
 			val intent = Intent(this, EditMemberActivity::class.java)
