@@ -4,15 +4,17 @@ import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.csc530.familytree.R
 import com.csc530.familytree.databinding.ActivityEditMemberBinding
 import com.csc530.familytree.models.FamilyMember
 import com.csc530.familytree.models.FamilyTree
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 import java.util.*
@@ -21,19 +23,48 @@ import java.util.*
 class EditMemberActivity : AppCompatActivity()
 {
 	private lateinit var binding: ActivityEditMemberBinding
-	private val locale = Locale.getDefault();
+	private val locale = Locale.getDefault()
+	private val firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
+	private val collection = firebase.collection("Trees")
+	
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		val auth = FirebaseAuth.getInstance()
 		super.onCreate(savedInstanceState)
 		binding = ActivityEditMemberBinding.inflate(layoutInflater)
 		setContentView(binding.root)
+		
+		val docPath = intent.getStringExtra("docPath")
+		if(docPath == null)
+		{
+			finish()
+			startActivity(Intent(this, LaunchActivity::class.java))
+		}
+		
 		binding.btnCncl.setOnClickListener {
-			val docPath = intent.getStringExtra("docPath")!!
 			val intent = Intent(this, TreeActivity::class.java)
 			intent.putExtra("docPath", docPath)
 			startActivity(intent)
 		}
+		
+		//? setup parent spinners
+		val fathers: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
+		val fatherAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, fathers)
+		binding.spinDad.adapter = fatherAdapter
+		val mothers = ArrayList<FamilyMember>()
+		val motherAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, mothers)
+		binding.spinMom.adapter = motherAdapter
+		
+		firebase.document(docPath!!).get().addOnSuccessListener {
+			val tree = it.toObject(FamilyTree::class.java)
+			val members = tree?.members
+			if(members != null)
+			{
+				motherAdapter.addAll(members)
+				fatherAdapter.addAll(members)
+			}
+		}
+		
 		//? show datepicker when birth or date date is selected
 		binding.edtDD.setOnFocusChangeListener { deathDate, hasFocus ->
 			deathDate.isEnabled = !hasFocus
@@ -45,6 +76,7 @@ class EditMemberActivity : AppCompatActivity()
 			if(hasFocus)
 				setDate(birthDate as EditText, "Birth date")
 		}
+		
 		binding.btnCnfm.setOnClickListener {
 			val firstName = binding.edtFName.text.toString()
 			val lastName = binding.edtLName.text.toString()
@@ -56,50 +88,28 @@ class EditMemberActivity : AppCompatActivity()
 				LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
 			else
 				null
-			val firebase = FirebaseFirestore.getInstance()
-			val collection = firebase.collection("Trees")
+			val mom =
+					if(binding.spinMom.selectedItemPosition != Spinner.INVALID_POSITION)
+						motherAdapter.getItem(binding.spinMom.selectedItemPosition)
+					else
+						null
+			val dad =
+					if(binding.spinDad.selectedItemPosition != Spinner.INVALID_POSITION)
+						fatherAdapter.getItem(binding.spinDad.selectedItemPosition)
+					else
+						null
+			
 			val comments = binding.taOther.text.toString()
-			val member = FamilyMember(firstName, lastName, birthdate, deathDate, id = collection.document().id)
+			val member = FamilyMember(firstName, lastName, birthdate, deathDate)
+			if(mom?.id != null)
+				member.parents.add(mom.id!!)
+			if(dad?.id != null)
+				member.parents.add(dad.id!!)
+			
 			val intent = Intent(this, TreeActivity::class.java)
 			//? write to db if logged in
 			if(auth.currentUser != null)
-			{
-				val docPath = this.intent.getStringExtra("docPath")!!
-				firebase.document(docPath).get().addOnSuccessListener {
-					val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
-					
-					//Update last modified timestamp
-					familyTree.lastModified = Timestamp.now()
-					
-					//? check if they are updating a predefined member in the tree
-					val memberID = this.intent.getStringExtra("memberID")
-					if(memberID != null)
-					{
-						val values = HashMap<String, Any?>()
-						values["firstName"] = firstName
-						values["lastName"] = lastName
-						values["birthdate"] = birthdate
-						values["deathdate"] = deathDate
-						values["comments"] = comments
-						for(field in values)
-							collection.document(docPath)
-								.update(FieldPath.of("members", field.key), field.value)
-					}
-					else
-					{
-						member.id = collection.document().id
-						familyTree.members.add(member)
-						firebase.document(docPath)
-							.update("members", familyTree.members, "lastModified", familyTree.lastModified)
-							.addOnFailureListener { e ->
-								Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
-								println(e)
-							}
-					}
-					intent.putExtra("docPath", docPath)
-					startActivity(intent)
-				}
-			}
+				uploadToDB(member, intent)
 			else
 			{
 				//TODO: write to file if not logged in and read from file on scene change
@@ -107,6 +117,50 @@ class EditMemberActivity : AppCompatActivity()
 			}
 		}
 	}
+	
+	private fun uploadToDB(member: FamilyMember, intent: Intent)
+	{
+		val docPath = this.intent.getStringExtra("docPath")!!
+		firebase.document(docPath).get().addOnSuccessListener {
+			val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
+			
+			//Update last modified timestamp
+			familyTree.lastModified = Timestamp.now()
+			
+			//? check if they are updating a predefined member in the tree
+			val memberID = this.intent.getStringExtra("memberID")
+			if(memberID != null)
+			{
+				for(curMember in familyTree.members)
+					if(member.id == memberID)
+					{
+						member.id = curMember.id
+						familyTree.members.remove(curMember)
+						familyTree.members.add(member)
+						break
+					}
+				firebase.document(docPath).update("members", familyTree.members, "lastModified", familyTree.lastModified)
+					.addOnFailureListener { e ->
+						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+						println(e)
+					}
+			}
+			else
+			{
+				member.id = collection.document().id
+				familyTree.members.add(member)
+				firebase.document(docPath)
+					.update("members", familyTree.members, "lastModified", familyTree.lastModified)
+					.addOnFailureListener { e ->
+						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+						println(e)
+					}
+			}
+			intent.putExtra("docPath", docPath)
+			startActivity(intent)
+		}
+	}
+	
 	
 	private fun setDate(value: EditText, title: String)
 	{

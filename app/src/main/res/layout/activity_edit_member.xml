@@ -117,7 +117,46 @@
 			android:gravity="center">
 			
 			<TextView
-				android:id="@+id/txtOther"
+				android:id="@+id/txtMom"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:text="Mother:" />
+			
+			<Spinner
+				android:id="@+id/spinMom"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:spinnerMode="dropdown" />
+		
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:id="@+id/txtDad"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Father:" />
+			
+			<Spinner
+				android:id="@+id/spinDad"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:dropDownWidth="match_parent"
+				android:spinnerMode="dropdown" />
+		
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:id="@+id/txtBio"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Biography:" />
