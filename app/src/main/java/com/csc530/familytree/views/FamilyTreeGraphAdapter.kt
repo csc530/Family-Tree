@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.csc530.familytree.R
+import com.csc530.familytree.models.FamilyMember
 import com.csc530.familytree.models.FamilyTree
 import dev.bandb.graphview.AbstractGraphAdapter
 
@@ -42,13 +43,15 @@ class FamilyTreeGraphAdapter() : AbstractGraphAdapter<FamilyTreeGraphAdapter.Nod
 	 */
 	override fun onBindViewHolder(holder: NodeViewHolder, position: Int)
 	{
-//		val node = tree.members[position]
-//		val name = "${node.firstName} ${node.lastName}"
-//		with(holder) {
-//			this.name.text = name
-//			portrait.setImageDrawable(node.image)
-//			itemView.setOnClickListener { }
+		val node = graph?.getNodeAtPosition(position)?.data as FamilyMember
+		val name = "${node.firstName} ${node.lastName}"
+		with(holder) {
+			this.name.text = name
+			portrait.setImageDrawable(node.image)
+			itemView.setOnClickListener { }
 		}
+	}
+	
 	
 	/**
 	 * Called when RecyclerView needs a new [ViewHolder] of the given type to represent

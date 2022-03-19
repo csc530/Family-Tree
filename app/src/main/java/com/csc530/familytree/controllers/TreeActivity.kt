@@ -58,17 +58,25 @@ class TreeActivity : AppCompatActivity()
 						backToHome()
 					familyTree = document.toObject(FamilyTree::class.java)!! //!!!!
 					//? add view for each family member
+					val graph = Graph()
 					for((i, member) in familyTree.members.withIndex())
 					{
 						//TODO: draw lines for connecting members and add member to page consider webview
 						// with https://balkan.app/FamilyTreeJS/Docs/GettingStarted
-						val view = FamilyMemberView(this@TreeActivity)
-						binding.rel.addView(view, i)
-						view.firstName = member.firstName ?: "????"
-						view.lastName = member.lastName ?: "?????"
-						view.layoutParams.height = 250
-						view.layoutParams.width = 250
+						//						val view = FamilyMemberView(this@TreeActivity)
+						//						binding.rel.addView(view, i)
+						//						view.firstName = member.firstName ?: "????"
+						//						view.lastName = member.lastName ?: "?????"
+						//						view.layoutParams.height = 250
+						//						view.layoutParams.width = 250
+						val node = Node(member)
+						graph.addNode(node)
+						Log.i("Node", node.toString())
 					}
+					println("${graph.nodeCount} + \n + $graph")
+					val adapter = FamilyTreeGraphAdapter()
+					binding.recycler.adapter = adapter
+					adapter.submitGraph(graph)
 				}.addOnFailureListener {
 					Log.e("Firebase", it.toString())
 					backToHome()
@@ -97,22 +105,6 @@ class TreeActivity : AppCompatActivity()
 		// 2. Attach item decorations to draw edges
 		recycler.addItemDecoration(TreeEdgeDecoration())
 		
-		// 3. Build your graph
-		val graph = Graph()
-		val node1 = Node("Parent")
-		val node2 = Node("Child 1")
-		val node3 = Node("Child 2")
-		
-		graph.addEdge(node1, node2)
-		graph.addEdge(node1, node3)
-		
-		// 4. You will need a simple Adapter/ViewHolder.
-		// 4.1 Your Adapter class should extend from `AbstractGraphAdapter`
-		
-		val adapter = FamilyTreeGraphAdapter()
-		// 4.3 Submit the graph
-		adapter.submitGraph(graph)
-		recycler.adapter = adapter
 	}
 	
 	/**

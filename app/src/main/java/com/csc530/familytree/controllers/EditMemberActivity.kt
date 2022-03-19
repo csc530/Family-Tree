@@ -66,7 +66,7 @@ class EditMemberActivity : AppCompatActivity()
 			{
 				val docPath = this.intent.getStringExtra("docPath")!!
 				firebase.document(docPath).get().addOnSuccessListener {
-				val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
+					val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
 					
 					//Update last modified timestamp
 					familyTree.lastModified = Timestamp.now()
@@ -116,6 +116,8 @@ class EditMemberActivity : AppCompatActivity()
 		date.datePicker.maxDate = Date().toInstant().toEpochMilli()
 		date.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm") { _, _ ->
 			val datepicker = date.datePicker
+			if(datepicker.month !in 1..13 && datepicker.dayOfMonth < 1)
+				return@setButton
 			val selectedDate = LocalDate.of(datepicker.year, datepicker.month, datepicker.dayOfMonth)
 			value.setText(selectedDate.toString())
 		}
