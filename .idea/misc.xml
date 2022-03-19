@@ -25,6 +25,7 @@
         <entry key="app/src/main/res/layout/item_load_tree.xml" value="0.33" />
         <entry key="app/src/main/res/layout/layout.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/load_tree.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/node_family_memeber.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_family_member.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_family_tree_view.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/sample_member_view.xml" value="0.35625" />
