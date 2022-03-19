@@ -14,10 +14,19 @@ data class FamilyMember(
 		var id: String? = null
 )
 {
+	override fun toString(): String
+	{
+		return "$firstName $lastName ${
+			if(getAge() != -1)
+				": ${getAge()}"
+			else
+				""
+		}"
+	}
 	
-	var parents: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
-	var kids: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
-	var partners: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
+	var parents: ArrayList<String> = ArrayList<String>()
+	var kids: ArrayList<String> = ArrayList<String>()
+	var partners: ArrayList<String> = ArrayList<String>()
 	
 	init
 	{
@@ -29,14 +38,14 @@ data class FamilyMember(
 			return LocalDate.ofEpochDay(birthEpochDay!!);
 		return null
 	}
-
+	
 	private fun getDeathDate(): LocalDate?
 	{
 		if(deathEpochDay != null)
 			return LocalDate.ofEpochDay(deathEpochDay!!);
 		return null
 	}
-
+	
 	fun getAge(): Int
 	{
 		if(getBirthDate() == null) return -1
