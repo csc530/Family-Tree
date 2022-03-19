@@ -18,4 +18,6 @@ TODO: Add privacy policy as per google analytics from [Firebase](https://www.goo
 
 ## Credits
 Big thanks to these for these resource providing their services, images, etc. for my app
-- [SVG Repo](https://www.svgrepo.com/svg/157858/plus)
+- [SVG Repo](https://www.svgrepo.com/svg/157858/plus): icons
+- [Mattia Iavarone &  Markus Ressel](https://github.com/natario1/ZoomLayout): zoom functionality on family trees
+- [Block & Block](https://github.com/oss-bandb/GraphView): family tree structure and layouts
