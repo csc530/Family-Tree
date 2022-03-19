@@ -1,0 +1,5 @@
+<resources>
+	<declare-styleable name="TreeView">
+		<attr name="parent" format="reference" />
+	</declare-styleable>
+</resources>
