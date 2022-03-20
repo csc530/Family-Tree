@@ -14,6 +14,11 @@ data class FamilyMember(
 		var id: String? = null
 )
 {
+	companion object Constants
+	{
+		const val NULL_ID = "-1 null nope naddadada-ID"
+	}
+	
 	override fun toString(): String
 	{
 		return "$firstName $lastName ${

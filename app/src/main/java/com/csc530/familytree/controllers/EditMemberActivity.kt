@@ -60,7 +60,9 @@ class EditMemberActivity : AppCompatActivity()
 			val members = tree?.members
 			if(members != null)
 			{
+				motherAdapter.add(FamilyMember("Select", "Mother", id = FamilyMember.NULL_ID))
 				motherAdapter.addAll(members)
+				fatherAdapter.add(FamilyMember("Select", "Father", id = FamilyMember.NULL_ID))
 				fatherAdapter.addAll(members)
 			}
 		}
@@ -89,12 +91,12 @@ class EditMemberActivity : AppCompatActivity()
 			else
 				null
 			val mom =
-					if(binding.spinMom.selectedItemPosition != Spinner.INVALID_POSITION)
+					if(binding.spinMom.selectedItemPosition != Spinner.INVALID_POSITION && binding.spinMom.selectedItemPosition != 0)
 						motherAdapter.getItem(binding.spinMom.selectedItemPosition)
 					else
 						null
 			val dad =
-					if(binding.spinDad.selectedItemPosition != Spinner.INVALID_POSITION)
+					if(binding.spinDad.selectedItemPosition != Spinner.INVALID_POSITION && binding.spinDad.selectedItemPosition != 0)
 						fatherAdapter.getItem(binding.spinDad.selectedItemPosition)
 					else
 						null
