@@ -1,0 +1,17 @@
+<resources>
+	<declare-styleable name="TreeLayout">
+		<attr name="direction" format="enum">
+			<enum name="top to bottom" value="TB" />
+			<enum name="bottom_To_Top" value="BT" />
+			<enum name="left_To_Right" value="LTR" />
+			<enum name="right_To_Left" value="RTL" />
+		</attr>
+		<attr name="equalChildSize" format="boolean" />
+	</declare-styleable>
+	<declare-styleable name="TreeLayout_Layout">
+		<attr name="mother" format="reference" />
+		<attr name="father" format="reference" />
+		<attr name="level" format="integer" />
+		<attr name="children" format="integer"/>
+	</declare-styleable>
+</resources>
