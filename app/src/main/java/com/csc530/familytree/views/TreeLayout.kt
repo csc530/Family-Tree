@@ -87,6 +87,11 @@ class TreeLayout : ViewGroup
 	private var children: ArrayList<View> = ArrayList<View>()
 	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int)
 	{
+<<<<<<< HEAD
+=======
+		//TODO: currently working on laying out children in relation to layout parameter of father mother
+		//and spacing with provided child information
+>>>>>>> 9946868 (:construction: perf(views): Family Tree)
 		if(!changed) return
 		for(i in 0 until this.childCount)
 		{
