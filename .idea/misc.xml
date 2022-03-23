@@ -3,7 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../../layout/custom_preview.xml" value="0.17962962962962964" />
+        <entry key="../../../../../layout/custom_preview.xml" value="0.2796875" />
         <entry key="../../../.gradle/caches/transforms-3/a871abf261a1d943958f5333fdb3ed0e/transformed/appcompat-1.4.1/res/layout/support_simple_spinner_dropdown_item.xml" value="0.35625" />
         <entry key="..\:/Project workspaces/AndroidStudioProjects/Family-Tree/app/src/main/res/drawable/circle.xml" value="0.236" />
         <entry key="..\:/Project workspaces/AndroidStudioProjects/Family-Tree/app/src/main/res/layout/activity_tree.xml" value="0.24547101449275363" />
@@ -21,7 +21,7 @@
         <entry key="app/src/main/res/layout/activity_load_tree.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_tree.xml" value="0.35625" />
-        <entry key="app/src/main/res/layout/activity_tree_test.xml" value="0.17325227963525835" />
+        <entry key="app/src/main/res/layout/activity_tree_test.xml" value="0.34074074074074073" />
         <entry key="app/src/main/res/layout/ex.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/exampleOfCustomLayout.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/item_load_tree.xml" value="0.33" />

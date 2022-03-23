@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import com.csc530.familytree.R
 import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlin.streams.toList
 
 /**
@@ -15,7 +16,51 @@ import kotlin.streams.toList
  */
 class TreeLayout : ViewGroup
 {
+	companion object Constants
+	{
+		// * for child sizing
+		const val LARGEST_CHILD = 1
+		const val SMALLEST_CHILD = 2
+		const val AVERAGE_CHILDREN = 0
+		const val MEDIAN_CHILD = 3
+		const val CUSTOM_SIZE = 4
+		
+		/* * for layout direction*/
+		
+		const val TOP_TO_BOTTOM = 0
+		const val BOTTOM_TO_TOP = 1
+		const val LEFT_TO_RIGHT = 2
+		const val RIGHT_TO_LEFT = 3
+	}
 	
+	//TODO: make enums https://www.baeldung.com/kotlin/enum
+	var treeDirection = TOP_TO_BOTTOM
+	var equalChildSizes: Boolean = true
+	var childSizes: Int = AVERAGE_CHILDREN
+		set(value)
+		{
+			field = value
+			postInvalidate()
+		}
+	var customChildSize: Int = -1
+		set(value)
+		{
+			field = value
+			if(childSizes == customChildSize)
+				postInvalidate()
+		}
+	var siblingPadding: Int = 15
+		set(value)
+		{
+			field = value
+			postInvalidate()
+		}
+	var parentalPadding: Int = 15
+		set(value)
+		{
+			field = value
+			postInvalidate()
+		}
 	
 	constructor(context: Context) : super(context)
 	{
@@ -36,23 +81,39 @@ class TreeLayout : ViewGroup
 	{
 		// Load attributes
 		val a = context.obtainStyledAttributes(attrs, R.styleable.TreeLayout, defStyle, 0)
+		childSizes = a.getInt(R.styleable.TreeLayout_child_size, AVERAGE_CHILDREN)
+		equalChildSizes = a.getBoolean(R.styleable.TreeLayout_equal_child_size, true)
+		treeDirection = a.getInt(R.styleable.TreeLayout_direction, TOP_TO_BOTTOM)
+		customChildSize = a.getInt(R.styleable.TreeLayout_custom_child_size, -1)
+		siblingPadding = a.getInt(R.styleable.TreeLayout_sibling_padding, 15)
+		parentalPadding = a.getInt(R.styleable.TreeLayout_parental_padding, 15)
 		a.recycle()
 	}
 	
-	
+	private val childHeights = HashMap<View, Int>()
+	private val childWidths = HashMap<View, Int>()
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int)
 	{
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+		if(childCount == 0)
+		{
+			super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+			return
+		}
+		//clear the widths and heights from previous measure of children
+		childWidths.clear()
+		childHeights.clear()
 		val widthSpecMode = MeasureSpec.getMode(widthMeasureSpec)
 		val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
 		val resizeWidth = widthSpecMode != MeasureSpec.EXACTLY
 		val resizeHeight = heightSpecMode != MeasureSpec.EXACTLY
 		val measureSpecWidth = MeasureSpec.getSize(widthMeasureSpec)
 		val measureSpecHeight = MeasureSpec.getSize(heightMeasureSpec)
-		var usedWidth = max(paddingLeft, paddingStart) + max(paddingRight, paddingEnd)
-		var usedHeight = paddingTop + paddingBottom
-		for(child in children)
+		var maxWidth = max(paddingLeft, paddingStart) + max(paddingRight, paddingEnd) + siblingPadding * (childCount)
+		var maxHeight = paddingTop + paddingBottom + parentalPadding * (childCount)
+		
+		for(i in 0 until childCount)
 		{
+			val child = getChildAt(i)
 			val childHeightSpecMode =
 					if(layoutParams.height == ViewGroup.LayoutParams.MATCH_PARENT && measureSpecHeight != 0)
 						MeasureSpec.AT_MOST
@@ -70,50 +131,186 @@ class TreeLayout : ViewGroup
 			val childWidthSpec = MeasureSpec.makeMeasureSpec(measureSpecWidth, childWidthSpecMode)
 			val childHeightSpec = MeasureSpec.makeMeasureSpec(measureSpecHeight, childHeightSpecMode)
 			child.measure(childWidthSpec, childHeightSpec)
-			usedWidth += child.measuredWidth
-			usedHeight += child.measuredHeight
+			childWidths[child] = child.measuredWidth
+			childHeights.put(child, child.measuredHeight)
 		}
+		var childWidth = 0
+		var childHeight = 0
+		when(childSizes)
+		{
+			LARGEST_CHILD    ->
+			{
+				childHeight = childHeights.values.maxOf { it }
+				childWidth = childWidths.values.maxOf { it }
+			}
+			SMALLEST_CHILD   ->
+			{
+				childHeight = childHeights.values.minOf { it }
+				childWidth = childWidths.values.minOf { it }
+			}
+			AVERAGE_CHILDREN ->
+			{
+				// if prevent Nan comparisons of empty layouts causing errors
+				if(childHeights.size > 0)
+					childHeight = childHeights.values.average().roundToInt()
+				if(childWidths.size > 0)
+					childWidth = childWidths.values.average().roundToInt()
+			}
+			MEDIAN_CHILD     ->
+			{
+				childHeight = childHeights.values.stream().sorted().toList()[childHeights.size / 2]
+				childWidth = childWidths.values.stream().sorted().toList()[childHeights.size / 2]
+			}
+			CUSTOM_SIZE      ->
+			{
+				childHeight = customChildSize
+				childWidth = customChildSize
+			}
+			else             -> //!! an error has occurred if it's not one of the selected enums but lay them out how they want
+				//!! TODO: important to make enum so it can't be assigned a random int
+			{
+				setMeasuredDimension(resolveSize(maxWidth, widthMeasureSpec), resolveSize(maxHeight, heightMeasureSpec))
+				return
+			}
+		}
+		
+		maxWidth+= childWidth * childCount
+		maxHeight+= childHeight * childCount
+		
 		if(!resizeWidth)
-			usedWidth = measureSpecWidth
+			maxWidth = measureSpecWidth
 		if(!resizeHeight)
-			usedHeight = measureSpecHeight
-		setMeasuredDimension(resolveSize(usedWidth, widthMeasureSpec), resolveSize(usedHeight, heightMeasureSpec))
-		println("Resizable: width: $resizeWidth, height: $resizeHeight")
-		println("Used width: $usedWidth, Used Height: $usedHeight")
-		println("Parent; width: $measureSpecWidth, height: $measureSpecHeight")
-		println("OnMeasure(); Width: $width, Height: $height")
+			maxHeight = measureSpecHeight
+		//check width and height are not greater than parent's border's with padding
+		
+		if(childWidth * childCount > maxWidth)
+			childWidth -= (childWidth * childCount - maxWidth) / childCount
+		if(childHeight * childCount > maxHeight)
+			childHeight -= (childHeight * childCount - maxHeight) / childCount
+		//ensure that height and width are at least 1
+		childHeight.coerceAtLeast(1)
+		childWidth.coerceAtLeast(1)
+		//update measurements of children to be within the new calculated amount
+		val childHeightSpec = MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST)
+		val childWidthSpec = MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST)
+		for(i in 0 until childCount)
+		{
+			val child = getChildAt(i)
+			child.measure(childWidthSpec, childHeightSpec)
+			childWidths[child] = child.measuredWidth
+			childHeights.put(child, child.measuredHeight)
+		}
+		
+//		println(MeasureSpec.toString(widthMeasureSpec))
+//		println(MeasureSpec.toString(heightMeasureSpec))
+		setMeasuredDimension(resolveSize(maxWidth, widthMeasureSpec), resolveSize(maxHeight, heightMeasureSpec))
+//				println("Resizable: width: $resizeWidth, height: $resizeHeight")
+//				println("Used width: $maxWidth, Used Height: $maxHeight")
+//				println("Parent; width: $measureSpecWidth, height: $measureSpecHeight")
+//				println("OnMeasure(); Width: $width, Height: $height")
+		println("Measure")
 	}
 	
-	private var children: ArrayList<View> = ArrayList<View>()
+	/** To be used to store all children during layout*/
+	private val layoutChildren = ArrayList<View>()
 	override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int)
 	{
-		//TODO: currently working on laying out children in relation to layout parameter of father mother
-		//and spacing with provided child information
 		if(!changed) return
-		for(i in 0 until this.childCount)
-		{
-			val child: View = getChildAt(i)
-			if(child.visibility != GONE && child.layoutParams is LayoutParams)
-				children.add(child)
-		}
-		val rootChildren = children.stream().filter {
-			val lp = it.layoutParams as LayoutParams
-			lp.father != lp.NO_PARENT || lp.mother != lp.NO_PARENT
-		}.toList()
-		for(child in rootChildren)
-		{
-			for(c in children)
-					if((c.layoutParams as LayoutParams).father == child.id)
-				(child.layoutParams as LayoutParams).children++
-			val layoutParams = child.layoutParams
-			if(layoutParams !is LayoutParams)
-				continue
-			val childLeft: Int = paddingLeft + layoutParams.width
-			val childTop: Int = paddingTop + layoutParams.height
-			child.layout(childLeft, childTop,
-			             childLeft + child.measuredWidth,
-			             childTop + child.measuredHeight)
-		}
+		laidOutChildren.clear()
+		// ? Lay children with no parents in a row
+		for(i in 0 until childCount)
+			layoutChildren.add(getChildAt(i))
+		var siblingSpacing = paddingLeft
+		layoutChildren.stream()
+			.filter { parent ->
+				if(parent.layoutParams !is LayoutParams || parent.visibility == GONE)
+					return@filter false
+				val childParams = parent.layoutParams as LayoutParams
+				childParams.mother == LayoutParams.NO_PARENT && childParams.father == LayoutParams.NO_PARENT
+			}
+			.forEach { parent ->
+				val childLeft: Int = siblingSpacing
+				val childTop: Int = paddingTop
+				parent.layout(childLeft, childTop,
+				              childLeft + childWidths.get(parent)!!,
+				              childTop + parent.measuredHeight)
+				laidOutChildren.add(parent)
+				siblingSpacing += siblingPadding + childWidths[parent]!!
+//				println("${parent.id}\n\t${parent.measuredWidth} =? ${childWidths[parent]}")
+				layoutChildren(parent, 0)
+				
+			}
+		println("Lay")
+		//			val layoutParams = child.layoutParams
+		//			if(child.visibility != GONE && layoutParams is LayoutParams)
+		//			{
+		//				val childParams = child.layoutParams as LayoutParams
+		//				if(childParams.mother != LayoutParams.NO_PARENT && childParams.father != LayoutParams.NO_PARENT)
+		//				{
+		//					val childLeft: Int = paddingLeft + layoutParams.width
+		//					val childTop: Int = paddingTop + layoutParams.height
+		//					child.layout(childLeft, childTop,
+		//					             childLeft + child.measuredWidth,
+		//					             childTop + child.measuredHeight)
+		//
+		//				}
+		//				else
+		//				{
+		//					val childLeft: Int = paddingLeft + layoutParams.width
+		//					val childTop: Int = paddingTop + layoutParams.height
+		//					child.layout(childLeft, childTop,
+		//					             childLeft + child.measuredWidth,
+		//					             childTop + child.measuredHeight)
+		//				}
+		//			}
+		//		}
+		//		for(i in 0 until this.childCount)
+		//		{
+		//			val child: View = getChildAt(i)
+		//			if(child.visibility != GONE && child.layoutParams is LayoutParams)
+		//				children.add(child)
+		//		}
+		//		val rootChildren = children.stream().filter {
+		//			val lp = it.layoutParams as LayoutParams
+		//			lp.father != lp.NO_PARENT || lp.mother != lp.NO_PARENT
+		//		}.toList()
+		//		for(child in rootChildren)
+		//		{
+		//			for(c in children)
+		//					if((c.layoutParams as LayoutParams).father == child.id)
+		//				(child.layoutParams as LayoutParams).children++
+		//			val layoutParams = child.layoutParams
+		//			if(layoutParams !is LayoutParams)
+		//				continue
+		//			val childLeft: Int = paddingLeft + layoutParams.width
+		//			val childTop: Int = paddingTop + layoutParams.height
+		//			child.layout(childLeft, childTop,
+		//			             childLeft + child.measuredWidth,
+		//			             childTop + child.measuredHeight)
+		//		}
+	}
+	
+	private var laidOutChildren = ArrayList<View>()
+	private fun layoutChildren(child: View, parentalSpacing: Int)
+	{
+		var siblingSpacing = 0
+		layoutChildren.stream()
+			.filter {
+				if(it.layoutParams !is LayoutParams && !laidOutChildren.contains(it))
+					return@filter false
+				val childParams = it.layoutParams as LayoutParams
+				childParams.mother == child.id || childParams.father == child.id
+			}
+			.forEach {
+				val left: Int = paddingLeft + layoutParams.width + siblingSpacing
+				val top: Int = paddingTop + layoutParams.height + parentalSpacing
+				child.layout(left, top,
+				             left + child.measuredWidth,
+				             top + child.measuredHeight)
+				laidOutChildren.add(it)
+				layoutChildren(it, parentalSpacing + 35)
+				siblingSpacing += 35
+			}
 	}
 	
 	override fun checkLayoutParams(p: ViewGroup.LayoutParams?): Boolean
@@ -143,9 +340,13 @@ class TreeLayout : ViewGroup
 	 *
 	 * @constructor Create empty constructor for layout params
 	 */
-	inner class LayoutParams : ViewGroup.LayoutParams
+	class LayoutParams : ViewGroup.LayoutParams
 	{
-		val NO_PARENT = -1
+		companion object Constants
+		{
+			const val NO_PARENT: Int = -1
+		}
+		
 		var father: Int = NO_PARENT
 		var mother: Int = NO_PARENT
 		var level: Int = 1

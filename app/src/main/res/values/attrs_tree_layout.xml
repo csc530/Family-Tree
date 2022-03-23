@@ -6,7 +6,17 @@
 			<enum name="left_To_Right" value="3" />
 			<enum name="right_To_Left" value="4" />
 		</attr>
-		<attr name="equalChildSize" format="boolean" />
+		<attr name="equal_child_size" format="boolean" />
+		<attr name="child_size" format="enum">
+			<enum name="average_of_children" value="0"/>
+			<enum name="largest_child" value="1"/>
+			<enum name="smallest_child" value="2"/>
+			<enum name="median_child_size" value="3"/>
+			<enum name="custom_size" value="4"/>
+		</attr>
+		<attr name="custom_child_size" format="integer"/>
+		<attr name="sibling_padding" format="integer"/>
+		<attr name="parental_padding" format="integer"/>
 	</declare-styleable>
 	<declare-styleable name="TreeLayout_Layout">
 		<attr name="mother" format="reference" />
