@@ -4,19 +4,17 @@ package com.csc530.familytree.controllers
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.webkit.WebSettings
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.views.FamilyMemberView
-import com.csc530.familytree.views.FamilyTreeGraphAdapter
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import dev.bandb.graphview.graph.Graph
-import dev.bandb.graphview.graph.Node
-import dev.bandb.graphview.layouts.tree.BuchheimWalkerConfiguration
-import dev.bandb.graphview.layouts.tree.BuchheimWalkerLayoutManager
-import dev.bandb.graphview.layouts.tree.TreeEdgeDecoration
+
 
 class TreeActivity : AppCompatActivity()
 {
@@ -33,7 +31,25 @@ class TreeActivity : AppCompatActivity()
 		val treeName = this.intent.getStringExtra("treeName")
 		val collection = firebase.collection("Trees")
 		var docPath = intent.getStringExtra("docPath")
-		setupGraphView()
+		val wb = binding.webView
+		
+		wb.getSettings().setJavaScriptEnabled(true)
+		val settings: WebSettings = wb.settings
+		settings.javaScriptEnabled = true
+		settings.domStorageEnabled = true
+		
+		//Listed as optimal settings for HTML5 (may need testing?).
+		//Ref. http://stackoverflow.com/questions/10097233/optimal-webview-settings-for-  html5-support
+		wb.isFocusable = true
+		wb.isFocusableInTouchMode = true
+		wb.settings.cacheMode = WebSettings.LOAD_NO_CACHE
+		wb.settings.databaseEnabled = true
+		wb.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
+		binding.webView.settings.builtInZoomControls = true;
+		wb.webViewClient = WebViewClient() // tells page not to open links in android browser and instead open them in this webview
+		
+		
+		binding.webView.loadUrl("file:///android_asset/familyTree.html")
 		//create new family tree if no tree name is given
 		if(auth.currentUser != null)
 		{
@@ -59,7 +75,7 @@ class TreeActivity : AppCompatActivity()
 							backToHome()
 						familyTree = document.toObject(FamilyTree::class.java)!! //!!!!
 						//? add view for each family member
-						val graph = Graph()
+						
 						for(member in familyTree.members)
 						{
 							//TODO: draw lines for connecting members and add member to page consider webview
@@ -70,21 +86,8 @@ class TreeActivity : AppCompatActivity()
 							//						view.lastName = member.lastName ?: "?????"
 							//						view.layoutParams.height = 250
 							//						view.layoutParams.width = 250
-							val node = Node(member)
-							if(member.parents.size == 0)
-								graph.addNode(node)
-							else
-								for(parent in member.parents)
-								{
-									val parentID = familyTree.findMemberByID(member.parents[0]) ?: continue
-									val parentNode = graph.getNodeAtPosition(parentID) ?: continue
-									graph.addEdge(parentNode, node)
-								}
+							
 						}
-						println("${graph.nodeCount} + \n + $graph")
-						val adapter = FamilyTreeGraphAdapter()
-						binding.recycler.adapter = adapter
-						adapter.submitGraph(graph)
 					}
 					.addOnFailureListener {
 						Log.e("Firebase", it.toString())
@@ -96,24 +99,6 @@ class TreeActivity : AppCompatActivity()
 			intent.putExtra("docPath", docPath)
 			startActivity(intent)
 		}
-	}
-	
-	private fun setupGraphView()
-	{
-		val recycler = binding.recycler
-		
-		// 1. Set a layout manager of the ones described above that the RecyclerView will use.
-		val configuration = BuchheimWalkerConfiguration.Builder()
-			.setSiblingSeparation(100)
-			.setLevelSeparation(100)
-			.setSubtreeSeparation(100)
-			.setOrientation(BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM)
-			.build()
-		recycler.layoutManager = BuchheimWalkerLayoutManager(this, configuration)
-		
-		// 2. Attach item decorations to draw edges
-		recycler.addItemDecoration(TreeEdgeDecoration())
-		
 	}
 	
 	/**
