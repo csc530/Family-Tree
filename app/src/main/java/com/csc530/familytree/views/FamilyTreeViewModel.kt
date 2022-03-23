@@ -50,8 +50,6 @@ class FamilyTreeViewModel(val treePath: String? = null) : ViewModel()
 						val tress = ArrayList<FamilyTree>()
 						for(document in documents)
 						{
-							Log.i("DB_Response", "${document.data}")
-							
 							//convert the JSON document into a Project object
 							val familyTree = document.toObject(FamilyTree::class.java)
 							tress.add(familyTree)

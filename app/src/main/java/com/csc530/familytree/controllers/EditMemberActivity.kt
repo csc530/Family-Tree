@@ -82,14 +82,16 @@ class EditMemberActivity : AppCompatActivity()
 		binding.btnCnfm.setOnClickListener {
 			val firstName = binding.edtFName.text.toString()
 			val lastName = binding.edtLName.text.toString()
-			val birthdate = if(binding.edtBD.text.toString().isNotEmpty())
-				LocalDate.parse(binding.edtBD.text.toString()).toEpochDay()
-			else
-				null
-			val deathDate = if(binding.edtDD.text.toString().isNotEmpty())
-				LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
-			else
-				null
+			val birthdate =
+					if(binding.edtBD.text.toString().isNotEmpty())
+						LocalDate.parse(binding.edtBD.text.toString()).toEpochDay()
+					else
+						null
+			val deathDate =
+					if(binding.edtDD.text.toString().isNotEmpty())
+						LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
+					else
+						null
 			val mom =
 					if(binding.spinMom.selectedItemPosition != Spinner.INVALID_POSITION && binding.spinMom.selectedItemPosition != 0)
 						motherAdapter.getItem(binding.spinMom.selectedItemPosition)
@@ -104,14 +106,17 @@ class EditMemberActivity : AppCompatActivity()
 			val comments = binding.taOther.text.toString()
 			val member = FamilyMember(firstName, lastName, birthdate, deathDate)
 			if(mom?.id != null)
-				member.parents.add(mom.id!!)
+				member.mom = mom.id!!
 			if(dad?.id != null)
-				member.parents.add(dad.id!!)
+				member.dad = dad.id!!
 			
 			val intent = Intent(this, TreeActivity::class.java)
 			//? write to db if logged in
 			if(auth.currentUser != null)
-				uploadToDB(member, intent)
+			{
+				intent.putExtra("docPath", docPath)
+				uploadToDB(member, intent, docPath)
+			}
 			else
 			{
 				//TODO: write to file if not logged in and read from file on scene change
@@ -120,9 +125,8 @@ class EditMemberActivity : AppCompatActivity()
 		}
 	}
 	
-	private fun uploadToDB(member: FamilyMember, intent: Intent)
+	private fun uploadToDB(member: FamilyMember, intent: Intent, docPath:String)
 	{
-		val docPath = this.intent.getStringExtra("docPath")!!
 		firebase.document(docPath).get().addOnSuccessListener {
 			val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
 			
@@ -158,7 +162,6 @@ class EditMemberActivity : AppCompatActivity()
 						println(e)
 					}
 			}
-			intent.putExtra("docPath", docPath)
 			startActivity(intent)
 		}
 	}

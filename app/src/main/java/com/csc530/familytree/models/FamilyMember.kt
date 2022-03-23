@@ -11,7 +11,9 @@ data class FamilyMember(
 		var deathEpochDay: Long? = null,
 		var comments: String? = null,
 		var image: Drawable? = null,
-		var id: String? = null
+		var id: String? = null,
+		var mom: String?=null,
+		var dad: String?=null
 )
 {
 	companion object Constants
@@ -29,7 +31,6 @@ data class FamilyMember(
 		}"
 	}
 	
-	var parents: ArrayList<String> = ArrayList<String>()
 	var kids: ArrayList<String> = ArrayList<String>()
 	var partners: ArrayList<String> = ArrayList<String>()
 	

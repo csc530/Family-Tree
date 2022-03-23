@@ -2,6 +2,8 @@ package com.csc530.familytree.views
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -87,6 +89,7 @@ class TreeLayout : ViewGroup
 		customChildSize = a.getInt(R.styleable.TreeLayout_custom_child_size, -1)
 		siblingPadding = a.getInt(R.styleable.TreeLayout_sibling_padding, 15)
 		parentalPadding = a.getInt(R.styleable.TreeLayout_parental_padding, 15)
+		setWillNotDraw(false)
 		a.recycle()
 	}
 	
@@ -187,13 +190,7 @@ class TreeLayout : ViewGroup
 			childHeights.put(child, child.measuredHeight)
 		}
 		
-		//		println(MeasureSpec.toString(widthMeasureSpec))
-		//		println(MeasureSpec.toString(heightMeasureSpec))
 		setMeasuredDimension(resolveSize(maxWidth, widthMeasureSpec), resolveSize(maxHeight, heightMeasureSpec))
-		//				println("Resizable: width: $resizeWidth, height: $resizeHeight")
-		//				println("Used width: $maxWidth, Used Height: $maxHeight")
-		//				println("Parent; width: $measureSpecWidth, height: $measureSpecHeight")
-		//				println("OnMeasure(); Width: $width, Height: $height")
 	}
 	
 	/** To be used to store all children during layout*/
@@ -226,43 +223,6 @@ class TreeLayout : ViewGroup
 				//				println("${parent.id}\n\t${parent.measuredWidth} =? ${childWidths[parent]}")
 				layoutChildren(parent, parentalPadding + paddingTop + childHeights[parent]!!)
 			}
-		
-		//			val layoutParams = child.layoutParams
-		//			if(child.visibility != GONE && child.layoutParams is LayoutParams)
-		//			{
-		//					val childLeft: Int = paddingLeft
-		//					val childTop: Int = paddingTop
-		//				println()
-		//				println("width: ${layoutParams.width}, height: ${layoutParams.height}")
-		//					child.layout(childLeft, childTop,
-		//					             childLeft + child.measuredWidth,
-		//					             childTop + child.measuredHeight)
-		//			}
-		//		}
-		//		for(i in 0 until this.childCount)
-		//		{
-		//			val child: View = getChildAt(i)
-		//			if(child.visibility != GONE && child.layoutParams is LayoutParams)
-		//				children.add(child)
-		//		}
-		//		val rootChildren = children.stream().filter {
-		//			val lp = it.layoutParams as LayoutParams
-		//			lp.father != lp.NO_PARENT || lp.mother != lp.NO_PARENT
-		//		}.toList()
-		//		for(child in rootChildren)
-		//		{
-		//			for(c in children)
-		//					if((c.layoutParams as LayoutParams).father == child.id)
-		//				(child.layoutParams as LayoutParams).children++
-		//			val layoutParams = child.layoutParams
-		//			if(layoutParams !is LayoutParams)
-		//				continue
-		//			val childLeft: Int = paddingLeft + layoutParams.width
-		//			val childTop: Int = paddingTop + layoutParams.height
-		//			child.layout(childLeft, childTop,
-		//			             childLeft + child.measuredWidth,
-		//			             childTop + child.measuredHeight)
-		//		}
 	}
 	
 	private var laidOutChildren = ArrayList<View>()
@@ -286,6 +246,31 @@ class TreeLayout : ViewGroup
 				layoutChildren(child, parentalSpacing + parentalPadding + childHeights[parent]!!)
 				siblingSpacing += siblingPadding + childWidths[child]!!
 			}
+	}
+	
+	override fun onDraw(canvas: Canvas)
+	{
+		super.onDraw(canvas)
+		val linePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+		for(child in laidOutChildren)
+		{
+			val childParams = child.layoutParams as LayoutParams
+			if(childParams.mother != LayoutParams.NO_PARENT && childParams.father != LayoutParams.NO_PARENT)
+			{
+				val mother = laidOutChildren.stream().filter { it.id == childParams.mother }.findFirst().get()
+				val father = laidOutChildren.stream().filter { it.id == childParams.father }.findFirst().get()
+				if(mother.right < father.left)
+					canvas.drawLine(mother.right.toFloat(), childHeights[mother]!! / 2f, father.left.toFloat(), childHeights[father]!! / 2f, linePaint)
+			}
+			else if(childParams.mother != LayoutParams.NO_PARENT)
+			{
+				val mother = laidOutChildren.stream().filter { it.id == childParams.mother }.findFirst().get()
+//			todo	canvas.drawLine(childWidths[mother]!!/2f, childHeights[mother]!! / 2f, father.left.toFloat(), childHeights[father]!! / 2f, linePaint)
+			}
+			else if(childParams.father != LayoutParams.NO_PARENT)
+			{
+			}
+		}
 	}
 	
 	override fun checkLayoutParams(p: ViewGroup.LayoutParams?): Boolean
