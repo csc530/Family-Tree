@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.webkit.JavascriptInterface
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import com.csc530.familytree.controllers.MemberDetailsActivity
+import com.csc530.familytree.controllers.TreeActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
@@ -14,6 +14,7 @@ import java.lang.reflect.Type
 class WebAppInterface(private val mContext: Context)
 {
 	var nodes: ArrayList<Node?> = ArrayList<Node?>()
+	lateinit var activity: TreeActivity
 	
 	@JavascriptInterface
 	fun getNodes(): String

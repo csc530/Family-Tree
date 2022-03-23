@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.models.WebAppInterface
-import com.csc530.familytree.views.FamilyMemberView
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,7 +20,6 @@ class TreeActivity : AppCompatActivity()
 {
 	private lateinit var binding: ActivityTreeBinding
 	private lateinit var familyTree: FamilyTree
-	private val treeViews = ArrayList<FamilyMemberView>()
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
@@ -50,6 +48,7 @@ class TreeActivity : AppCompatActivity()
 		wb.webViewClient = WebViewClient() // tells page not to open links in android browser and instead open them in this webview
 		
 		val wai = WebAppInterface(this)
+		wai.activity = this
 		wb.addJavascriptInterface(wai, "Android")
 		binding.webView.loadUrl("file:///android_asset/familyTree.html")
 		//create new family tree if no tree name is given
