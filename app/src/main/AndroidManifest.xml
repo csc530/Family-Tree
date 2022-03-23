@@ -24,7 +24,7 @@
 			android:name=".controllers.EditMemberActivity"
 			android:exported="false" />
 		<activity
-			android:name=".controllers.EditDetailsActivity"
+			android:name=".controllers.MemberDetailsActivity"
 			android:exported="false" />
 		<activity
 			android:name=".controllers.LaunchActivity"
