@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "363525913034",
+    "project_id": "family-tree-bc13d",
+    "storage_bucket": "family-tree-bc13d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363525913034:android:745c3a263b57ab26eb3733",
+        "android_client_info": {
+          "package_name": "com.csc530.familytree"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363525913034-l6aen0olsc3cvpffmhoojsgjp717th67.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZYVtsyM9VPKSizh99QYXUHxfxAMqICL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363525913034-l6aen0olsc3cvpffmhoojsgjp717th67.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
