@@ -39,7 +39,7 @@
 			android:id="@+id/btnEdit"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Edit"
+			android:text="@string/fui_button_text_save"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintHorizontal_bias="0.5"

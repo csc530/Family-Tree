@@ -9,6 +9,7 @@ import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
+import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.models.WebAppInterface
 import com.google.firebase.Timestamp
@@ -20,11 +21,14 @@ class TreeActivity : AppCompatActivity()
 {
 	private lateinit var binding: ActivityTreeBinding
 	private lateinit var familyTree: FamilyTree
+	private lateinit var activityManager:ActivityManager
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
 		binding = ActivityTreeBinding.inflate(layoutInflater)
 		setContentView(binding.root)
+		
+		activityManager = ActivityManager(this)
 		val auth = FirebaseAuth.getInstance()
 		val firebase = FirebaseFirestore.getInstance()
 		val treeName = this.intent.getStringExtra("treeName")
@@ -66,14 +70,14 @@ class TreeActivity : AppCompatActivity()
 						intent.putExtra("docPath", docPath)
 					}
 					.addOnFailureListener {
-						backToHome()
+						activityManager.backToHome(this)
 					}
 			}
 			else if(docPath != null)
 				firebase.document(docPath!!).get()
 					.addOnSuccessListener { document ->
 						if(document == null)
-							backToHome()
+							activityManager.backToHome(this)
 						familyTree = document.toObject(FamilyTree::class.java)!! //!!!!
 						//? add view for each family member
 						for(member in familyTree.members)
@@ -82,7 +86,7 @@ class TreeActivity : AppCompatActivity()
 					}
 					.addOnFailureListener {
 						Log.e("Firebase", it.toString())
-						backToHome()
+						activityManager.backToHome(this)
 					}
 		}
 		binding.fabAdd.setOnClickListener {
@@ -92,13 +96,4 @@ class TreeActivity : AppCompatActivity()
 		}
 	}
 	
-	/**
-	 * Redirects back to homepage
-	 * Back to home.
-	 */
-	private fun backToHome()
-	{
-		finish()
-		startActivity(Intent(this, LaunchActivity::class.java))
-	}
 }
