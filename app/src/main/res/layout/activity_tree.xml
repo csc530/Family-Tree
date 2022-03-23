@@ -29,7 +29,7 @@
 		app:maxZoom="2.5"
 		app:maxZoomType="zoom"
 		app:animationDuration="280"
-		app:hasClickableChildren="false">
+		app:hasClickableChildren="true">
 		
 		<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/recycler"

@@ -114,22 +114,8 @@ class TreeLayout : ViewGroup
 		for(i in 0 until childCount)
 		{
 			val child = getChildAt(i)
-			val childHeightSpecMode =
-					if(layoutParams.height == ViewGroup.LayoutParams.MATCH_PARENT && measureSpecHeight != 0)
-						MeasureSpec.AT_MOST
-					else if(heightSpecMode == MeasureSpec.EXACTLY && measureSpecHeight == 0)
-						MeasureSpec.UNSPECIFIED
-					else
-						heightSpecMode
-			val childWidthSpecMode =
-					if(layoutParams.width == ViewGroup.LayoutParams.MATCH_PARENT && measureSpecWidth != 0)
-						MeasureSpec.AT_MOST
-					else if(widthSpecMode == MeasureSpec.EXACTLY && measureSpecWidth == 0)
-						MeasureSpec.UNSPECIFIED
-					else
-						widthSpecMode
-			val childWidthSpec = MeasureSpec.makeMeasureSpec(measureSpecWidth, childWidthSpecMode)
-			val childHeightSpec = MeasureSpec.makeMeasureSpec(measureSpecHeight, childHeightSpecMode)
+			val childWidthSpec = MeasureSpec.makeMeasureSpec(measureSpecWidth, widthSpecMode)
+			val childHeightSpec = MeasureSpec.makeMeasureSpec(measureSpecHeight, heightSpecMode)
 			child.measure(childWidthSpec, childHeightSpec)
 			childWidths[child] = child.measuredWidth
 			childHeights.put(child, child.measuredHeight)
@@ -174,8 +160,8 @@ class TreeLayout : ViewGroup
 			}
 		}
 		
-		maxWidth+= childWidth * childCount
-		maxHeight+= childHeight * childCount
+		maxWidth += childWidth * childCount
+		maxHeight += childHeight * childCount
 		
 		if(!resizeWidth)
 			maxWidth = measureSpecWidth
@@ -201,14 +187,13 @@ class TreeLayout : ViewGroup
 			childHeights.put(child, child.measuredHeight)
 		}
 		
-//		println(MeasureSpec.toString(widthMeasureSpec))
-//		println(MeasureSpec.toString(heightMeasureSpec))
+		//		println(MeasureSpec.toString(widthMeasureSpec))
+		//		println(MeasureSpec.toString(heightMeasureSpec))
 		setMeasuredDimension(resolveSize(maxWidth, widthMeasureSpec), resolveSize(maxHeight, heightMeasureSpec))
-//				println("Resizable: width: $resizeWidth, height: $resizeHeight")
-//				println("Used width: $maxWidth, Used Height: $maxHeight")
-//				println("Parent; width: $measureSpecWidth, height: $measureSpecHeight")
-//				println("OnMeasure(); Width: $width, Height: $height")
-		println("Measure")
+		//				println("Resizable: width: $resizeWidth, height: $resizeHeight")
+		//				println("Used width: $maxWidth, Used Height: $maxHeight")
+		//				println("Parent; width: $measureSpecWidth, height: $measureSpecHeight")
+		//				println("OnMeasure(); Width: $width, Height: $height")
 	}
 	
 	/** To be used to store all children during layout*/
@@ -220,6 +205,7 @@ class TreeLayout : ViewGroup
 		// ? Lay children with no parents in a row
 		for(i in 0 until childCount)
 			layoutChildren.add(getChildAt(i))
+		
 		var siblingSpacing = paddingLeft
 		layoutChildren.stream()
 			.filter { parent ->
@@ -228,7 +214,8 @@ class TreeLayout : ViewGroup
 				val childParams = parent.layoutParams as LayoutParams
 				childParams.mother == LayoutParams.NO_PARENT && childParams.father == LayoutParams.NO_PARENT
 			}
-			.forEach { parent ->
+			.forEach { parent ->				println(parent.getResources().getResourceName(parent.getId()))
+				
 				val childLeft: Int = siblingSpacing
 				val childTop: Int = paddingTop
 				parent.layout(childLeft, childTop,
@@ -236,32 +223,20 @@ class TreeLayout : ViewGroup
 				              childTop + parent.measuredHeight)
 				laidOutChildren.add(parent)
 				siblingSpacing += siblingPadding + childWidths[parent]!!
-//				println("${parent.id}\n\t${parent.measuredWidth} =? ${childWidths[parent]}")
-				layoutChildren(parent, 0)
-				
+				//				println("${parent.id}\n\t${parent.measuredWidth} =? ${childWidths[parent]}")
+				layoutChildren(parent, parentalPadding + paddingTop+ childHeights[parent]!!)
 			}
-		println("Lay")
+		
 		//			val layoutParams = child.layoutParams
-		//			if(child.visibility != GONE && layoutParams is LayoutParams)
+		//			if(child.visibility != GONE && child.layoutParams is LayoutParams)
 		//			{
-		//				val childParams = child.layoutParams as LayoutParams
-		//				if(childParams.mother != LayoutParams.NO_PARENT && childParams.father != LayoutParams.NO_PARENT)
-		//				{
-		//					val childLeft: Int = paddingLeft + layoutParams.width
-		//					val childTop: Int = paddingTop + layoutParams.height
+		//					val childLeft: Int = paddingLeft
+		//					val childTop: Int = paddingTop
+		//				println()
+		//				println("width: ${layoutParams.width}, height: ${layoutParams.height}")
 		//					child.layout(childLeft, childTop,
 		//					             childLeft + child.measuredWidth,
 		//					             childTop + child.measuredHeight)
-		//
-		//				}
-		//				else
-		//				{
-		//					val childLeft: Int = paddingLeft + layoutParams.width
-		//					val childTop: Int = paddingTop + layoutParams.height
-		//					child.layout(childLeft, childTop,
-		//					             childLeft + child.measuredWidth,
-		//					             childTop + child.measuredHeight)
-		//				}
 		//			}
 		//		}
 		//		for(i in 0 until this.childCount)
@@ -291,25 +266,25 @@ class TreeLayout : ViewGroup
 	}
 	
 	private var laidOutChildren = ArrayList<View>()
-	private fun layoutChildren(child: View, parentalSpacing: Int)
+	private fun layoutChildren(parent: View, parentalSpacing: Int)
 	{
-		var siblingSpacing = 0
+		var siblingSpacing = paddingLeft
 		layoutChildren.stream()
 			.filter {
-				if(it.layoutParams !is LayoutParams && !laidOutChildren.contains(it))
+				if(it.layoutParams !is LayoutParams || laidOutChildren.contains(it))
 					return@filter false
 				val childParams = it.layoutParams as LayoutParams
-				childParams.mother == child.id || childParams.father == child.id
+				childParams.mother == parent.id || childParams.father == parent.id
 			}
-			.forEach {
-				val left: Int = paddingLeft + layoutParams.width + siblingSpacing
-				val top: Int = paddingTop + layoutParams.height + parentalSpacing
-				child.layout(left, top,
-				             left + child.measuredWidth,
-				             top + child.measuredHeight)
-				laidOutChildren.add(it)
-				layoutChildren(it, parentalSpacing + 35)
-				siblingSpacing += 35
+			.forEach {child->
+				val left: Int = paddingLeft + siblingSpacing
+				val top: Int = paddingTop  + parentalSpacing
+				parent.layout(left, top,
+				              left + childWidths[child]!!,
+				              top + childHeights[child]!!)
+				laidOutChildren.add(child)
+				layoutChildren(child, parentalSpacing + parentalPadding)
+				siblingSpacing += siblingPadding
 			}
 	}
 	
