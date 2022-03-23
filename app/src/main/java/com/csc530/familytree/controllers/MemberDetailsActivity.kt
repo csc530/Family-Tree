@@ -53,9 +53,11 @@ class MemberDetailsActivity : AppCompatActivity()
 				}
 				else
 				{
-					binding.txtBirthday.text = member.getBirthday()
-					binding.txtDeathday.text = member.getDeathday()
-					binding.txtBiography.text = member.biography
+					// ? bind member details to activity views
+					binding.txtBirthday.text = member.getBirthday() ?: "-"
+					binding.txtDeathday.text = member.getDeathday() ?: "-"
+					binding.txtBiography.text = member.biography ?: "-"
+					binding.txtAge.text = "${member.getAge()} years old"
 					binding.imgPortrait.setImageDrawable(member.image
 					                                     ?: ResourcesCompat.getDrawable(resources, R.drawable.user, theme))
 				}

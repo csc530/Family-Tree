@@ -1,10 +1,9 @@
 /// <reference path="familytree.d.ts" />
 var family = new FamilyTree(document.getElementById("tree"), {
-    template: "john",
+    template: "hugo",
     scaleInitial: FamilyTree.match.boundary,
     nodeBinding: {
         field_0: "name",
-        john_img_0: "img"
     },
     nodes: JSON.parse(Android.getNodes()),
 });
@@ -13,4 +12,4 @@ family.on('click', function (sender, args) {
     return false;
 });
 const nodes = JSON.parse(Android.getNodes())
-Android.showToast(nodes.length);
+// Android.showToast(nodes.length);

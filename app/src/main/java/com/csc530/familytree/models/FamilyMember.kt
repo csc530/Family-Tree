@@ -5,6 +5,7 @@ import java.text.DateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 data class FamilyMember(
 		var firstName: String? = "????",
@@ -54,12 +55,12 @@ data class FamilyMember(
 	
 	fun getBirthday(): String?
 	{
-		return getBirthDate()?.format(DateTimeFormatter.BASIC_ISO_DATE)
+		return getBirthDate()?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
 	}
 	
 	fun getDeathday(): String?
 	{
-		return getDeathDate()?.format(DateTimeFormatter.ISO_ORDINAL_DATE)
+		return getDeathDate()?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
 	}
 	
 	fun getAge(): Int

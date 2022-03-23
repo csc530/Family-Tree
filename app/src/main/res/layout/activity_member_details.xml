@@ -79,8 +79,9 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
+				android:paddingEnd="5dp"
 				android:text="Birthday"
-				android:textAlignment="center" />
+				android:textAlignment="textEnd" />
 			
 			<TextView
 				android:id="@+id/txtBirthday"
@@ -100,17 +101,40 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
+				android:paddingEnd="5dp"
 				android:text="Deathday"
-				android:textAlignment="center" />
+				android:textAlignment="textEnd" />
 			
 			<TextView
 				android:id="@+id/txtDeathday"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:layout_weight="2"
-				android:text="TextView" />
+				android:text="TextView"
+				android:textAlignment="center" />
 		</TableRow>
-		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:orientation="vertical">
+			
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:paddingEnd="5dp"
+				android:text="Age"
+				android:textAlignment="textEnd" />
+			
+			<TextView
+				android:id="@+id/txtAge"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="672 years old" />
+		</TableRow>
 		<TableRow
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
@@ -120,8 +144,9 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
+				android:paddingEnd="5dp"
 				android:text="Partners"
-				android:textAlignment="center" />
+				android:textAlignment="textEnd" />
 			
 			<androidx.recyclerview.widget.RecyclerView
 				android:id="@+id/recyclerPartners"
@@ -135,12 +160,15 @@
 			android:layout_height="match_parent"
 			android:gravity="center">
 			
+			
+			
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
+				android:paddingEnd="5dp"
 				android:text="Children"
-				android:textAlignment="center" />
+				android:textAlignment="textEnd" />
 			
 			<androidx.recyclerview.widget.RecyclerView
 				android:id="@+id/recyclerChildren"
@@ -158,15 +186,17 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
+				android:paddingEnd="5dp"
 				android:text="Biography"
-				android:textAlignment="center" />
+				android:textAlignment="textEnd" />
 			
 			<TextView
 				android:id="@+id/txtBiography"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:layout_weight="2"
-				android:text="TextView" />
+				android:text="TextView"
+				android:textAlignment="center" />
 		</TableRow>
 	</TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
