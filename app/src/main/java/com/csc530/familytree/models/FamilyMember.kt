@@ -12,8 +12,10 @@ data class FamilyMember(
 		var comments: String? = null,
 		var image: Drawable? = null,
 		var id: String? = null,
-		var mom: String?=null,
-		var dad: String?=null
+		var mom: String? = null,
+		var dad: String? = null,
+		//TODO make String enum
+		var sex: String = "?",
 )
 {
 	companion object Constants
@@ -33,10 +35,6 @@ data class FamilyMember(
 	
 	var kids: ArrayList<String> = ArrayList<String>()
 	var partners: ArrayList<String> = ArrayList<String>()
-	
-	init
-	{
-	}
 	
 	private fun getBirthDate(): LocalDate?
 	{
@@ -61,5 +59,20 @@ data class FamilyMember(
 	fun isDead(): Boolean
 	{
 		return getDeathDate() != null
+	}
+	
+	fun toNode(): Node?
+	{
+		val id = id ?: return null
+		val pid: Array<String> = partners.toTypedArray()
+		val mid = mom
+		val fid = dad
+		val gender = sex
+		return Node(id, pid, mid, fid,getFullName())
+	}
+	
+	private fun getFullName(): String
+	{
+		return "$firstName $lastName".trim()
 	}
 }

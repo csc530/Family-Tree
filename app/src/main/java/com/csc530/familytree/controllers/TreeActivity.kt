@@ -10,6 +10,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.FamilyTree
+import com.csc530.familytree.models.WebAppInterface
 import com.csc530.familytree.views.FamilyMemberView
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -48,7 +49,8 @@ class TreeActivity : AppCompatActivity()
 		binding.webView.settings.builtInZoomControls = true;
 		wb.webViewClient = WebViewClient() // tells page not to open links in android browser and instead open them in this webview
 		
-		
+		val wai = WebAppInterface(this)
+		wb.addJavascriptInterface(wai, "Android")
 		binding.webView.loadUrl("file:///android_asset/familyTree.html")
 		//create new family tree if no tree name is given
 		if(auth.currentUser != null)
@@ -75,19 +77,9 @@ class TreeActivity : AppCompatActivity()
 							backToHome()
 						familyTree = document.toObject(FamilyTree::class.java)!! //!!!!
 						//? add view for each family member
-						
 						for(member in familyTree.members)
-						{
-							//TODO: draw lines for connecting members and add member to page consider webview
-							// with https://balkan.app/FamilyTreeJS/Docs/GettingStarted
-							//						val view = FamilyMemberView(this@TreeActivity)
-							//						binding.rel.addView(view, i)
-							//						view.firstName = member.firstName ?: "????"
-							//						view.lastName = member.lastName ?: "?????"
-							//						view.layoutParams.height = 250
-							//						view.layoutParams.width = 250
-							
-						}
+							wai.nodes.add(member.toNode())
+						wb.reload()
 					}
 					.addOnFailureListener {
 						Log.e("Firebase", it.toString())
