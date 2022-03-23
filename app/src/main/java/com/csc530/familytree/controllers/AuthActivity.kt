@@ -42,8 +42,8 @@ class AuthActivity : AppCompatActivity()
 		// Choose authentication providers
 		val providers = arrayListOf(
 				AuthUI.IdpConfig.EmailBuilder()
-					.enableEmailLinkSignIn()
-					.setActionCodeSettings(actionCodeSettings)
+//					.enableEmailLinkSignIn()
+//					.setActionCodeSettings(actionCodeSettings)
 					.build(),
 				//			AuthUI.IdpConfig.PhoneBuilder().build(),
 				AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -90,7 +90,6 @@ class AuthActivity : AppCompatActivity()
 		if(result.resultCode == RESULT_OK)
 		{
 			// Successfully signed in
-			val user = FirebaseAuth.getInstance().currentUser
 			startActivity(Intent(this, LaunchActivity::class.java))
 		}
 		else
@@ -111,11 +110,12 @@ class AuthActivity : AppCompatActivity()
 					          }
 					          ErrorCodes.DEVELOPER_ERROR                           ->
 					          {
-						          TODO()
+						          "Error, check the play store for updates"
 					          }
 					          ErrorCodes.EMAIL_LINK_CROSS_DEVICE_LINKING_ERROR     ->
 					          {
-						          TODO()
+						          
+						         TODO()
 					          }
 					          ErrorCodes.EMAIL_LINK_DIFFERENT_ANONYMOUS_USER_ERROR ->
 					          {
