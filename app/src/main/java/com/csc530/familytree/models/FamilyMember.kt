@@ -1,15 +1,17 @@
 package com.csc530.familytree.models
 
 import android.graphics.drawable.Drawable
+import java.text.DateFormat
 import java.time.LocalDate
 import java.time.Period
+import java.time.format.DateTimeFormatter
 
 data class FamilyMember(
 		var firstName: String? = "????",
 		var lastName: String? = "????",
 		var birthEpochDay: Long? = null,
 		var deathEpochDay: Long? = null,
-		var comments: String? = null,
+		var biography: String? = null,
 		var image: Drawable? = null,
 		var id: String? = null,
 		var mom: String? = null,
@@ -50,6 +52,16 @@ data class FamilyMember(
 		return null
 	}
 	
+	fun getBirthday(): String?
+	{
+		return getBirthDate()?.format(DateTimeFormatter.BASIC_ISO_DATE)
+	}
+	
+	fun getDeathday(): String?
+	{
+		return getDeathDate()?.format(DateTimeFormatter.ISO_ORDINAL_DATE)
+	}
+	
 	fun getAge(): Int
 	{
 		if(getBirthDate() == null) return -1
@@ -68,7 +80,8 @@ data class FamilyMember(
 		val mid = mom
 		val fid = dad
 		val gender = sex
-		return Node(id, pid, mid, fid,getFullName())
+		val img = image
+		return Node(id, pid, mid, fid, getFullName())
 	}
 	
 	private fun getFullName(): String
