@@ -10,7 +10,9 @@ class Node(
 		/**father id.*/
 		val fid: String? = null,
 		/**Full name of the family member*/
-		val name:String?=null,
+		val name: String? = null,
+		/**The location of family member image*/
+		val img: String? = null
 )
 {
 	override fun toString(): String
