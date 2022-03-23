@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.csc530.familytree.R
 import com.csc530.familytree.models.FamilyTree
+import java.text.DateFormat
+import java.util.*
 
 class FamilyTreeAdapter(val content: Context,
                         val familyTrees: List<FamilyTree>,
@@ -91,7 +93,8 @@ class FamilyTreeAdapter(val content: Context,
 			//bind the properties of the family tree to the view
 			image.setImageResource(familyTree.image ?: R.drawable.family_tree_load)
 			title.text = familyTree.name
-			dateCreated.text = familyTree.created.toDate().toString()
+			val date = familyTree.created.toDate()
+			dateCreated.text = "Created: ${DateFormat.getDateTimeInstance().format(date)}"
 			itemView.setOnClickListener {
 				itemListener(familyTree, it)
 			}
