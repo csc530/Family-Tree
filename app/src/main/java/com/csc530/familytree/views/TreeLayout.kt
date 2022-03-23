@@ -214,8 +214,8 @@ class TreeLayout : ViewGroup
 				val childParams = parent.layoutParams as LayoutParams
 				childParams.mother == LayoutParams.NO_PARENT && childParams.father == LayoutParams.NO_PARENT
 			}
-			.forEach { parent ->				println(parent.getResources().getResourceName(parent.getId()))
-				
+			.forEach { parent ->
+				println(parent.getResources().getResourceName(parent.getId()))
 				val childLeft: Int = siblingSpacing
 				val childTop: Int = paddingTop
 				parent.layout(childLeft, childTop,
@@ -224,7 +224,7 @@ class TreeLayout : ViewGroup
 				laidOutChildren.add(parent)
 				siblingSpacing += siblingPadding + childWidths[parent]!!
 				//				println("${parent.id}\n\t${parent.measuredWidth} =? ${childWidths[parent]}")
-				layoutChildren(parent, parentalPadding + paddingTop+ childHeights[parent]!!)
+				layoutChildren(parent, parentalPadding + paddingTop + childHeights[parent]!!)
 			}
 		
 		//			val layoutParams = child.layoutParams
@@ -276,15 +276,15 @@ class TreeLayout : ViewGroup
 				val childParams = it.layoutParams as LayoutParams
 				childParams.mother == parent.id || childParams.father == parent.id
 			}
-			.forEach {child->
-				val left: Int = paddingLeft + siblingSpacing
-				val top: Int = paddingTop  + parentalSpacing
-				parent.layout(left, top,
-				              left + childWidths[child]!!,
-				              top + childHeights[child]!!)
+			.forEach { child ->
+				val left: Int = siblingSpacing
+				val top: Int = parentalSpacing
+				child.layout(left, top,
+				             left + childWidths[child]!!,
+				             top + childHeights[child]!!)
 				laidOutChildren.add(child)
-				layoutChildren(child, parentalSpacing + parentalPadding)
-				siblingSpacing += siblingPadding
+				layoutChildren(child, parentalSpacing + parentalPadding + childHeights[parent]!!)
+				siblingSpacing += siblingPadding + childWidths[child]!!
 			}
 	}
 	
