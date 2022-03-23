@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.ActivityManager
@@ -50,9 +51,8 @@ class TreeActivity : AppCompatActivity()
 		wb.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
 		binding.webView.settings.builtInZoomControls = true;
 		wb.webViewClient = WebViewClient() // tells page not to open links in android browser and instead open them in this webview
-		
+
 		val wai = WebAppInterface(this)
-		wai.activity = this
 		wb.addJavascriptInterface(wai, "Android")
 		binding.webView.loadUrl("file:///android_asset/familyTree.html")
 		//create new family tree if no tree name is given

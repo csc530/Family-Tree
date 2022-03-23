@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.R
 import com.csc530.familytree.databinding.ActivityEditMemberBinding
+import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyMember
 import com.csc530.familytree.models.FamilyTree
 import com.google.firebase.Timestamp
@@ -26,7 +27,7 @@ class EditMemberActivity : AppCompatActivity()
 	private val locale = Locale.getDefault()
 	private val firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
 	private val collection = firebase.collection("Trees")
-	
+	private val activityManager = ActivityManager(this)
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		val auth = FirebaseAuth.getInstance()
@@ -34,12 +35,7 @@ class EditMemberActivity : AppCompatActivity()
 		binding = ActivityEditMemberBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		
-		val docPath = intent.getStringExtra("docPath")
-		if(docPath == null)
-		{
-			finish()
-			startActivity(Intent(this, LaunchActivity::class.java))
-		}
+		val docPath = intent.getStringExtra("docPath") ?: return activityManager.backToHome(this)
 		
 		binding.btnCncl.setOnClickListener {
 			val intent = Intent(this, TreeActivity::class.java)
