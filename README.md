@@ -17,7 +17,10 @@ Or you may visit the assignment details branch (`assignment-tasks`) [README](/..
 TODO: Add privacy policy as per google analytics from [Firebase](https://www.google.com/analytics/terms/us.html)
 
 ## Credits
+
 Big thanks to these for these resource providing their services, images, etc. for my app
+
 - [SVG Repo](https://www.svgrepo.com/svg/157858/plus): icons
-- [Mattia Iavarone &  Markus Ressel](https://github.com/natario1/ZoomLayout): zoom functionality on family trees
-- [Block & Block](https://github.com/oss-bandb/GraphView): family tree structure and layouts
+- ~~[Mattia Iavarone &  Markus Ressel](https://github.com/natario1/ZoomLayout): zoom functionality on family trees~~
+- ~~[Block & Block](https://github.com/oss-bandb/GraphView): family tree structure and layouts~~
+- [Balkan Family TreeJS](https://balkan.app/FamilyTreeJS) Family tree view
