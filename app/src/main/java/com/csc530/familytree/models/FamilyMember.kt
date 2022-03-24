@@ -46,7 +46,7 @@ data class FamilyMember(
 		return null
 	}
 	
-	private fun getDeathDate(): LocalDate?
+	fun getDeathDate(): LocalDate?
 	{
 		if(deathEpochDay != null)
 			return LocalDate.ofEpochDay(deathEpochDay!!);
@@ -85,7 +85,7 @@ data class FamilyMember(
 		return Node(id, pid, mid, fid, getFullName())
 	}
 	
-	private fun getFullName(): String
+	fun getFullName(): String
 	{
 		return "$firstName $lastName".trim()
 	}

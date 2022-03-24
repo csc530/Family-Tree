@@ -16,14 +16,22 @@ class FamilyTree(
 	/**
 	 * Find  family member by id within family tree
 	 *
-	 * @param ID Id of desired family member
+	 * @param id Id of desired family member
 	 * @return [FamilyMember] or null if not found
 	 */
-	fun findMemberByID(ID: String): FamilyMember?
+	fun findMemberByID(id: String): FamilyMember?
 	{
 		for(member in members)
-			if(member.id == ID)
+			if(member.id == id)
 				return member
 		return null
+	}
+	
+	fun getMembersByID(ids: List<String>): ArrayList<FamilyMember>
+	{
+		val list = ArrayList<FamilyMember>()
+		for(id in ids)
+			list += findMemberByID(id) ?: continue
+		return list
 	}
 }

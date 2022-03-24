@@ -34,7 +34,7 @@ class WebAppInterface(private val activity: AppCompatActivity)
 	}
 	
 	@JavascriptInterface
-	fun showDetails(memberID: String): Unit
+	fun showDetails(memberId: String): Unit
 	{
 		val docPath = activity.intent.getStringExtra("docPath")
 		if(docPath == null)
@@ -42,7 +42,7 @@ class WebAppInterface(private val activity: AppCompatActivity)
 		else
 		{
 			val intent = Intent(activity, MemberDetailsActivity::class.java)
-			intent.putExtra("memberID", memberID)
+			intent.putExtra("memberId", memberId)
 			activityManager.startActivity(intent, docPath)
 		}
 	}
