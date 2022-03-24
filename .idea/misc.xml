@@ -19,12 +19,13 @@
         <entry key="app/src/main/res/layout/activity_edit_member.xml" value="0.3507692307692308" />
         <entry key="app/src/main/res/layout/activity_launch.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/activity_load_tree.xml" value="0.35625" />
-        <entry key="app/src/main/res/layout/activity_member_details.xml" value="0.32314814814814813" />
+        <entry key="app/src/main/res/layout/activity_member_details.xml" value="0.25925925925925924" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_tree.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_tree_test.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/ex.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/exampleOfCustomLayout.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/item_family_member.xml" value="0.32314814814814813" />
         <entry key="app/src/main/res/layout/item_load_tree.xml" value="0.33" />
         <entry key="app/src/main/res/layout/layout.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/load_tree.xml" value="0.35625" />
