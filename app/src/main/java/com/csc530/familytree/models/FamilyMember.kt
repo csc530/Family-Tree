@@ -1,7 +1,6 @@
 package com.csc530.familytree.models
 
 import android.graphics.drawable.Drawable
-import java.text.DateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
@@ -36,8 +35,29 @@ data class FamilyMember(
 		}"
 	}
 	
-	var kids: ArrayList<String> = ArrayList<String>()
-	var partners: ArrayList<String> = ArrayList<String>()
+	private val kids: ArrayList<String> = ArrayList<String>()
+	private val partners: ArrayList<String> = ArrayList<String>()
+	fun getPartners(): List<String>
+	{
+		return partners
+	}
+	
+	fun getKids(): List<String>
+	{
+		return kids
+	}
+	
+	fun addPartner(id: String)
+	{
+		if(!partners.contains(id))
+			partners.add(id)
+	}
+	
+	fun addChild(id: String)
+	{
+		if(!kids.contains(id))
+			kids.add(id)
+	}
 	
 	fun getBirthDate(): LocalDate?
 	{

@@ -69,14 +69,14 @@ class MemberDetailsActivity : AppCompatActivity()
 					binding.imgPortrait.setImageDrawable(member.image
 					                                     ?: ResourcesCompat.getDrawable(resources, R.drawable.user, theme))
 					//set up children and partner to display total number
-					binding.txtChildren.text = "${member.kids.size} kids"
-					binding.txtPartners.text = "${member.partners.size} partners"
+					binding.txtChildren.text = "${member.getKids().size} kids"
+					binding.txtPartners.text = "${member.getPartners().size} partners"
 					//when the click the text display each child in a recycler view
-					val kids = familyTree.getMembersByID(member.kids)
+					val kids = familyTree.getMembersByID(member.getKids())
 					binding.txtChildren.setOnClickListener {
 						showMembers(kids, "${member.getFullName()}'s Children", docPath)
 					}
-					val partners = familyTree.getMembersByID(member.partners)
+					val partners = familyTree.getMembersByID(member.getPartners())
 					binding.txtPartners.setOnClickListener {
 						showMembers(partners, "${member.getFullName()}'s Partners", docPath)
 					}
