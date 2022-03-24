@@ -39,7 +39,6 @@ class EditMemberActivity : AppCompatActivity()
 		
 		// ? setup spinners
 		val (fatherAdapter, motherAdapter) = setupParentSpinners(docPath)
-		println(memberId)
 		// * populate form with current member details if they are updating a member
 		if(memberId != null)
 		{
@@ -138,7 +137,7 @@ class EditMemberActivity : AppCompatActivity()
 					null
 		
 		val biography = binding.taOther.text.toString()
-		val member = FamilyMember(firstName, lastName, birthdate, deathDate)
+		val member = FamilyMember(firstName, lastName, birthdate, deathDate, biography)
 		if(mom?.id != null)
 			member.mom = mom.id!!
 		if(dad?.id != null)
@@ -160,6 +159,7 @@ class EditMemberActivity : AppCompatActivity()
 				val oldVersion = familyTree.findMemberByID(memberId)
 				familyTree.members.remove(oldVersion)
 				familyTree.members.add(member)
+				updateParentRelationships(familyTree, member)
 				firebase.document(docPath).update("members", familyTree.members,
 				                                  "lastModified", familyTree.lastModified)
 					.addOnFailureListener { e ->
@@ -173,6 +173,7 @@ class EditMemberActivity : AppCompatActivity()
 			{
 				member.id = collection.document().id
 				familyTree.members.add(member)
+				updateParentRelationships(familyTree, member)
 				firebase.document(docPath)
 					.update("members", familyTree.members,
 					        "lastModified", familyTree.lastModified)
@@ -184,6 +185,18 @@ class EditMemberActivity : AppCompatActivity()
 				activityManager.startActivity(TreeActivity::class.java, docPath)
 			}
 		}
+	}
+	
+	private fun updateParentRelationships(familyTree: FamilyTree, member: FamilyMember)
+	{
+		// ? update the parent if any to include the child in `kids`
+		val mom = familyTree.findMemberByID(member.mom ?: FamilyMember.NULL_ID)
+		mom?.addChild(member.id!!)
+		val dad = familyTree.findMemberByID(member.dad ?: FamilyMember.NULL_ID)
+		dad?.addChild(member.id!!)
+		// ? add relationship between mom and dad
+		mom?.addPartner(dad?.id ?: return)
+		dad?.addPartner(mom?.id ?: return println("Mom: $mom+${mom?.id}\nDad: $dad+${dad.id}"))
 	}
 	
 	
