@@ -11,6 +11,8 @@
 		android:id="@+id/txtFullName"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:textAlignment="center"
+		android:textSize="@dimen/titleSize"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
@@ -110,8 +112,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:layout_weight="2"
-				android:text="TextView"
-				android:textAlignment="center" />
+				android:textAlignment="center"
+				tools:text="Neveah" />
 		</TableRow>
 		<TableRow
 			android:layout_width="match_parent"
@@ -148,11 +150,14 @@
 				android:text="Partners"
 				android:textAlignment="textEnd" />
 			
-			<androidx.recyclerview.widget.RecyclerView
-				android:id="@+id/recyclerPartners"
+			<TextView
+				android:id="@+id/txtPartners"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:layout_weight="2" />
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="Nuff" />
+		
 		</TableRow>
 		
 		<TableRow
@@ -170,17 +175,22 @@
 				android:text="Children"
 				android:textAlignment="textEnd" />
 			
-			<androidx.recyclerview.widget.RecyclerView
-				android:id="@+id/recyclerChildren"
+			<TextView
+				android:id="@+id/txtChildren"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:layout_weight="2" />
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="Nuff" />
+		
 		</TableRow>
 		
 		<TableRow
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:gravity="center">
+			android:gravity="center"
+			android:orientation="horizontal"
+			android:scrollbars="vertical">
 			
 			<TextView
 				android:layout_width="wrap_content"
@@ -195,8 +205,10 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:layout_weight="2"
-				android:text="TextView"
-				android:textAlignment="center" />
+				android:scrollIndicators="end|right"
+				android:scrollbars="vertical"
+				android:textAlignment="center"
+				android:textAllCaps="false" />
 		</TableRow>
 	</TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
