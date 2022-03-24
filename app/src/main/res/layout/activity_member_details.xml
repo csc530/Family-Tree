@@ -113,7 +113,7 @@
 				android:layout_height="match_parent"
 				android:layout_weight="2"
 				android:textAlignment="center"
-				tools:text="Neveah" />
+				tools:text="-" />
 		</TableRow>
 		<TableRow
 			android:layout_width="match_parent"
@@ -156,7 +156,7 @@
 				android:layout_height="match_parent"
 				android:layout_weight="2"
 				android:textAlignment="center"
-				tools:text="Nuff" />
+				tools:text="Patricya Kolan" />
 		
 		</TableRow>
 		
@@ -181,7 +181,7 @@
 				android:layout_height="match_parent"
 				android:layout_weight="2"
 				android:textAlignment="center"
-				tools:text="Nuff" />
+				tools:text="None" />
 		
 		</TableRow>
 		

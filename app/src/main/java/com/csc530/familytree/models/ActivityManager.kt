@@ -54,19 +54,37 @@ class ActivityManager(
 	{
 		context.startActivity(Intent(context, activityClass))
 	}
+	
 	/**
 	 * Starts an activity to given java class
 	 * With a path to a firebase document; neither the class or document is validated
 	 * The current intent is not finished (navigate back to on back button)
 	 *
-	 * @param activityClass Class to navigate to
+	 * @param clazz Class to navigate to
 	 * @param docPath Path to document in firebase, not validated
 	 
 	 */
-	fun startActivity(activityClass: Class<*>, docPath: String)
+	fun startActivity(clazz: Class<*>, docPath: String)
 	{
-		val intent = Intent(context, activityClass)
-		intent.putExtra("docPath",docPath)
+		val intent = Intent(context, clazz)
+		intent.putExtra("docPath", docPath)
+		context.startActivity(intent)
+	}
+	
+	/**
+	 * Starts an activity to given java class
+	 * With a path to a firebase document and id of a family member; no parameters are validated
+	 * The current intent is not finished (navigate back to on back button)
+	 *
+	 * @param clazz Class to navigate to
+	 * @param docPath Path to document in firebase, not validated; key name= `docPath`
+	 * @param memberId memberId to include; key name=`memberId`
+	 */
+	fun startActivity(clazz: Class<*>, docPath: String, memberId: String)
+	{
+		val intent = Intent(context, clazz)
+		intent.putExtra("docPath", docPath)
+		intent.putExtra("memberId", memberId)
 		context.startActivity(intent)
 	}
 }

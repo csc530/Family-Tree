@@ -83,7 +83,7 @@ class TreeActivity : AppCompatActivity()
 					.addOnSuccessListener { document ->
 						if(document == null)
 							activityManager.backToHome(this)
-						familyTree = document.toObject(FamilyTree::class.java)!! //!!!!
+						familyTree = document.toObject(FamilyTree::class.java)!!
 						//? add view for each family member
 						for(member in familyTree.members)
 							wai.nodes.add(member.toNode())

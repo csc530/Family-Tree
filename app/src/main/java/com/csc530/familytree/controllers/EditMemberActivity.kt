@@ -51,7 +51,7 @@ class EditMemberActivity : AppCompatActivity()
 		val motherAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, mothers)
 		binding.spinMom.adapter = motherAdapter
 		
-		firebase.document(docPath!!).get().addOnSuccessListener {
+		firebase.document(docPath).get().addOnSuccessListener {
 			val tree = it.toObject(FamilyTree::class.java)
 			val members = tree?.members
 			if(members != null)
@@ -76,43 +76,11 @@ class EditMemberActivity : AppCompatActivity()
 		}
 		
 		binding.btnCnfm.setOnClickListener {
-			val firstName = binding.edtFName.text.toString()
-			val lastName = binding.edtLName.text.toString()
-			val birthdate =
-					if(binding.edtBD.text.toString().isNotEmpty())
-						LocalDate.parse(binding.edtBD.text.toString()).toEpochDay()
-					else
-						null
-			val deathDate =
-					if(binding.edtDD.text.toString().isNotEmpty())
-						LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
-					else
-						null
-			val mom =
-					if(binding.spinMom.selectedItemPosition != Spinner.INVALID_POSITION && binding.spinMom.selectedItemPosition != 0)
-						motherAdapter.getItem(binding.spinMom.selectedItemPosition)
-					else
-						null
-			val dad =
-					if(binding.spinDad.selectedItemPosition != Spinner.INVALID_POSITION && binding.spinDad.selectedItemPosition != 0)
-						fatherAdapter.getItem(binding.spinDad.selectedItemPosition)
-					else
-						null
+			val member = parseData(motherAdapter, fatherAdapter)
 			
-			val comments = binding.taOther.text.toString()
-			val member = FamilyMember(firstName, lastName, birthdate, deathDate)
-			if(mom?.id != null)
-				member.mom = mom.id!!
-			if(dad?.id != null)
-				member.dad = dad.id!!
-			
-			val intent = Intent(this, TreeActivity::class.java)
 			//? write to db if logged in
 			if(auth.currentUser != null)
-			{
-				intent.putExtra("docPath", docPath)
-				uploadToDB(member, intent, docPath)
-			}
+				uploadToDB(member, docPath)
 			else
 			{
 				//TODO: write to file if not logged in and read from file on scene change
@@ -121,7 +89,41 @@ class EditMemberActivity : AppCompatActivity()
 		}
 	}
 	
-	private fun uploadToDB(member: FamilyMember, intent: Intent, docPath:String)
+	private fun parseData(motherAdapter: ArrayAdapter<FamilyMember>, fatherAdapter: ArrayAdapter<FamilyMember>): FamilyMember
+	{
+		val firstName = binding.edtFName.text.toString()
+		val lastName = binding.edtLName.text.toString()
+		val birthdate =
+				if(binding.edtBD.text.toString().isNotEmpty())
+					LocalDate.parse(binding.edtBD.text.toString()).toEpochDay()
+				else
+					null
+		val deathDate =
+				if(binding.edtDD.text.toString().isNotEmpty())
+					LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
+				else
+					null
+		val mom =
+				if(binding.spinMom.selectedItemPosition != Spinner.INVALID_POSITION && binding.spinMom.selectedItemPosition != 0)
+					motherAdapter.getItem(binding.spinMom.selectedItemPosition)
+				else
+					null
+		val dad =
+				if(binding.spinDad.selectedItemPosition != Spinner.INVALID_POSITION && binding.spinDad.selectedItemPosition != 0)
+					fatherAdapter.getItem(binding.spinDad.selectedItemPosition)
+				else
+					null
+		
+		val biography = binding.taOther.text.toString()
+		val member = FamilyMember(firstName, lastName, birthdate, deathDate)
+		if(mom?.id != null)
+			member.mom = mom.id!!
+		if(dad?.id != null)
+			member.dad = dad.id!!
+		return member
+	}
+	
+	private fun uploadToDB(member: FamilyMember, docPath: String)
 	{
 		firebase.document(docPath).get().addOnSuccessListener {
 			val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
@@ -130,35 +132,35 @@ class EditMemberActivity : AppCompatActivity()
 			familyTree.lastModified = Timestamp.now()
 			
 			//? check if they are updating a predefined member in the tree
-			val memberID = this.intent.getStringExtra("memberID")
-			if(memberID != null)
+			val memberId = intent.getStringExtra("memberId")
+			if(memberId != null)
 			{
-				for(curMember in familyTree.members)
-					if(member.id == memberID)
-					{
-						member.id = curMember.id
-						familyTree.members.remove(curMember)
-						familyTree.members.add(member)
-						break
-					}
-				firebase.document(docPath).update("members", familyTree.members, "lastModified", familyTree.lastModified)
+				val oldVersion = familyTree.findMemberByID(memberId)
+				familyTree.members.remove(oldVersion)
+				familyTree.members.add(member)
+				firebase.document(docPath).update("members", familyTree.members,
+				                                  "lastModified", familyTree.lastModified)
 					.addOnFailureListener { e ->
 						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
 						println(e)
 					}
+				//navigate back to member details
+				activityManager.startActivity(EditMemberActivity::class.java, docPath, memberId)
 			}
 			else
 			{
 				member.id = collection.document().id
 				familyTree.members.add(member)
 				firebase.document(docPath)
-					.update("members", familyTree.members, "lastModified", familyTree.lastModified)
+					.update("members", familyTree.members,
+					        "lastModified", familyTree.lastModified)
 					.addOnFailureListener { e ->
 						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
 						println(e)
 					}
+				//navigate back to family tree
+				activityManager.startActivity(TreeActivity::class.java, docPath)
 			}
-			startActivity(intent)
 		}
 	}
 	
