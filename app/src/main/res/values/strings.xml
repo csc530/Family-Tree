@@ -28,4 +28,6 @@
 	</string>
 	<string name="attachment_summary_off">Only download attachments when manually requested</string>
 	<string name="first_name" formatted="false">Kane</string>
+	<string name="add_member">Create family member</string>
+	<string name="edit_member">Edit family Member</string>
 </resources>

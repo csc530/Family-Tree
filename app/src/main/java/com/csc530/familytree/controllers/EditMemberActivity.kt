@@ -2,7 +2,6 @@ package com.csc530.familytree.controllers
 
 import android.app.DatePickerDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -36,13 +35,61 @@ class EditMemberActivity : AppCompatActivity()
 		setContentView(binding.root)
 		
 		val docPath = intent.getStringExtra("docPath") ?: return activityManager.backToHome(this)
+		val memberId = intent.getStringExtra("memberId")
 		
-		binding.btnCncl.setOnClickListener {
-			val intent = Intent(this, TreeActivity::class.java)
-			intent.putExtra("docPath", docPath)
-			startActivity(intent)
+		// ? setup spinners
+		val (fatherAdapter, motherAdapter) = setupParentSpinners(docPath)
+		println(memberId)
+		// * populate form with current member details if they are updating a member
+		if(memberId != null)
+		{
+			firebase.document(docPath).get().addOnSuccessListener {
+				val member = it.toObject(FamilyTree::class.java)?.findMemberByID(memberId)
+				if(member == null)
+					return@addOnSuccessListener finish()
+				binding.txtEdtTitle.text = resources.getText(R.string.edit_member)
+				binding.edtFName.setText(member.firstName)
+				binding.edtLName.setText(member.lastName)
+				if(member.getBirthDate() != null)
+					binding.edtBirthDate.setText(member.getBirthDate().toString())
+				if(member.getDeathDate() != null)
+					binding.edtDeathDate.setText(member.getDeathDate().toString())
+				binding.taOther.setText(member.biography)
+			}
+		}
+		else
+			binding.txtEdtTitle.text = resources.getText(R.string.add_member)
+		
+		binding.btnCncl.setOnClickListener { finish() }
+		
+		//? show datepicker when birth or date date is selected
+		binding.edtDeathDate.setOnFocusChangeListener { deathDate, hasFocus ->
+			deathDate.isEnabled = !hasFocus
+			if(hasFocus)
+				setDate(deathDate as EditText, "Death date")
+		}
+		binding.edtBirthDate.setOnFocusChangeListener { birthDate, hasFocus ->
+			birthDate.isEnabled = !hasFocus
+			if(hasFocus)
+				setDate(birthDate as EditText, "Birth date")
 		}
 		
+		binding.btnCnfm.setOnClickListener {
+			val member = parseData(motherAdapter, fatherAdapter)
+			
+			//? write to db if logged in
+			if(auth.currentUser != null)
+				uploadToDB(member, docPath, memberId)
+			else
+			{
+				//TODO: write to file if not logged in and read from file on scene change
+				//			intent.putExtra("member", member)
+			}
+		}
+	}
+	
+	private fun setupParentSpinners(docPath: String): Pair<ArrayAdapter<FamilyMember>, ArrayAdapter<FamilyMember>>
+	{
 		//? setup parent spinners
 		val fathers: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
 		val fatherAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, fathers)
@@ -62,31 +109,7 @@ class EditMemberActivity : AppCompatActivity()
 				fatherAdapter.addAll(members)
 			}
 		}
-		
-		//? show datepicker when birth or date date is selected
-		binding.edtDD.setOnFocusChangeListener { deathDate, hasFocus ->
-			deathDate.isEnabled = !hasFocus
-			if(hasFocus)
-				setDate(deathDate as EditText, "Death date")
-		}
-		binding.edtBD.setOnFocusChangeListener { birthDate, hasFocus ->
-			birthDate.isEnabled = !hasFocus
-			if(hasFocus)
-				setDate(birthDate as EditText, "Birth date")
-		}
-		
-		binding.btnCnfm.setOnClickListener {
-			val member = parseData(motherAdapter, fatherAdapter)
-			
-			//? write to db if logged in
-			if(auth.currentUser != null)
-				uploadToDB(member, docPath)
-			else
-			{
-				//TODO: write to file if not logged in and read from file on scene change
-				//			intent.putExtra("member", member)
-			}
-		}
+		return Pair(fatherAdapter, motherAdapter)
 	}
 	
 	private fun parseData(motherAdapter: ArrayAdapter<FamilyMember>, fatherAdapter: ArrayAdapter<FamilyMember>): FamilyMember
@@ -94,13 +117,13 @@ class EditMemberActivity : AppCompatActivity()
 		val firstName = binding.edtFName.text.toString()
 		val lastName = binding.edtLName.text.toString()
 		val birthdate =
-				if(binding.edtBD.text.toString().isNotEmpty())
-					LocalDate.parse(binding.edtBD.text.toString()).toEpochDay()
+				if(binding.edtBirthDate.text.toString().isNotEmpty())
+					LocalDate.parse(binding.edtBirthDate.text.toString()).toEpochDay()
 				else
 					null
 		val deathDate =
-				if(binding.edtDD.text.toString().isNotEmpty())
-					LocalDate.parse(binding.edtDD.text.toString()).toEpochDay()
+				if(binding.edtDeathDate.text.toString().isNotEmpty())
+					LocalDate.parse(binding.edtDeathDate.text.toString()).toEpochDay()
 				else
 					null
 		val mom =
@@ -123,7 +146,7 @@ class EditMemberActivity : AppCompatActivity()
 		return member
 	}
 	
-	private fun uploadToDB(member: FamilyMember, docPath: String)
+	private fun uploadToDB(member: FamilyMember, docPath: String, memberId: String?)
 	{
 		firebase.document(docPath).get().addOnSuccessListener {
 			val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
@@ -132,7 +155,6 @@ class EditMemberActivity : AppCompatActivity()
 			familyTree.lastModified = Timestamp.now()
 			
 			//? check if they are updating a predefined member in the tree
-			val memberId = intent.getStringExtra("memberId")
 			if(memberId != null)
 			{
 				val oldVersion = familyTree.findMemberByID(memberId)

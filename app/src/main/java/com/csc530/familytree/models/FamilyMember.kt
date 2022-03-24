@@ -39,7 +39,7 @@ data class FamilyMember(
 	var kids: ArrayList<String> = ArrayList<String>()
 	var partners: ArrayList<String> = ArrayList<String>()
 	
-	private fun getBirthDate(): LocalDate?
+	fun getBirthDate(): LocalDate?
 	{
 		if(birthEpochDay != null)
 			return LocalDate.ofEpochDay(birthEpochDay!!);

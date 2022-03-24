@@ -31,19 +31,18 @@ class MemberDetailsActivity : AppCompatActivity()
 		activityManager = ActivityManager(this)
 		// * validate the doc path; this is to parse a family member and prevent errors
 		val docPath = intent.getStringExtra("docPath")
-		val memberID = intent.getStringExtra("memberId")
-		if(docPath == null || memberID == null)
+		val memberId = intent.getStringExtra("memberId")
+		if(docPath == null || memberId == null)
 			activityManager.backToHome(this)
 		else
 		{
 			binding.btnClose.setOnClickListener {
-				finish()
 				activityManager.startActivity(TreeActivity::class.java, docPath)
 			}
 			binding.btnEdit.setOnClickListener {
-				activityManager.startActivity(EditMemberActivity::class.java, docPath)
+				activityManager.startActivity(EditMemberActivity::class.java, docPath, memberId)
 			}
-			populateMember(docPath, memberID)
+			populateMember(docPath, memberId)
 		}
 	}
 	
