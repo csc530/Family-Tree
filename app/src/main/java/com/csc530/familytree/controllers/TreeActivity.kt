@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.WebSettings
+import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -37,7 +38,6 @@ class TreeActivity : AppCompatActivity()
 		var docPath = intent.getStringExtra("docPath")
 		val wb = binding.webView
 		
-		wb.getSettings().setJavaScriptEnabled(true)
 		val settings: WebSettings = wb.settings
 		settings.javaScriptEnabled = true
 		settings.domStorageEnabled = true
@@ -46,8 +46,8 @@ class TreeActivity : AppCompatActivity()
 		//Ref. http://stackoverflow.com/questions/10097233/optimal-webview-settings-for-  html5-support
 		wb.isFocusable = true
 		wb.isFocusableInTouchMode = true
-		wb.settings.cacheMode = WebSettings.LOAD_NO_CACHE
-		wb.settings.databaseEnabled = true
+		settings.cacheMode = WebSettings.LOAD_NO_CACHE
+		settings.databaseEnabled = true
 		wb.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
 		binding.webView.settings.builtInZoomControls = true;
 		wb.webViewClient = WebViewClient() // tells page not to open links in android browser and instead open them in this webview
@@ -58,8 +58,12 @@ class TreeActivity : AppCompatActivity()
 		//create new family tree if no tree name is given
 		if(auth.currentUser != null)
 		{
+			// * logic if they just created a new Family tree
 			if(docPath == null && treeName != null)
 			{
+				// ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
+				wb.visibility = WebView.GONE
+				
 				familyTree = FamilyTree(treeName, auth.currentUser!!.uid, created = Timestamp.now(), lastModified = Timestamp.now())
 				familyTree.id = collection.document().id
 				val docID = "$treeName-${auth.currentUser!!.uid}-${familyTree.id}"
@@ -73,6 +77,7 @@ class TreeActivity : AppCompatActivity()
 						activityManager.backToHome(this)
 					}
 			}
+			// * logic for loading a pre-existing family-tree
 			else if(docPath != null)
 				firebase.document(docPath!!).get()
 					.addOnSuccessListener { document ->
