@@ -84,10 +84,17 @@ class TreeActivity : AppCompatActivity()
 						if(document == null)
 							activityManager.backToHome(this)
 						familyTree = document.toObject(FamilyTree::class.java)!!
-						//? add view for each family member
-						for(member in familyTree.members)
-							wai.nodes.add(member.toNode())
-						wb.reload()
+						if(familyTree.members.size > 0)
+						{
+							//? add view for each family member
+							for(member in familyTree.members)
+								wai.nodes.add(member.toNode())
+							wb.reload()
+						}
+						else{
+							// ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
+							wb.visibility = WebView.GONE
+						}
 					}
 					.addOnFailureListener {
 						Log.e("Firebase", it.toString())
