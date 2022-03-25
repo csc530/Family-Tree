@@ -37,7 +37,7 @@ class MemberDetailsActivity : AppCompatActivity()
 		else
 		{
 			binding.btnClose.setOnClickListener {
-				activityManager.startActivity(TreeActivity::class.java, docPath)
+				finish()
 			}
 			binding.btnEdit.setOnClickListener {
 				activityManager.startActivity(EditMemberActivity::class.java, docPath, memberId)
@@ -65,7 +65,10 @@ class MemberDetailsActivity : AppCompatActivity()
 					binding.txtBirthday.text = member.getBirthday() ?: "-"
 					binding.txtDeathday.text = member.getDeathday() ?: "-"
 					binding.txtBiography.text = member.biography ?: "-"
-					binding.txtAge.text = "${member.getAge()} years old"
+					if(member.getAge() != -1)
+						binding.txtAge.text = "${member.getAge()} years old"
+					else
+						binding.txtAge.text = "-"
 					binding.imgPortrait.setImageDrawable(member.image
 					                                     ?: ResourcesCompat.getDrawable(resources, R.drawable.user, theme))
 					//set up children and partner to display total number
@@ -73,13 +76,15 @@ class MemberDetailsActivity : AppCompatActivity()
 					binding.txtPartners.text = "${member.getPartners().size} partners"
 					//when the click the text display each child in a recycler view
 					val kids = familyTree.getMembersByID(member.getKids())
-					binding.txtChildren.setOnClickListener {
-						showMembers(kids, "${member.getFullName()}'s Children", docPath)
-					}
+					if(kids.size > 0)
+						binding.txtChildren.setOnClickListener {
+							showMembers(kids, "${member.getFullName()}'s Children", docPath)
+						}
 					val partners = familyTree.getMembersByID(member.getPartners())
-					binding.txtPartners.setOnClickListener {
-						showMembers(partners, "${member.getFullName()}'s Partners", docPath)
-					}
+					if(partners.size > 0)
+						binding.txtPartners.setOnClickListener {
+							showMembers(partners, "${member.getFullName()}'s Partners", docPath)
+						}
 				}
 			}
 	}
