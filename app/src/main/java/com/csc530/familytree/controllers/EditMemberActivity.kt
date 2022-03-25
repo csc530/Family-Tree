@@ -3,10 +3,8 @@ package com.csc530.familytree.controllers
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.R
 import com.csc530.familytree.databinding.ActivityEditMemberBinding
@@ -38,7 +36,7 @@ class EditMemberActivity : AppCompatActivity()
 		val memberId = intent.getStringExtra("memberId")
 		
 		// ? setup spinners
-		val (fatherAdapter, motherAdapter) = setupParentSpinners(docPath)
+		val (fatherAdapter, motherAdapter) = setupParentSpinners(docPath, memberId)
 		// * populate form with current member details if they are updating a member
 		if(memberId != null)
 		{
@@ -87,7 +85,7 @@ class EditMemberActivity : AppCompatActivity()
 		}
 	}
 	
-	private fun setupParentSpinners(docPath: String): Pair<ArrayAdapter<FamilyMember>, ArrayAdapter<FamilyMember>>
+	private fun setupParentSpinners(docPath: String, memberId: String?): Pair<ArrayAdapter<FamilyMember>, ArrayAdapter<FamilyMember>>
 	{
 		//? setup parent spinners
 		val fathers: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
@@ -96,6 +94,19 @@ class EditMemberActivity : AppCompatActivity()
 		val mothers = ArrayList<FamilyMember>()
 		val motherAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, mothers)
 		binding.spinMom.adapter = motherAdapter
+		
+		//TODO: have spinner not able to select the same family member at the same time
+		binding.spinMom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener
+		{
+			override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long)
+			{
+			}
+			
+			override fun onNothingSelected(parentView: AdapterView<*>)
+			{
+			
+			}
+		}
 		
 		firebase.document(docPath).get().addOnSuccessListener {
 			val tree = it.toObject(FamilyTree::class.java)
@@ -106,6 +117,12 @@ class EditMemberActivity : AppCompatActivity()
 				motherAdapter.addAll(members)
 				fatherAdapter.add(FamilyMember("Select", "Father", id = FamilyMember.NULL_ID))
 				fatherAdapter.addAll(members)
+				if(memberId != null)
+				{
+					// * remove themself from being their own parent
+					motherAdapter.remove(tree.findMemberByID(memberId))
+					fatherAdapter.remove(tree.findMemberByID(memberId))
+				}
 			}
 		}
 		return Pair(fatherAdapter, motherAdapter)
@@ -138,10 +155,9 @@ class EditMemberActivity : AppCompatActivity()
 		
 		val biography = binding.taOther.text.toString()
 		val member = FamilyMember(firstName, lastName, birthdate, deathDate, biography)
-		if(mom?.id != null)
-			member.mom = mom.id!!
-		if(dad?.id != null)
-			member.dad = dad.id!!
+		
+		member.mom = mom?.id
+		member.dad = dad?.id
 		return member
 	}
 	
@@ -167,7 +183,7 @@ class EditMemberActivity : AppCompatActivity()
 						println(e)
 					}
 				//navigate back to member details
-				activityManager.startActivity(EditMemberActivity::class.java, docPath, memberId)
+				activityManager.startActivity(MemberDetailsActivity::class.java, docPath, memberId)
 			}
 			else
 			{
