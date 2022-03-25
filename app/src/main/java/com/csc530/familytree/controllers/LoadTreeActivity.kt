@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.csc530.familytree.databinding.ActivityLoadTreeBinding
+import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.views.FamilyTreeAdapter
 import com.csc530.familytree.views.FamilyTreeViewModel
 
@@ -14,6 +15,10 @@ class LoadTreeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoadTreeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val activityManager = ActivityManager(this)
+        binding.fabBackToLaunch.setOnClickListener {
+            activityManager.startActivity(LaunchActivity::class.java)
+        }
         
         val familyTreeViewModel: FamilyTreeViewModel by viewModels()
         familyTreeViewModel.getFamilyTrees().observe(this){ familyTrees->
