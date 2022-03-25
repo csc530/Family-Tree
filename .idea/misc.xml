@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/drawable/info.xml" value="0.2885" />
         <entry key="app/src/main/res/drawable/plus_button.xml" value="0.196" />
         <entry key="app/src/main/res/drawable/previous_back.xml" value="0.2885" />
+        <entry key="app/src/main/res/drawable/refresh.xml" value="0.1215" />
         <entry key="app/src/main/res/drawable/tree_border.xml" value="0.291" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_edit_details.xml" value="0.35625" />
@@ -21,7 +22,7 @@
         <entry key="app/src/main/res/layout/activity_load_tree.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_member_details.xml" value="0.25925925925925924" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.35625" />
-        <entry key="app/src/main/res/layout/activity_tree.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/activity_tree.xml" value="0.32314814814814813" />
         <entry key="app/src/main/res/layout/activity_tree_test.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/ex.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/exampleOfCustomLayout.xml" value="0.35625" />

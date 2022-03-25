@@ -101,6 +101,8 @@ class TreeActivity : AppCompatActivity()
 						activityManager.backToHome(this)
 					}
 		}
+		binding.imgbtnHome.setOnClickListener{activityManager.startActivity(LaunchActivity::class.java)}
+		binding.imgbtnRefresh.setOnClickListener{wb.reload()}
 		binding.fabAdd.setOnClickListener {
 			val intent = Intent(this, EditMemberActivity::class.java)
 			intent.putExtra("docPath", docPath)
