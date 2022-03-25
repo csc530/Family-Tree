@@ -22,7 +22,6 @@ class WebAppInterface(private val activity: AppCompatActivity)
 		val typeOf: Type = object : TypeToken<ArrayList<Node>>()
 		{}.type
 		val json = gson.toJson(nodes, typeOf)
-		println(json)
 		return json
 	}
 	

@@ -1,5 +1,6 @@
 /// <reference path="familytree.d.ts" />
 var family = new FamilyTree(document.getElementById("tree"), {
+    enableSearch: false,
     template: "hugo",
     scaleInitial: FamilyTree.match.boundary,
     nodeBinding: {
