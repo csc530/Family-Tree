@@ -3,6 +3,7 @@ package com.csc530.familytree.controllers
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +48,7 @@ class EditMemberActivity : AppCompatActivity()
 				binding.txtEdtTitle.text = resources.getText(R.string.edit_member)
 				binding.edtFName.setText(member.firstName)
 				binding.edtLName.setText(member.lastName)
+				binding.sexSpinner.setSelection(member.sex.ordinal)
 				if(member.getBirthDate() != null)
 					binding.edtBirthDate.setText(member.getBirthDate().toString())
 				if(member.getDeathDate() != null)
@@ -198,6 +200,8 @@ class EditMemberActivity : AppCompatActivity()
 			//? check if they are updating a predefined member in the tree
 			if(memberId != null)
 			{
+				// * keep their memberId when updating/re-uploading them to DB
+				member.id = memberId
 				val oldVersion = familyTree.findMemberByID(memberId)
 				familyTree.members.remove(oldVersion)
 				familyTree.members.add(member)
@@ -205,14 +209,15 @@ class EditMemberActivity : AppCompatActivity()
 				firebase.document(docPath).update("members", familyTree.members,
 				                                  "lastModified", familyTree.lastModified)
 					.addOnFailureListener { e ->
+						Log.w("DB Failure", "Error updating document", e)
 						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
-						println(e)
 					}
 				// * navigate back to member details
-				activityManager.startActivity(MemberDetailsActivity::class.java, docPath, memberId)
+				finish()
 			}
 			else
 			{
+				//generate a new member Id for them
 				member.id = collection.document().id
 				familyTree.members.add(member)
 				updateParentRelationships(familyTree, member)
@@ -221,7 +226,7 @@ class EditMemberActivity : AppCompatActivity()
 					        "lastModified", familyTree.lastModified)
 					.addOnFailureListener { e ->
 						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
-						println(e)
+						Log.e("DB Error", e.message ?: e.localizedMessage ?: e.toString())
 					}
 				//navigate back to family tree
 				activityManager.startActivity(TreeActivity::class.java, docPath)

@@ -2,6 +2,7 @@ package com.csc530.familytree.controllers
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -86,6 +87,11 @@ class MemberDetailsActivity : AppCompatActivity()
 							showMembers(partners, "${member.getFullName()}'s Partners", docPath)
 						}
 				}
+			}
+			.addOnFailureListener {
+				Log.e("MemberDetailsActivity", "Error getting document: ${it.localizedMessage ?: it.message ?: it.toString()}", it)
+				Toast.makeText(this, "Error, no such member", Toast.LENGTH_SHORT).show()
+				activityManager.startActivity(TreeActivity::class.java, docPath)
 			}
 	}
 	
