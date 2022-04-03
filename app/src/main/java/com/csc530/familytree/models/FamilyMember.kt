@@ -1,13 +1,12 @@
 package com.csc530.familytree.models
 
-import android.graphics.drawable.Drawable
+import android.net.Uri
 import com.google.firebase.firestore.Exclude
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
-import kotlin.collections.HashSet
 
 enum class SexEnum
 {
@@ -21,8 +20,8 @@ data class FamilyMember(
 		var lastName: String? = "????",
 		var birthEpochDay: Long? = null,
 		var deathEpochDay: Long? = null,
-		var biography: String? = null,
-		var image: Drawable? = null,
+		//		var biography: String? = null,
+		var image: String? = null,
 		var id: String? = null,
 		var mother: String? = null,
 		var father: String? = null,
@@ -37,9 +36,16 @@ data class FamilyMember(
 	@get:Exclude
 	@field:Exclude
 	val children = HashSet<String>()
+	
 	@get:Exclude
 	@field:Exclude
 	val partners = HashSet<String>()
+	
+	@Exclude
+	fun getImageUri(): Uri?
+	{
+		return Uri.parse(image?: return null)
+	}
 	
 	override fun toString(): String
 	{

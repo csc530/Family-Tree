@@ -88,7 +88,7 @@ class FamilyMemberAdapter(val content: Context,
 		val familyMember = members[position]
 		with(holder) {
 			//bind the properties of the family tree to the view
-			image.setImageDrawable(familyMember.image)
+			image.setImageURI(familyMember.getImageUri())
 			fullName.text = familyMember.getFullName()
 				itemView.setOnClickListener {
 					itemListener?.invoke(familyMember, it)

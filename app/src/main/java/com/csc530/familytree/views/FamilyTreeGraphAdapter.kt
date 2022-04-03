@@ -1,6 +1,5 @@
 package com.csc530.familytree.views
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.csc530.familytree.R
 import com.csc530.familytree.models.FamilyMember
-import com.csc530.familytree.models.FamilyTree
 import dev.bandb.graphview.AbstractGraphAdapter
 
 class FamilyTreeGraphAdapter() : AbstractGraphAdapter<FamilyTreeGraphAdapter.NodeViewHolder>()
@@ -47,7 +45,7 @@ class FamilyTreeGraphAdapter() : AbstractGraphAdapter<FamilyTreeGraphAdapter.Nod
 		val name = "${node.firstName} ${node.lastName}"
 		with(holder) {
 			this.name.text = name
-			portrait.setImageDrawable(node.image)
+			portrait.setImageURI(node.getImageUri())
 			itemView.setOnClickListener { }
 		}
 	}

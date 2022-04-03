@@ -1,6 +1,7 @@
 package com.csc530.familytree.controllers
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -53,6 +54,7 @@ class MemberDetailsActivity : AppCompatActivity()
 		firebase.document(docPath).get()
 			.addOnSuccessListener {
 				val familyTree = it.toObject(FamilyTree::class.java)
+				familyTree?.populateRelationships()
 				val member = familyTree?.findMemberByID(memberID)
 				if(member == null)
 				{
@@ -65,24 +67,24 @@ class MemberDetailsActivity : AppCompatActivity()
 					binding.txtFullName.text = member.getFullName()
 					binding.txtBirthday.text = member.getBirthday() ?: "-"
 					binding.txtDeathday.text = member.getDeathday() ?: "-"
-					binding.txtBiography.text = member.biography ?: "-"
+					//					binding.txtBiography.text = member.biography ?: "-"
 					if(member.getAge() != -1)
 						binding.txtAge.text = "${member.getAge()} years old"
 					else
 						binding.txtAge.text = "-"
-					binding.imgPortrait.setImageDrawable(member.image
-					                                     ?: ResourcesCompat.getDrawable(resources, R.drawable.user, theme))
+					binding.imgPortrait.setImageURI(member.getImageUri()
+					                                /*TODO: get user pfp as uri*/)
 					//set up children and partner to display total number
 					binding.txtChildren.text = "${member.children.size} kids"
 					binding.txtPartners.text = "${member.partners.size} partners"
 					//when the click the text display each child in a recycler view
 					val kids = familyTree.getMembersByID(member.children)
-					if(kids.size > 0)
+					if(kids.isNotEmpty())
 						binding.txtChildren.setOnClickListener {
 							showMembers(kids, "${member.getFullName()}'s Children", docPath)
 						}
 					val partners = familyTree.getMembersByID(member.partners)
-					if(partners.size > 0)
+					if(partners.isNotEmpty())
 						binding.txtPartners.setOnClickListener {
 							showMembers(partners, "${member.getFullName()}'s Partners", docPath)
 						}
@@ -96,13 +98,13 @@ class MemberDetailsActivity : AppCompatActivity()
 	}
 	
 	
-	private fun showMembers(kids: List<FamilyMember>, title: String, docPath: String): Unit
+	private fun showMembers(members: List<FamilyMember>, title: String, docPath: String): Unit
 	{
 		val dialog = MaterialAlertDialogBuilder(this)
 		dialog.setTitle(title)
 		val recycler = RecyclerView(this)
 		recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-		recycler.adapter = FamilyMemberAdapter(this, kids, toMember(docPath))
+		recycler.adapter = FamilyMemberAdapter(this, members, toMember(docPath))
 		dialog.setView(recycler)
 		dialog.setNeutralButton("Close") { dialogInterface, _ ->
 			dialogInterface.dismiss()
