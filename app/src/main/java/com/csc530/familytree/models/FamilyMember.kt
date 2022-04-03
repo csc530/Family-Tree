@@ -1,11 +1,23 @@
 package com.csc530.familytree.models
 
 import android.graphics.drawable.Drawable
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.IgnoreExtraProperties
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
+import kotlin.collections.ArrayList
 
+enum class SexEnum
+{
+	UNKNOWN,
+	MALE,
+	FEMALE
+}
+
+@IgnoreExtraProperties
 data class FamilyMember(
 		var firstName: String? = "????",
 		var lastName: String? = "????",
@@ -16,8 +28,7 @@ data class FamilyMember(
 		var id: String? = null,
 		var mom: String? = null,
 		var dad: String? = null,
-		//TODO make String enum
-		var sex: String = "?",
+		var sex: SexEnum = SexEnum.UNKNOWN
 )
 {
 	companion object Constants
@@ -59,6 +70,7 @@ data class FamilyMember(
 			kids.add(id)
 	}
 	
+	@Exclude
 	fun getBirthDate(): LocalDate?
 	{
 		if(birthEpochDay != null)
@@ -66,6 +78,7 @@ data class FamilyMember(
 		return null
 	}
 	
+	@Exclude
 	fun getDeathDate(): LocalDate?
 	{
 		if(deathEpochDay != null)
@@ -100,9 +113,9 @@ data class FamilyMember(
 		val pid: Array<String> = partners.toTypedArray()
 		val mid = mom
 		val fid = dad
-		val gender = sex
+		val gender = sex.name.lowercase(Locale.getDefault())
 		val img = image
-		return Node(id, pid, mid, fid, getFullName())
+		return Node(id, pid, mid, fid, getFullName(), gender)
 	}
 	
 	fun getFullName(): String

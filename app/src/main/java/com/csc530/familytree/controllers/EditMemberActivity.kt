@@ -11,6 +11,7 @@ import com.csc530.familytree.databinding.ActivityEditMemberBinding
 import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyMember
 import com.csc530.familytree.models.FamilyTree
+import com.csc530.familytree.models.SexEnum
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,7 +22,6 @@ import java.util.*
 class EditMemberActivity : AppCompatActivity()
 {
 	private lateinit var binding: ActivityEditMemberBinding
-	private val locale = Locale.getDefault()
 	private val firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
 	private val collection = firebase.collection("Trees")
 	private val activityManager = ActivityManager(this)
@@ -150,6 +150,12 @@ class EditMemberActivity : AppCompatActivity()
 	{
 		val firstName = binding.edtFName.text.toString()
 		val lastName = binding.edtLName.text.toString()
+		val sex =
+				if(binding.sexSpinner.selectedItemPosition == Spinner.INVALID_POSITION)
+					SexEnum.UNKNOWN
+				else
+					SexEnum.values()[binding.sexSpinner.selectedItemPosition]
+					
 		val birthdate =
 				if(binding.edtBirthDate.text.toString().isNotEmpty())
 					LocalDate.parse(binding.edtBirthDate.text.toString()).toEpochDay()
@@ -172,7 +178,7 @@ class EditMemberActivity : AppCompatActivity()
 					null
 		
 		val biography = binding.taOther.text.toString()
-		val member = FamilyMember(firstName, lastName, birthdate, deathDate, biography)
+		val member = FamilyMember(firstName, lastName, birthdate, deathDate, biography, sex = sex)
 		
 		member.mom = mom?.id
 		member.dad = dad?.id
@@ -184,7 +190,7 @@ class EditMemberActivity : AppCompatActivity()
 		firebase.document(docPath).get().addOnSuccessListener {
 			val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
 			
-			//Update last modified timestamp
+			// * Update last modified timestamp
 			familyTree.lastModified = Timestamp.now()
 			
 			//? check if they are updating a predefined member in the tree
@@ -200,7 +206,7 @@ class EditMemberActivity : AppCompatActivity()
 						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
 						println(e)
 					}
-				//navigate back to member details
+				// * navigate back to member details
 				activityManager.startActivity(MemberDetailsActivity::class.java, docPath, memberId)
 			}
 			else
