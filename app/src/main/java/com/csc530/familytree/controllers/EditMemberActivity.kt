@@ -95,19 +95,35 @@ class EditMemberActivity : AppCompatActivity()
 		val motherAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, mothers)
 		binding.spinMom.adapter = motherAdapter
 		
-		//TODO: have spinner not able to select the same family member at the same time
+		// ? have spinners not able to select the same family member at the same time; causes render errors in BalkanJSTree
 		binding.spinMom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener
 		{
 			override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long)
 			{
+				if(position == binding.spinDad.selectedItemPosition)
+					parentView.setSelection(0)
+			}
+			
+			override fun onNothingSelected(parent: AdapterView<*>?)
+			{
+				return
+			}
+		}
+		binding.spinDad.onItemSelectedListener = object : AdapterView.OnItemSelectedListener
+		{
+			override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long)
+			{
+				if(position == binding.spinMom.selectedItemPosition)
+					parentView.setSelection(0)
 			}
 			
 			override fun onNothingSelected(parentView: AdapterView<*>)
 			{
-			
+				return
 			}
 		}
 		
+		// ? populate spinners with family members
 		firebase.document(docPath).get().addOnSuccessListener {
 			val tree = it.toObject(FamilyTree::class.java)
 			val members = tree?.members
@@ -125,6 +141,8 @@ class EditMemberActivity : AppCompatActivity()
 				}
 			}
 		}
+		
+		// ? return adapters
 		return Pair(fatherAdapter, motherAdapter)
 	}
 	
