@@ -13,6 +13,7 @@ import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.models.WebAppInterface
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -78,11 +79,16 @@ class TreeActivity : AppCompatActivity()
 			}
 			// * logic for loading a pre-existing family-tree
 			else if(docPath != null)
-				firebase.document(docPath!!).get()
-					.addOnSuccessListener { document ->
-						if(document == null)
-							return@addOnSuccessListener activityManager.backToHome(this)
-						familyTree = document.toObject(FamilyTree::class.java)!!
+				firebase.document(docPath!!).addSnapshotListener { snapshot, error ->
+					if(error != null)
+						Log.e("TreeActivity", "Error getting document: $error")
+					else if(snapshot == null)
+						Snackbar
+							.make(binding.root, "Error please try again later, please hard refresh the page (click and hold refresh button)", Snackbar.LENGTH_LONG)
+							.show()
+					else
+					{
+						familyTree = snapshot.toObject(FamilyTree::class.java)!!
 						if(familyTree.members.size > 0)
 						{
 							//? add view for each family member
@@ -91,15 +97,10 @@ class TreeActivity : AppCompatActivity()
 							wb.reload()
 						}
 						else
-						{
 							// ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
 							wb.visibility = WebView.GONE
-						}
 					}
-					.addOnFailureListener {
-						Log.e("Firebase", it.toString())
-						activityManager.backToHome(this)
-					}
+				}
 		}
 		binding.imgbtnHome.setOnClickListener { activityManager.startActivity(LaunchActivity::class.java) }
 		binding.imgbtnRefresh.setOnClickListener { wb.reload() }
