@@ -100,8 +100,9 @@ class EditMemberActivity : AppCompatActivity()
 		{
 			override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long)
 			{
-				if(position == binding.spinDad.selectedItemPosition)
-					parentView.setSelection(0)
+				val selected = motherAdapter.getItem(position)
+				if(selected == fatherAdapter.getItem(binding.spinDad.selectedItemPosition))
+					binding.spinMom.setSelection(0)
 			}
 			
 			override fun onNothingSelected(parent: AdapterView<*>?)
@@ -113,8 +114,9 @@ class EditMemberActivity : AppCompatActivity()
 		{
 			override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long)
 			{
-				if(position == binding.spinMom.selectedItemPosition)
-					parentView.setSelection(0)
+				val selected = fatherAdapter.getItem(position)
+				if(selected == motherAdapter.getItem(binding.spinMom.selectedItemPosition))
+					binding.spinDad.setSelection(0)
 			}
 			
 			override fun onNothingSelected(parentView: AdapterView<*>)
@@ -123,16 +125,16 @@ class EditMemberActivity : AppCompatActivity()
 			}
 		}
 		
-		// ? populate spinners with family members
-		firebase.document(docPath).get().addOnSuccessListener {
-			val tree = it.toObject(FamilyTree::class.java)
+		// ? populate spinners with family members; by sex of males being fathers and females mothers and unknown in both spinners
+		firebase.document(docPath).get().addOnSuccessListener { snapshot ->
+			val tree = snapshot.toObject(FamilyTree::class.java)
 			val members = tree?.members
 			if(members != null)
 			{
 				motherAdapter.add(FamilyMember("Select", "Mother", id = FamilyMember.NULL_ID))
-				motherAdapter.addAll(members)
+				motherAdapter.addAll(members.filter { it.sex != SexEnum.MALE })
 				fatherAdapter.add(FamilyMember("Select", "Father", id = FamilyMember.NULL_ID))
-				fatherAdapter.addAll(members)
+				fatherAdapter.addAll(members.filter { it.sex != SexEnum.FEMALE })
 				if(memberId != null)
 				{
 					// * remove themself from being their own parent
@@ -155,7 +157,7 @@ class EditMemberActivity : AppCompatActivity()
 					SexEnum.UNKNOWN
 				else
 					SexEnum.values()[binding.sexSpinner.selectedItemPosition]
-					
+		
 		val birthdate =
 				if(binding.edtBirthDate.text.toString().isNotEmpty())
 					LocalDate.parse(binding.edtBirthDate.text.toString()).toEpochDay()
