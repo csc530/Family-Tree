@@ -37,6 +37,7 @@
         <entry key="app/src/main/res/layout/sample_my_view.xml" value="0.16666666666666666" />
         <entry key="app/src/main/res/layout/sample_parent_view.xml" value="0.3411458333333333" />
         <entry key="app/src/main/res/layout/sample_tree_view.xml" value="0.245018115942029" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2385" />
         <entry key="app/src/main/res/xml/root_preferences.xml" value="0.35625" />
       </map>
     </option>
