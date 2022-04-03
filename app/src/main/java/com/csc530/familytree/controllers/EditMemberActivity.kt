@@ -77,7 +77,7 @@ class EditMemberActivity : AppCompatActivity()
 			val member = parseData(momAdapter, dadAdapter)
 			
 			//? write to db if logged in
-			if(auth.currentUser != null)
+			if(auth.currentUser != null && member != null)
 				uploadToDB(member, docPath, memberId)
 			else
 			{
@@ -161,7 +161,7 @@ class EditMemberActivity : AppCompatActivity()
 		return Pair(dadAdapter, momAdapter)
 	}
 	
-	private fun parseData(motherAdapter: ArrayAdapter<FamilyMember>, fatherAdapter: ArrayAdapter<FamilyMember>): FamilyMember
+	private fun parseData(motherAdapter: ArrayAdapter<FamilyMember>, fatherAdapter: ArrayAdapter<FamilyMember>): FamilyMember?
 	{
 		val firstName = binding.edtFName.text.toString()
 		val lastName = binding.edtLName.text.toString()
@@ -193,11 +193,39 @@ class EditMemberActivity : AppCompatActivity()
 					null
 		
 		val biography = binding.taOther.text.toString()
+		if(!validateData(firstName, lastName, birthdate, deathDate, mom, dad))
+			return null
 		val member = FamilyMember(firstName, lastName, birthdate, deathDate, biography, sex = sex)
 		
 		member.mother = mom?.id
 		member.father = dad?.id
 		return member
+	}
+	
+	private fun validateData(firstName: String, lastName: String, birthdate: Long?, deathDate: Long?, mom: FamilyMember?, dad: FamilyMember?): Boolean
+	{
+		val birthday: LocalDate? = if(birthdate != null)
+			LocalDate.ofEpochDay(birthdate)
+		else
+			null
+		val deathday: LocalDate? = if(deathDate != null)
+			LocalDate.ofEpochDay(deathDate)
+		else
+			null
+		return when
+		{
+			birthday?.isAfter(deathday) == true                      ->
+			{
+				Toast.makeText(this, "Birthdate cannot be after death date", Toast.LENGTH_SHORT).show()
+				false
+			}
+			mom != null && dad == null || dad != null && mom == null ->
+			{
+				Toast.makeText(this, "Both parents must be selected or none at all", Toast.LENGTH_SHORT).show()
+				false
+			}
+			else                                                     -> true
+		}
 	}
 	
 	private fun uploadToDB(member: FamilyMember, docPath: String, memberId: String?)
