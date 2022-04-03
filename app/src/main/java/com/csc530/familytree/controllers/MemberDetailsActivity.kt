@@ -73,15 +73,15 @@ class MemberDetailsActivity : AppCompatActivity()
 					binding.imgPortrait.setImageDrawable(member.image
 					                                     ?: ResourcesCompat.getDrawable(resources, R.drawable.user, theme))
 					//set up children and partner to display total number
-					binding.txtChildren.text = "${member.getKids().size} kids"
-					binding.txtPartners.text = "${member.getPartners().size} partners"
+					binding.txtChildren.text = "${member.children.size} kids"
+					binding.txtPartners.text = "${member.partners.size} partners"
 					//when the click the text display each child in a recycler view
-					val kids = familyTree.getMembersByID(member.getKids())
+					val kids = familyTree.getMembersByID(member.children)
 					if(kids.size > 0)
 						binding.txtChildren.setOnClickListener {
 							showMembers(kids, "${member.getFullName()}'s Children", docPath)
 						}
-					val partners = familyTree.getMembersByID(member.getPartners())
+					val partners = familyTree.getMembersByID(member.partners)
 					if(partners.size > 0)
 						binding.txtPartners.setOnClickListener {
 							showMembers(partners, "${member.getFullName()}'s Partners", docPath)
@@ -104,12 +104,12 @@ class MemberDetailsActivity : AppCompatActivity()
 		recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 		recycler.adapter = FamilyMemberAdapter(this, kids, toMember(docPath))
 		dialog.setView(recycler)
-		dialog.setNeutralButton("Close") { dialogInterface, button ->
+		dialog.setNeutralButton("Close") { dialogInterface, _ ->
 			dialogInterface.dismiss()
 		}.show()
 	}
 	
-	private fun toMember(docPath: String): (FamilyMember, View) -> Unit = { familyMember: FamilyMember, view: View ->
+	private fun toMember(docPath: String): (FamilyMember, View) -> Unit = { familyMember: FamilyMember, _: View ->
 		val intent = Intent(this, MemberDetailsActivity::class.java)
 		intent.putExtra("memberId", familyMember.id)
 		activityManager.startActivity(intent, docPath)

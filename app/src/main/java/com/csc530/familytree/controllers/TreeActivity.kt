@@ -89,6 +89,9 @@ class TreeActivity : AppCompatActivity()
 					else
 					{
 						familyTree = snapshot.toObject(FamilyTree::class.java)!!
+						println(familyTree)
+						wai.nodes.clear()
+						familyTree.populateRelationships()
 						if(familyTree.members.size > 0)
 						{
 							//? add view for each family member

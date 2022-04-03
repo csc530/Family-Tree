@@ -148,8 +148,8 @@ class EditMemberActivity : AppCompatActivity()
 				val member = tree.findMemberByID(memberId ?: FamilyMember.NULL_ID)
 				if(member != null)
 				{
-					val dad = tree.findMemberByID(member.dad ?: FamilyMember.NULL_ID)
-					val mom = tree.findMemberByID(member.mom ?: FamilyMember.NULL_ID)
+					val dad = tree.findMemberByID(member.father ?: FamilyMember.NULL_ID)
+					val mom = tree.findMemberByID(member.mother ?: FamilyMember.NULL_ID)
 					binding.spinDad.setSelection(dadAdapter.getPosition(dad))
 					binding.spinMom.setSelection(momAdapter.getPosition(mom))
 				}
@@ -195,8 +195,8 @@ class EditMemberActivity : AppCompatActivity()
 		val biography = binding.taOther.text.toString()
 		val member = FamilyMember(firstName, lastName, birthdate, deathDate, biography, sex = sex)
 		
-		member.mom = mom?.id
-		member.dad = dad?.id
+		member.mother = mom?.id
+		member.father = dad?.id
 		return member
 	}
 	
@@ -216,7 +216,6 @@ class EditMemberActivity : AppCompatActivity()
 				val oldVersion = familyTree.findMemberByID(memberId)
 				familyTree.members.remove(oldVersion)
 				familyTree.members.add(member)
-				updateParentRelationships(familyTree, member)
 				firebase.document(docPath).update("members", familyTree.members,
 				                                  "lastModified", familyTree.lastModified)
 					.addOnFailureListener { e ->
@@ -231,7 +230,6 @@ class EditMemberActivity : AppCompatActivity()
 				//generate a new member Id for them
 				member.id = collection.document().id
 				familyTree.members.add(member)
-				updateParentRelationships(familyTree, member)
 				firebase.document(docPath)
 					.update("members", familyTree.members,
 					        "lastModified", familyTree.lastModified)
@@ -243,18 +241,6 @@ class EditMemberActivity : AppCompatActivity()
 				activityManager.startActivity(TreeActivity::class.java, docPath)
 			}
 		}
-	}
-	
-	private fun updateParentRelationships(familyTree: FamilyTree, member: FamilyMember)
-	{
-		// ? update the parent if any to include the child in `kids`
-		val mom = familyTree.findMemberByID(member.mom ?: FamilyMember.NULL_ID)
-		mom?.addChild(member.id!!)
-		val dad = familyTree.findMemberByID(member.dad ?: FamilyMember.NULL_ID)
-		dad?.addChild(member.id!!)
-		// ? add relationship between mom and dad
-		mom?.addPartner(dad?.id ?: return)
-		dad?.addPartner(mom?.id ?: return println("Mom: $mom+${mom?.id}\nDad: $dad+${dad.id}"))
 	}
 	
 	

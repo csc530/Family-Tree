@@ -2,13 +2,12 @@ package com.csc530.familytree.models
 
 import android.graphics.drawable.Drawable
 import com.google.firebase.firestore.Exclude
-import com.google.firebase.firestore.IgnoreExtraProperties
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 enum class SexEnum
 {
@@ -17,7 +16,6 @@ enum class SexEnum
 	FEMALE
 }
 
-@IgnoreExtraProperties
 data class FamilyMember(
 		var firstName: String? = "????",
 		var lastName: String? = "????",
@@ -26,8 +24,8 @@ data class FamilyMember(
 		var biography: String? = null,
 		var image: Drawable? = null,
 		var id: String? = null,
-		var mom: String? = null,
-		var dad: String? = null,
+		var mother: String? = null,
+		var father: String? = null,
 		var sex: SexEnum = SexEnum.UNKNOWN
 )
 {
@@ -35,6 +33,13 @@ data class FamilyMember(
 	{
 		const val NULL_ID = "-1 null nope naddadada-ID"
 	}
+	
+	@get:Exclude
+	@field:Exclude
+	val children = HashSet<String>()
+	@get:Exclude
+	@field:Exclude
+	val partners = HashSet<String>()
 	
 	override fun toString(): String
 	{
@@ -44,30 +49,6 @@ data class FamilyMember(
 			else
 				""
 		}"
-	}
-	
-	private val kids: ArrayList<String> = ArrayList<String>()
-	private val partners: ArrayList<String> = ArrayList<String>()
-	fun getPartners(): List<String>
-	{
-		return partners
-	}
-	
-	fun getKids(): List<String>
-	{
-		return kids
-	}
-	
-	fun addPartner(id: String)
-	{
-		if(!partners.contains(id))
-			partners.add(id)
-	}
-	
-	fun addChild(id: String)
-	{
-		if(!kids.contains(id))
-			kids.add(id)
 	}
 	
 	@Exclude
@@ -111,12 +92,13 @@ data class FamilyMember(
 	{
 		val id = id ?: return null
 		val pid: Array<String> = partners.toTypedArray()
-		val mid = mom
-		val fid = dad
+		val mid = mother
+		val fid = father
 		val gender = sex.name.lowercase(Locale.getDefault())
 		val img = image
 		return Node(id, pid, mid, fid, getFullName(), gender)
 	}
+	
 	
 	fun getFullName(): String
 	{
