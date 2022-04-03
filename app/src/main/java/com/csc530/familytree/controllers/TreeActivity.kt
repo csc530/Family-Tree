@@ -8,7 +8,6 @@ import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.ActivityManager
@@ -23,7 +22,7 @@ class TreeActivity : AppCompatActivity()
 {
 	private lateinit var binding: ActivityTreeBinding
 	private lateinit var familyTree: FamilyTree
-	private lateinit var activityManager:ActivityManager
+	private lateinit var activityManager: ActivityManager
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
@@ -51,7 +50,7 @@ class TreeActivity : AppCompatActivity()
 		wb.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
 		binding.webView.settings.builtInZoomControls = true;
 		wb.webViewClient = WebViewClient() // tells page not to open links in android browser and instead open them in this webview
-
+		
 		val wai = WebAppInterface(this)
 		wb.addJavascriptInterface(wai, "Android")
 		binding.webView.loadUrl("file:///android_asset/familyTree.html")
@@ -82,7 +81,7 @@ class TreeActivity : AppCompatActivity()
 				firebase.document(docPath!!).get()
 					.addOnSuccessListener { document ->
 						if(document == null)
-							activityManager.backToHome(this)
+							return@addOnSuccessListener activityManager.backToHome(this)
 						familyTree = document.toObject(FamilyTree::class.java)!!
 						if(familyTree.members.size > 0)
 						{
@@ -91,7 +90,8 @@ class TreeActivity : AppCompatActivity()
 								wai.nodes.add(member.toNode())
 							wb.reload()
 						}
-						else{
+						else
+						{
 							// ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
 							wb.visibility = WebView.GONE
 						}
@@ -101,8 +101,10 @@ class TreeActivity : AppCompatActivity()
 						activityManager.backToHome(this)
 					}
 		}
-		binding.imgbtnHome.setOnClickListener{activityManager.startActivity(LaunchActivity::class.java)}
-		binding.imgbtnRefresh.setOnClickListener{wb.reload()}
+		binding.imgbtnHome.setOnClickListener { activityManager.startActivity(LaunchActivity::class.java) }
+		binding.imgbtnRefresh.setOnClickListener { wb.reload() }
+		// * "hard" refresh the view to reload the tree from db not just redraw the current tree
+		binding.imgbtnRefresh.setOnLongClickListener { recreate(); true }
 		binding.fabAdd.setOnClickListener {
 			val intent = Intent(this, EditMemberActivity::class.java)
 			intent.putExtra("docPath", docPath)

@@ -37,7 +37,7 @@ class EditMemberActivity : AppCompatActivity()
 		val memberId = intent.getStringExtra("memberId")
 		
 		// ? setup spinners
-		val (fatherAdapter, motherAdapter) = setupParentSpinners(docPath, memberId)
+		val (dadAdapter, momAdapter) = setupParentSpinners(docPath, memberId)
 		// * populate form with current member details if they are updating a member
 		if(memberId != null)
 		{
@@ -74,7 +74,7 @@ class EditMemberActivity : AppCompatActivity()
 		}
 		
 		binding.btnCnfm.setOnClickListener {
-			val member = parseData(motherAdapter, fatherAdapter)
+			val member = parseData(momAdapter, dadAdapter)
 			
 			//? write to db if logged in
 			if(auth.currentUser != null)
@@ -91,19 +91,19 @@ class EditMemberActivity : AppCompatActivity()
 	{
 		//? setup parent spinners
 		val fathers: ArrayList<FamilyMember> = ArrayList<FamilyMember>()
-		val fatherAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, fathers)
-		binding.spinDad.adapter = fatherAdapter
+		val dadAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, fathers)
+		binding.spinDad.adapter = dadAdapter
 		val mothers = ArrayList<FamilyMember>()
-		val motherAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, mothers)
-		binding.spinMom.adapter = motherAdapter
+		val momAdapter = ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, mothers)
+		binding.spinMom.adapter = momAdapter
 		
 		// ? have spinners not able to select the same family member at the same time; causes render errors in BalkanJSTree
 		binding.spinMom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener
 		{
 			override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long)
 			{
-				val selected = motherAdapter.getItem(position)
-				if(selected == fatherAdapter.getItem(binding.spinDad.selectedItemPosition))
+				val selected = momAdapter.getItem(position)
+				if(selected == dadAdapter.getItem(binding.spinDad.selectedItemPosition))
 					binding.spinMom.setSelection(0)
 			}
 			
@@ -116,8 +116,8 @@ class EditMemberActivity : AppCompatActivity()
 		{
 			override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long)
 			{
-				val selected = fatherAdapter.getItem(position)
-				if(selected == motherAdapter.getItem(binding.spinMom.selectedItemPosition))
+				val selected = dadAdapter.getItem(position)
+				if(selected == momAdapter.getItem(binding.spinMom.selectedItemPosition))
 					binding.spinDad.setSelection(0)
 			}
 			
@@ -133,21 +133,32 @@ class EditMemberActivity : AppCompatActivity()
 			val members = tree?.members
 			if(members != null)
 			{
-				motherAdapter.add(FamilyMember("Select", "Mother", id = FamilyMember.NULL_ID))
-				motherAdapter.addAll(members.filter { it.sex != SexEnum.MALE })
-				fatherAdapter.add(FamilyMember("Select", "Father", id = FamilyMember.NULL_ID))
-				fatherAdapter.addAll(members.filter { it.sex != SexEnum.FEMALE })
+				momAdapter.add(FamilyMember("Select", "Mother", id = FamilyMember.NULL_ID))
+				momAdapter.addAll(members.filter { it.sex != SexEnum.MALE })
+				dadAdapter.add(FamilyMember("Select", "Father", id = FamilyMember.NULL_ID))
+				dadAdapter.addAll(members.filter { it.sex != SexEnum.FEMALE })
 				if(memberId != null)
 				{
 					// * remove themself from being their own parent
-					motherAdapter.remove(tree.findMemberByID(memberId))
-					fatherAdapter.remove(tree.findMemberByID(memberId))
+					momAdapter.remove(tree.findMemberByID(memberId))
+					dadAdapter.remove(tree.findMemberByID(memberId))
+				}
+				
+				// ? set spinners to selected member's parents
+				val member = tree.findMemberByID(memberId ?: FamilyMember.NULL_ID)
+				if(member != null)
+				{
+					val dad = tree.findMemberByID(member.dad ?: FamilyMember.NULL_ID)
+					val mom = tree.findMemberByID(member.mom ?: FamilyMember.NULL_ID)
+					binding.spinDad.setSelection(dadAdapter.getPosition(dad))
+					binding.spinMom.setSelection(momAdapter.getPosition(mom))
 				}
 			}
+			
 		}
 		
 		// ? return adapters
-		return Pair(fatherAdapter, motherAdapter)
+		return Pair(dadAdapter, momAdapter)
 	}
 	
 	private fun parseData(motherAdapter: ArrayAdapter<FamilyMember>, fatherAdapter: ArrayAdapter<FamilyMember>): FamilyMember
