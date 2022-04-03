@@ -4,6 +4,12 @@
 	<string name="create_a_new_tree">New tree</string>
 	<string name="familyTree_logo_cntDesc">A family tree logo</string>
 	
+	<string-array name="sexes">
+		<item>Other/Unknown</item>
+		<item>Male</item>
+		<item>Female</item>
+	</string-array>
+	
 	<!--Twitter application ID and custom URL scheme (app ID prefixed by 'fb'). -->
 	<!--Not set up-->
 	<string name="twitter_application_id" translatable="false">YOUR_APP_ID</string>

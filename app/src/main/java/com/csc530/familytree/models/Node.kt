@@ -11,6 +11,7 @@ class Node(
 		val fid: String? = null,
 		/**Full name of the family member*/
 		val name: String? = null,
+		val gender: String? = null,
 		/**The location of family member image*/
 		val img: String? = null
 )

@@ -5,4 +5,5 @@
 	<dimen name="largeFont">20sp</dimen>
 	<dimen name="titleSize">40sp</dimen>
 	<dimen name="containerPadding">10dp</dimen>
+	<dimen name="spinnerPadding">3dp</dimen>
 </resources>
