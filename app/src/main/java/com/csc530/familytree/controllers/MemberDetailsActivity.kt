@@ -51,8 +51,16 @@ class MemberDetailsActivity : AppCompatActivity()
 	private fun populateMember(docPath: String, memberID: String)
 	{
 		val firebase = FirebaseFirestore.getInstance()
-		firebase.document(docPath).get()
-			.addOnSuccessListener {
+		firebase.document(docPath).addSnapshotListener { it, error ->
+			if(error != null || it == null)
+			{
+				Log.e("MemberDetailsActivity", "Error getting document", error)
+				Toast.makeText(this, "Error, no such member", Toast.LENGTH_SHORT).show()
+				finish()
+				activityManager.startActivity(TreeActivity::class.java, docPath)
+			}
+			else
+			{
 				val familyTree = it.toObject(FamilyTree::class.java)
 				familyTree?.populateRelationships()
 				val member = familyTree?.findMemberByID(memberID)
@@ -97,11 +105,7 @@ class MemberDetailsActivity : AppCompatActivity()
 						}
 				}
 			}
-			.addOnFailureListener {
-				Log.e("MemberDetailsActivity", "Error getting document: ${it.localizedMessage ?: it.message ?: it.toString()}", it)
-				Toast.makeText(this, "Error, no such member", Toast.LENGTH_SHORT).show()
-				activityManager.startActivity(TreeActivity::class.java, docPath)
-			}
+		}
 	}
 	
 	
