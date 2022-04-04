@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.csc530.familytree.R
 import com.csc530.familytree.databinding.ActivityMemberDetailsBinding
 import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyMember
@@ -15,6 +16,8 @@ import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.views.FamilyMemberAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.picasso.Picasso
+
 
 class MemberDetailsActivity : AppCompatActivity()
 {
@@ -69,13 +72,17 @@ class MemberDetailsActivity : AppCompatActivity()
 						binding.txtAge.text = "${member.getAge()} years old"
 					else
 						binding.txtAge.text = "-"
-					binding.imgPortrait.setImageURI(member.getImageUri()
-							/*TODO: get user pfp as uri*/)
+					
+					Picasso.get()
+						.load(member.getImageUri())
+						.placeholder(R.drawable.user)
+						.into(binding.imgPortrait)
+					
 					//set up children and partner to display total number
 					binding.txtChildren.text = "${member.children.size} kids"
 					binding.txtPartners.text = "${member.partners.size} partners"
 					
-					binding.txtSex.text = member.sex.name
+					binding.txtSex.text = member.sex.toString()
 					
 					//when the click the text display each child in a recycler view
 					val kids = familyTree.getMembersByID(member.children)

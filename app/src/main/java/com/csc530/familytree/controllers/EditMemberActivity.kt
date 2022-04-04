@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.util.*
@@ -63,7 +64,10 @@ class EditMemberActivity : AppCompatActivity()
 				if(member.getDeathDate() != null)
 					binding.edtDeathDate.setText(member.getDeathDate().toString())
 				//				binding.taOther.setText(member.biography)
-				binding.btnImg.setImageURI(member.getImageUri())
+				Picasso.get()
+					.load(member.getImageUri())
+					.placeholder(R.drawable.user)
+					.into(binding.btnImg)
 			}
 		}
 		else

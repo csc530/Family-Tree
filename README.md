@@ -25,3 +25,4 @@ Big thanks to these for these resource providing their services, images, etc. fo
 - ~~[Block & Block](https://github.com/oss-bandb/GraphView): family tree structure and layouts~~
 - [Balkan Family TreeJS](https://balkan.app/FamilyTreeJS) Family tree view
 - [Termly io](https://termly.io) for my [privacy policy](/../../assignment-tasks/docs/privacy-policy.md)
+- [Picasso](https://square.github.io/picasso/) for image loading

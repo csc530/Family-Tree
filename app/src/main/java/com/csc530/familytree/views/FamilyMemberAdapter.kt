@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.csc530.familytree.R
 import com.csc530.familytree.models.FamilyMember
+import com.squareup.picasso.Picasso
 
 class FamilyMemberAdapter(val content: Context,
                           val members: List<FamilyMember>,
@@ -88,11 +89,14 @@ class FamilyMemberAdapter(val content: Context,
 		val familyMember = members[position]
 		with(holder) {
 			//bind the properties of the family tree to the view
-			image.setImageURI(familyMember.getImageUri())
+			Picasso.get()
+				.load(familyMember.getImageUri())
+				.placeholder(R.drawable.user)
+				.into(image)
 			fullName.text = familyMember.getFullName()
-				itemView.setOnClickListener {
-					itemListener?.invoke(familyMember, it)
-				}
+			itemView.setOnClickListener {
+				itemListener.invoke(familyMember, it)
+			}
 		}
 	}
 }
