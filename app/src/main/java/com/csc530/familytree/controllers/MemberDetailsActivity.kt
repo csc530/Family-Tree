@@ -1,16 +1,13 @@
 package com.csc530.familytree.controllers
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.csc530.familytree.R
 import com.csc530.familytree.databinding.ActivityMemberDetailsBinding
 import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyMember
@@ -73,16 +70,19 @@ class MemberDetailsActivity : AppCompatActivity()
 					else
 						binding.txtAge.text = "-"
 					binding.imgPortrait.setImageURI(member.getImageUri()
-					                                /*TODO: get user pfp as uri*/)
+							/*TODO: get user pfp as uri*/)
 					//set up children and partner to display total number
 					binding.txtChildren.text = "${member.children.size} kids"
 					binding.txtPartners.text = "${member.partners.size} partners"
+					
+					binding.txtSex.text = member.sex.name
+					
 					//when the click the text display each child in a recycler view
 					val kids = familyTree.getMembersByID(member.children)
 					if(kids.isNotEmpty())
-						binding.txtChildren.setOnClickListener {
-							showMembers(kids, "${member.getFullName()}'s Children", docPath)
-						}
+						binding.txtChildren.setOnClickListener(
+								showMembers(kids, "${member.getFullName()}'s Children", docPath)
+						)
 					val partners = familyTree.getMembersByID(member.partners)
 					if(partners.isNotEmpty())
 						binding.txtPartners.setOnClickListener {
@@ -98,17 +98,19 @@ class MemberDetailsActivity : AppCompatActivity()
 	}
 	
 	
-	private fun showMembers(members: List<FamilyMember>, title: String, docPath: String): Unit
+	private fun showMembers(members: List<FamilyMember>, title: String, docPath: String): View.OnClickListener?
 	{
-		val dialog = MaterialAlertDialogBuilder(this)
-		dialog.setTitle(title)
-		val recycler = RecyclerView(this)
-		recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-		recycler.adapter = FamilyMemberAdapter(this, members, toMember(docPath))
-		dialog.setView(recycler)
-		dialog.setNeutralButton("Close") { dialogInterface, _ ->
-			dialogInterface.dismiss()
-		}.show()
+		return View.OnClickListener {
+			val dialog = MaterialAlertDialogBuilder(this)
+			dialog.setTitle(title)
+			val recycler = RecyclerView(this)
+			recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+			recycler.adapter = FamilyMemberAdapter(this, members, toMember(docPath))
+			dialog.setView(recycler)
+			dialog.setNeutralButton("Close") { dialogInterface, _ ->
+				dialogInterface.dismiss()
+			}.show()
+		}
 	}
 	
 	private fun toMember(docPath: String): (FamilyMember, View) -> Unit = { familyMember: FamilyMember, _: View ->

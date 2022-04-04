@@ -102,7 +102,7 @@ data class FamilyMember(
 		val fid = father
 		val gender = sex.name.lowercase(Locale.getDefault())
 		val img = image
-		return Node(id, pid, mid, fid, getFullName(), gender)
+		return Node(id, pid, mid, fid, getFullName(), gender,img)
 	}
 	
 	

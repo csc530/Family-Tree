@@ -58,7 +58,7 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/txtFullName"
-		app:srcCompat="@drawable/groceries" />
+		app:srcCompat="@drawable/user" />
 	
 	<TableLayout
 		android:layout_width="match_parent"
@@ -137,6 +137,30 @@
 				android:textAlignment="center"
 				tools:text="672 years old" />
 		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:paddingEnd="5dp"
+				android:text="Sex"
+				android:textAlignment="textEnd" />
+			
+			<TextView
+				android:id="@+id/txtSex"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="Male" />
+		
+		</TableRow>
+		
 		<TableRow
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"

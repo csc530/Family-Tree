@@ -63,6 +63,7 @@ class EditMemberActivity : AppCompatActivity()
 				if(member.getDeathDate() != null)
 					binding.edtDeathDate.setText(member.getDeathDate().toString())
 				//				binding.taOther.setText(member.biography)
+				binding.btnImg.setImageURI(member.getImageUri())
 			}
 		}
 		else
@@ -100,7 +101,6 @@ class EditMemberActivity : AppCompatActivity()
 	
 	private fun setupImageUpload()
 	{
-		
 		val intent = Intent()
 		intent.apply {
 			action = Intent.ACTION_GET_CONTENT

@@ -5,6 +5,7 @@ var family = new FamilyTree(document.getElementById("tree"), {
     scaleInitial: FamilyTree.match.boundary,
     nodeBinding: {
         field_0: "name",
+        img_0: 'img'
     },
     nodes: JSON.parse(Android.getNodes()),
 });

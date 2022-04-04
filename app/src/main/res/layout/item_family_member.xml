@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 	
 	<ImageView
 		android:id="@+id/imgFamMemberPortrait"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		app:srcCompat="@drawable/user" />
+		android:layout_width="match_parent"
+		android:layout_height="65dp"
+		android:layout_weight="2"
+		android:maxWidth="50dp"
+		android:maxHeight="50dp"
+		app:srcCompat="@drawable/user"
+		tools:layout_conversion_absoluteHeight="50dp"
+		tools:layout_conversion_absoluteWidth="355dp"
+		tools:layout_editor_absoluteX="0dp"
+		tools:layout_editor_absoluteY="0dp" />
 	
 	<TextView
 		android:id="@+id/txtFamMemberName"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_height="65dp"
 		android:layout_weight="1"
-		android:text="TextView" />
+		android:gravity="center|center_vertical"
+		android:textAlignment="center"
+		tools:layout_conversion_absoluteHeight="51dp"
+		tools:layout_conversion_absoluteWidth="56dp"
+		tools:layout_editor_absoluteX="355dp"
+		tools:layout_editor_absoluteY="0dp"
+		tools:text="Marble Docker" />
 </LinearLayout>
