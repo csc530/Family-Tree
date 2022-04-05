@@ -2,8 +2,8 @@ package com.csc530.familytree.controllers
 
 import android.app.DatePickerDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
@@ -105,20 +105,20 @@ class EditMemberActivity : AppCompatActivity()
 	
 	private fun setupImageUpload()
 	{
-		val intent = Intent()
-		intent.apply {
-			action = Intent.ACTION_GET_CONTENT
-			type = Intent.normalizeMimeType("image/*")
+		val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+			if(it == null)
+				return@registerForActivityResult
+			val bitmap = BitmapFactory.decodeFile(it.toString())
+			binding.btnImg.setImageBitmap(bitmap)
 		}
-		
-		val resultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+		val selectLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
 			binding.btnImg.setImageURI(uri)
 			binding.btnImg.tag = uri
 		}
 		
 		binding.btnImg.setOnClickListener {
 			if(intent.resolveActivity(packageManager) != null)
-				resultLauncher.launch("image/*")
+				selectLauncher.launch("image/*")
 		}
 		// * reset uploaded image; when long clicked
 		binding.btnImg.setOnLongClickListener {
@@ -297,6 +297,9 @@ class EditMemberActivity : AppCompatActivity()
 				val oldVersion = familyTree.findMemberByID(memberId)
 				familyTree.members.remove(oldVersion)
 				familyTree.members.add(member)
+				// ? delete old image in fireStorage if it exists
+				if(oldVersion?.image != null)
+					Firebase.storage.getReference(oldVersion.image!!).delete()
 				firebase.document(docPath).update("members", familyTree.members,
 				                                  "lastModified", familyTree.lastModified)
 					.addOnFailureListener { e ->
