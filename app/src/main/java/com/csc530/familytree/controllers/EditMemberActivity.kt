@@ -113,11 +113,18 @@ class EditMemberActivity : AppCompatActivity()
 		
 		val resultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
 			binding.btnImg.setImageURI(uri)
+			binding.btnImg.tag = uri
 		}
 		
 		binding.btnImg.setOnClickListener {
 			if(intent.resolveActivity(packageManager) != null)
 				resultLauncher.launch("image/*")
+		}
+		// * reset uploaded image; when long clicked
+		binding.btnImg.setOnLongClickListener {
+			binding.btnImg.setImageResource(R.drawable.user)
+			binding.btnImg.tag = null
+			true
 		}
 	}
 	
@@ -268,6 +275,62 @@ class EditMemberActivity : AppCompatActivity()
 	
 	private fun uploadToDB(member: FamilyMember, docPath: String, memberId: String?)
 	{
+		if(binding.btnImg.tag == null)
+			uploadMember(member, docPath, memberId)
+		else
+			uploadImage(member, docPath, memberId)
+	}
+	
+	private fun uploadMember(member: FamilyMember, docPath: String, memberId: String?)
+	{
+		firebase.document(docPath).get().addOnSuccessListener {
+			val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
+			
+			// * Update last modified timestamp
+			familyTree.lastModified = Timestamp.now()
+			
+			//? check if they are updating a predefined member in the tree
+			if(memberId != null)
+			{
+				// * keep their memberId when updating/re-uploading them to DB
+				member.id = memberId
+				val oldVersion = familyTree.findMemberByID(memberId)
+				familyTree.members.remove(oldVersion)
+				familyTree.members.add(member)
+				firebase.document(docPath).update("members", familyTree.members,
+				                                  "lastModified", familyTree.lastModified)
+					.addOnFailureListener { e ->
+						Log.w("DB Failure", "Error updating document", e)
+						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+					}
+				// * navigate back to member details
+				finish()
+			}
+			else
+			{
+				//generate a new member Id for them
+				member.id = collection.document().id
+				familyTree.members.add(member)
+				firebase.document(docPath)
+					.update("members", familyTree.members,
+					        "lastModified", familyTree.lastModified)
+					.addOnFailureListener { e ->
+						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+						Log.e("DB Error", e.message ?: e.localizedMessage ?: e.toString())
+					}
+				//navigate back to family tree
+				activityManager.startActivity(TreeActivity::class.java, docPath)
+			}
+		}
+			.addOnFailureListener {
+				Toast.makeText(this, "Could not find family tree, please try again later", Toast.LENGTH_SHORT).show()
+				Log.e("DB Error", it.message ?: it.localizedMessage ?: it.toString())
+				activityManager.backToHome(this)
+			}
+	}
+	
+	private fun uploadImage(member: FamilyMember, docPath: String, memberId: String?)
+	{
 		// * upload image to firebase storage first to get it's uri
 		val storage = Firebase.storage.reference
 		val image = (binding.btnImg.drawable as BitmapDrawable).bitmap
@@ -295,45 +358,7 @@ class EditMemberActivity : AppCompatActivity()
 			.addOnSuccessListener {
 				imageRef.downloadUrl.addOnSuccessListener { uri ->
 					member.image = uri.toString()
-					firebase.document(docPath).get().addOnSuccessListener {
-						val familyTree = it.toObject(FamilyTree::class.javaObjectType)!!
-						
-						// * Update last modified timestamp
-						familyTree.lastModified = Timestamp.now()
-						
-						//? check if they are updating a predefined member in the tree
-						if(memberId != null)
-						{
-							// * keep their memberId when updating/re-uploading them to DB
-							member.id = memberId
-							val oldVersion = familyTree.findMemberByID(memberId)
-							familyTree.members.remove(oldVersion)
-							familyTree.members.add(member)
-							firebase.document(docPath).update("members", familyTree.members,
-							                                  "lastModified", familyTree.lastModified)
-								.addOnFailureListener { e ->
-									Log.w("DB Failure", "Error updating document", e)
-									Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
-								}
-							// * navigate back to member details
-							finish()
-						}
-						else
-						{
-							//generate a new member Id for them
-							member.id = collection.document().id
-							familyTree.members.add(member)
-							firebase.document(docPath)
-								.update("members", familyTree.members,
-								        "lastModified", familyTree.lastModified)
-								.addOnFailureListener { e ->
-									Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
-									Log.e("DB Error", e.message ?: e.localizedMessage ?: e.toString())
-								}
-							//navigate back to family tree
-							activityManager.startActivity(TreeActivity::class.java, docPath)
-						}
-					}
+					uploadMember(member, docPath, memberId)
 				}
 			}
 	}
