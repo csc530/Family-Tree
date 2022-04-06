@@ -9,6 +9,14 @@ class ActivityManager(
 		val context: Context,
 )
 {
+	companion object
+	{
+		fun launchActivity(context: Context, activity: Class<out AppCompatActivity>)
+		{
+			val intent = Intent(context, activity)
+			context.startActivity(intent)
+		}
+	}
 	
 	/**
 	 * Redirects back to homepage

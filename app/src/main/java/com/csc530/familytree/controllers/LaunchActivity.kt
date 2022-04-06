@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.csc530.familytree.databinding.ActivityLaunchBinding
+import com.csc530.familytree.models.ActivityManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -39,7 +40,7 @@ class LaunchActivity : AppCompatActivity()
 		
 		//Switch intents on button click
 		binding.btnNewTree.setOnClickListener {
-			//!!! temporary until I learn to make local saves of family trees
+			//!!! temporary until InfoActivity learn to make local saves of family trees
 			if(auth.currentUser == null)
 				Snackbar.make(this, binding.root, "Please log in or signup to continue", Snackbar.LENGTH_SHORT).show()
 			else
@@ -92,17 +93,10 @@ class LaunchActivity : AppCompatActivity()
 			this.recreate()
 		}
 		
-	}
-	
-	public override fun onStart()
-	{
-		super.onStart()
-		// Check if user is signed in (non-null) and update UI accordingly.
-		val currentUser = auth.currentUser
-		if(currentUser != null)
-		{
-			//TODO: display user infor and related data somewhere
+		binding.btnInfo.setOnClickListener {
+			ActivityManager.launchActivity(this, InfoActivity::class.java)
 		}
+		
 	}
 	
 	

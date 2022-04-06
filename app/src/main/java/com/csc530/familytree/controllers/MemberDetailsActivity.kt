@@ -108,8 +108,7 @@ class MemberDetailsActivity : AppCompatActivity()
 		}
 	}
 	
-	
-	private fun showMembers(members: List<FamilyMember>, title: String, docPath: String): View.OnClickListener?
+	private fun showMembers(members: List<FamilyMember>, title: String, docPath: String): View.OnClickListener
 	{
 		return View.OnClickListener {
 			val dialog = MaterialAlertDialogBuilder(this)
