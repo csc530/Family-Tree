@@ -14,10 +14,6 @@
 			android:exported="false" />
 		
 		<activity
-			android:name=".treeTest"
-			android:exported="false" />
-		
-		<activity
 			android:name=".controllers.EditMemberActivity"
 			android:exported="false" />
 		<activity
