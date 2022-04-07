@@ -16,6 +16,12 @@ class ActivityManager(
 			val intent = Intent(context, activity)
 			context.startActivity(intent)
 		}
+		fun launchActivity(context: Context, activity: Class<out AppCompatActivity>, docPath: String)
+		{
+			val intent = Intent(context, activity)
+			intent.putExtra("docPath", docPath)
+			context.startActivity(intent)
+		}
 	}
 	
 	/**

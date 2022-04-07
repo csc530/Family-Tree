@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -12,11 +13,19 @@ import com.csc530.familytree.models.FamilyTree
 import java.text.DateFormat
 import java.util.*
 
-class FamilyTreeAdapter(val content: Context,
-                        val familyTrees: List<FamilyTree>,
-                        val itemListener: (FamilyTree, View) -> Unit)
+class FamilyTreeAdapter(
+		val context: Context,
+		val familyTrees: List<FamilyTree>,
+		val itemClickListener: FamilyTreeClickListener,
+		val itemDeleteListener: FamilyTreeClickListener,
+		val itemEditListener: FamilyTreeClickListener,
+		)
 	: RecyclerView.Adapter<FamilyTreeAdapter.FamilyTreeViewHolder>()
 {
+	
+fun	interface FamilyTreeClickListener {
+		fun onItemClick(familyTree: FamilyTree, view: View)
+	}
 	
 	inner class FamilyTreeViewHolder(view: View) : RecyclerView.ViewHolder(view)
 	{
@@ -96,8 +105,19 @@ class FamilyTreeAdapter(val content: Context,
 			val date = familyTree.created.toDate()
 			dateCreated.text = "Created: ${DateFormat.getDateTimeInstance().format(date)}"
 			itemView.setOnClickListener {
-				itemListener(familyTree, it)
+				itemClickListener.onItemClick(familyTree, it)
+			}
+			itemView.findViewById<ImageButton>(R.id.imgbtnDelete).setOnClickListener {
+				itemDeleteListener.onItemClick(familyTree, it)
+			}
+			itemView.findViewById<ImageButton>(R.id.imgbtnEdit).setOnClickListener {
+				itemEditListener.onItemClick(familyTree, it)
 			}
 		}
 	}
-}
+	
+	fun getFamilyTree(position: Int): FamilyTree
+	{
+		return familyTrees[position]
+	}
+	}
