@@ -63,8 +63,8 @@ class EditMemberActivity : AppCompatActivity()
 					binding.edtFName.setText(member.firstName)
 					binding.edtLName.setText(member.lastName)
 					binding.sexSpinner.setSelection(member.sex.ordinal)
-					binding.edtBirthDate.setText(member.getBirthDate().toString())
-					binding.edtDeathDate.setText(member.getDeathDate().toString())
+					binding.edtBirthDate.setText("${member.getBirthDate()?:""}")
+					binding.edtDeathDate.setText("${member.getDeathDate()?:""}")
 					Picasso.get()
 						.load(member.getImageUri())
 						.placeholder(R.drawable.user)
@@ -261,7 +261,7 @@ class EditMemberActivity : AppCompatActivity()
 					null
 		
 		// ? check if data is valid
-		if(!validateData(firstName, lastName, birthdate, deathDate, mom, dad))
+		if(!validateData(birthdate, deathDate, mom, dad))
 			return null
 		
 		// ? create family member object and return it
@@ -275,15 +275,13 @@ class EditMemberActivity : AppCompatActivity()
 	/**
 	 * Validate data against what least most amount of data we'll not cause errors when sent to BalkanJSTree
 	 *
-	 * @param firstName First name of the family member to be added
-	 * @param lastName Last name of the family member to be added
 	 * @param birthdate Birthdate of the family member to be added
 	 * @param deathDate Death date of the family member to be added
 	 * @param mom Mom id of the family member to be added
 	 * @param dad Dad id of the family member to be added
 	 * @return True if all the data is valid, false otherwise
 	 */
-	private fun validateData(firstName: String, lastName: String, birthdate: Long?, deathDate: Long?, mom: FamilyMember?, dad: FamilyMember?): Boolean
+	private fun validateData(birthdate: Long?, deathDate: Long?, mom: FamilyMember?, dad: FamilyMember?): Boolean
 	{
 		val birthday: LocalDate? = if(birthdate != null)
 			LocalDate.ofEpochDay(birthdate)
