@@ -37,6 +37,7 @@ class FamilyTree(
 			.replace("\n", "__", true)
 			.replace("\r", "__", true)
 			.replace("\t", "--", true)
+			.trim()
 		return "${safeName}-$creator-${id}"
 	}
 	
