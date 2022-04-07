@@ -36,6 +36,7 @@ class EditMemberActivity : AppCompatActivity()
 	private val firebase: FirebaseFirestore = FirebaseFirestore.getInstance()
 	private val collection = firebase.collection("Trees")
 	private val activityManager = ActivityManager(this)
+	
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		val auth = FirebaseAuth.getInstance()
@@ -46,8 +47,11 @@ class EditMemberActivity : AppCompatActivity()
 		val docPath = intent.getStringExtra("docPath") ?: return activityManager.backToHome()
 		val memberId = intent.getStringExtra("memberId")
 		
+		setupImageUpload()
+		
 		// ? setup spinners
 		val (dadAdapter, momAdapter) = setupParentSpinners(docPath, memberId)
+		
 		// * populate form with current member details if they are updating a member
 		if(memberId != null)
 		{
@@ -59,10 +63,8 @@ class EditMemberActivity : AppCompatActivity()
 					binding.edtFName.setText(member.firstName)
 					binding.edtLName.setText(member.lastName)
 					binding.sexSpinner.setSelection(member.sex.ordinal)
-					if(member.getBirthDate() != null)
-						binding.edtBirthDate.setText(member.getBirthDate().toString())
-					if(member.getDeathDate() != null)
-						binding.edtDeathDate.setText(member.getDeathDate().toString())
+					binding.edtBirthDate.setText(member.getBirthDate().toString())
+					binding.edtDeathDate.setText(member.getDeathDate().toString())
 					Picasso.get()
 						.load(member.getImageUri())
 						.placeholder(R.drawable.user)
@@ -72,12 +74,17 @@ class EditMemberActivity : AppCompatActivity()
 		else
 			binding.txtEdtTitle.text = resources.getText(R.string.add_member)
 		
-		setupImageUpload()
-		
 		binding.btnCncl.setOnClickListener { finish() }
 		
-		//? show datepicker when birth or date date is selected
+		//? show datepicker when birth or date date is selected (gimmicky on click listener using focus change)
 		binding.edtDeathDate.setOnFocusChangeListener { deathDate, hasFocus ->
+			/*
+			 * when the edit text is clicked take focus away and disable it
+			 * to mitigate the chance to input invalid data
+			 * and then show the date picker
+			 * When the datepicker is closed, the focus is returned to the edit text
+			 * and it can be "clicked" again
+			 */
 			deathDate.isEnabled = !hasFocus
 			if(hasFocus)
 				setDate(deathDate as EditText, "Death date")
@@ -105,17 +112,25 @@ class EditMemberActivity : AppCompatActivity()
 		}
 	}
 	
+	/**
+	 * Setup image upload.
+	 * Initializes the result launcher for the file chooser Intent
+	 * This needs to be done before onCreate or an error is thrown
+	 */
 	private fun setupImageUpload()
 	{
+		/**	 * Launches the file chooser Intent and handles the selected uri if any		 */
 		val resultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
 			binding.btnImg.setImageURI(uri)
 			binding.btnImg.tag = uri
 		}
 		
+		/**	 * Launches the file chooser Intent on the family member imageView		 */
 		binding.btnImg.setOnClickListener {
 			if(intent.resolveActivity(packageManager) != null)
 				resultLauncher.launch("image/*")
 		}
+		
 		// * reset uploaded image; when long clicked
 		binding.btnImg.setOnLongClickListener {
 			binding.btnImg.setImageResource(R.drawable.user)
@@ -124,7 +139,15 @@ class EditMemberActivity : AppCompatActivity()
 		}
 	}
 	
-	
+	/**
+	 * Setup parent spinners.
+	 * Adds all the family members in the family tree to each spinner and filters out any invalid parents
+	 * from the mother and father adapter, that could cause errors
+	 *
+	 * @param docPath Document path to current family tree
+	 * @param memberId Member id of currently edited member, if any
+	 * @return a pair of adapters for the spinners, one for the mother and one for the father
+	 */
 	private fun setupParentSpinners(docPath: String, memberId: String?): Pair<ArrayAdapter<FamilyMember>, ArrayAdapter<FamilyMember>>
 	{
 		//? setup parent spinners
@@ -198,8 +221,16 @@ class EditMemberActivity : AppCompatActivity()
 		return Pair(dadAdapter, momAdapter)
 	}
 	
+	/**
+	 * Parse data of family member from the activity form and return it as a FamilyMember object
+	 *
+	 * @param motherAdapter Mother adapter for the mom spinner
+	 * @param fatherAdapter Father adapter for the dad spinner
+	 * @return [FamilyMember] or null if any of the data is invalid
+	 */
 	private fun parseData(motherAdapter: ArrayAdapter<FamilyMember>, fatherAdapter: ArrayAdapter<FamilyMember>): FamilyMember?
 	{
+		//? get data from form
 		val firstName = binding.edtFName.text.toString()
 		val lastName = binding.edtLName.text.toString()
 		val sex =
@@ -229,18 +260,29 @@ class EditMemberActivity : AppCompatActivity()
 				else
 					null
 		
-		
+		// ? check if data is valid
 		if(!validateData(firstName, lastName, birthdate, deathDate, mom, dad))
 			return null
 		
+		// ? create family member object and return it
 		val member = FamilyMember(firstName, lastName, birthdate, deathDate, sex = sex)
-		
 		member.mother = mom?.id
 		member.father = dad?.id
 		return member
 		
 	}
 	
+	/**
+	 * Validate data against what least most amount of data we'll not cause errors when sent to BalkanJSTree
+	 *
+	 * @param firstName First name of the family member to be added
+	 * @param lastName Last name of the family member to be added
+	 * @param birthdate Birthdate of the family member to be added
+	 * @param deathDate Death date of the family member to be added
+	 * @param mom Mom id of the family member to be added
+	 * @param dad Dad id of the family member to be added
+	 * @return True if all the data is valid, false otherwise
+	 */
 	private fun validateData(firstName: String, lastName: String, birthdate: Long?, deathDate: Long?, mom: FamilyMember?, dad: FamilyMember?): Boolean
 	{
 		val birthday: LocalDate? = if(birthdate != null)
@@ -253,11 +295,13 @@ class EditMemberActivity : AppCompatActivity()
 			null
 		return when
 		{
+			// * birthday must be before deathday
 			birthday != null && deathday != null && birthday.isAfter(deathday) ->
 			{
 				Toast.makeText(this, "Birthdate cannot be after death date", Toast.LENGTH_SHORT).show()
 				false
 			}
+			// * must have both parents or neither
 			mom != null && dad == null || dad != null && mom == null           ->
 			{
 				Toast.makeText(this, "Both parents must be selected or none at all", Toast.LENGTH_SHORT).show()
@@ -267,14 +311,27 @@ class EditMemberActivity : AppCompatActivity()
 		}
 	}
 	
+	/**
+	 * Add a new family member to the family tree
+	 *
+	 * @param member Family member to be added
+	 */
 	private fun uploadToDB(member: FamilyMember, docPath: String, memberId: String?)
 	{
+		// * check if they are uploading an image as well
 		if(binding.btnImg.tag == null)
 			uploadMember(member, docPath, memberId)
 		else
 			uploadImage(member, docPath, memberId)
 	}
 	
+	/**
+	 * Upload member to the database
+	 *
+	 * @param member Member to be added
+	 * @param docPath Document path to the family Tree
+	 * @param memberId Member id of the member to be updated, null if creating a new member
+	 */
 	private fun uploadMember(member: FamilyMember, docPath: String, memberId: String?)
 	{
 		firebase.document(docPath).get().addOnSuccessListener {
@@ -288,13 +345,16 @@ class EditMemberActivity : AppCompatActivity()
 			{
 				// * keep their memberId when updating/re-uploading them to DB
 				member.id = memberId
+				// ? update the member in the tree; out with the old in with the new
 				val oldVersion = familyTree.findMemberByID(memberId)
 				familyTree.members.remove(oldVersion)
 				familyTree.members.add(member)
-				// ? delete old image in fireStorage if it exists
-				if(oldVersion?.image != null)
+				
+				// ? delete old image in fireStorage if it exists and upload new one or deleting it
+				if(oldVersion?.image != null && oldVersion.image != member.image)
 					Firebase.storage.getReference(oldVersion.image!!).delete()
-				// * delete old member document; by (unique) id (in case the name and hence forth the doc id changed
+				
+				// * update the member in the tree
 				firebase.document(docPath).update("lastModified", familyTree.lastModified,
 				                                  "members", familyTree.members)
 					.addOnSuccessListener {
@@ -303,15 +363,15 @@ class EditMemberActivity : AppCompatActivity()
 						Toast.makeText(this, "Member updated", Toast.LENGTH_SHORT).show()
 					}
 					.addOnFailureListener { e ->
-						binding.btnSubmit.isEnabled = true
-						Log.w("DB Failure", "Error updating document", e)
-						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+						dbError(e)
 					}
 			}
 			else
 			{
-				//generate a new member Id for them
+				// ? generate a new member Id and assign it to the member
 				member.id = collection.document().id
+				
+				// ? add the member to the tree
 				familyTree.members.add(member)
 				firebase.document(docPath).update("lastModified", familyTree.lastModified,
 				                                  "members", familyTree.members)
@@ -321,29 +381,53 @@ class EditMemberActivity : AppCompatActivity()
 						finish()
 					}
 					.addOnFailureListener { e ->
-						binding.btnSubmit.isEnabled = true
-						Log.w("DB Failure", "Error updating document", e)
-						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+						dbError(e, "Failed to add member")
 					}
 			}
 		}
 			.addOnFailureListener { e ->
-				binding.btnSubmit.isEnabled = true
-				Log.w("DB Failure", "Error getting document", e)
-				Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+				dbError(e, "Failed to get family tree")
 			}
 	}
 	
+	/**
+	 * Database error handler
+	 * shows a toast with the error message to user and logs the error
+	 *
+	 * @param e Exception thrown
+	 * @param msg Message to be shown to user
+	 */
+	private fun dbError(e: Exception, msg: String = "Please try again")
+	{
+		binding.btnSubmit.isEnabled = true
+		Log.w("DB Failure", msg, e)
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+	}
+	
+	/**
+	 * Upload image to fireStorage
+	 *
+	 * @param member Member to be added and uploaded
+	 * @param docPath document path to the family tree
+	 * @param memberId Member id of the member to be updated, null if creating a new member
+	 */
 	private fun uploadImage(member: FamilyMember, docPath: String, memberId: String?)
 	{
+		// * set the member id
+		//!! critical for naming and retrieving the image from fireStorage
+		if(memberId != null)
+			member.id = memberId
+		else
+			member.id = collection.document().id
+		
 		// * upload image to firebase storage first to get it's uri
 		val storage = Firebase.storage.reference
 		val image = (binding.btnImg.drawable as BitmapDrawable).bitmap
 		val imageRef: StorageReference
-		val imageName = "Family-member-images/${member.getFullName()}-${member.id}"
+		val imageName = "Family-member-images/${member.id}"
 		val baos = ByteArrayOutputStream()
-		// To compress the image to a desired webp format requires the higher than desired SDK minimum for the app
-		// so it's separated into a conditional
+		//  * To compress the image to a desired webp format requires the higher than desired SDK minimum for the app
+		//  * so it's separated into a conditional
 		imageRef = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
 		{
 			image.compress(Bitmap.CompressFormat.WEBP_LOSSY, 100, baos)
@@ -355,28 +439,39 @@ class EditMemberActivity : AppCompatActivity()
 			storage.child("$imageName.png")
 		}
 		
-		val uploadTask = imageRef.putBytes(baos.toByteArray())
-		uploadTask
+		// * upload the image to firebase storage
+		imageRef.putBytes(baos.toByteArray())
 			.addOnFailureListener {
-				Log.e("Image Upload", "Failed to upload image", it)
-				binding.btnSubmit.isEnabled = true
-				Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
+				dbError(it, "Failed to upload image")
 			}
 			.addOnSuccessListener {
+				// * get the image uri and set it to the member's image field
 				imageRef.downloadUrl.addOnSuccessListener { uri ->
 					member.image = uri.toString()
-					uploadMember(member, docPath, memberId)
+					//!! used member's id (member.id) to keep the member coherent with the firebase storage image name
+					// ! and potentially prevent error retrieving image
+					uploadMember(member, docPath, member.id)
 				}
 			}
 	}
 	
-	
+	/**
+	 * onclick listener to display datepickers
+	 *
+	 * @param value The [EditText] to be edited with the datepicker's selected date
+	 * @param title The title to display for datepicker dialog
+	 */
 	private fun setDate(value: EditText, title: String)
 	{
 		val date = DatePickerDialog(this)
+		// * set the datepicker to the current date
 		date.updateDate(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
+		// * set the datepicker's title
 		date.setTitle(title)
+		// ? Make max date to today's date
 		date.datePicker.maxDate = Date().toInstant().toEpochMilli()
+		
+		// ? When confirm is clicked update the given editText with the selected date String
 		date.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm") { _, _ ->
 			val datepicker = date.datePicker
 			if(datepicker.month !in 1..13 && datepicker.dayOfMonth < 1)
