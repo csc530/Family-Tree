@@ -81,6 +81,9 @@ class LoadTreeActivity : AppCompatActivity()
 								Log.e("Delete", it.message ?: it.localizedMessage, it)
 							}
 					}
+					.setNegativeButton("No") { _, _ ->
+						Snackbar.make(binding.root, "Deletion Cancelled", Snackbar.LENGTH_SHORT).show()
+					}
 					.show()
 			}
 	}

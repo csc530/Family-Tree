@@ -19,6 +19,22 @@ class FamilyTree(
 		populateRelationships()
 	}
 	
+	fun generateDocPath(): String
+	{
+		if(id.isNullOrEmpty())
+			throw Exception("FamilyTree has not been saved to the database yet")
+		val safeName = this.name.replace("/", "", true).replace("\\", "", true)
+		return "Trees/$safeName-${creator}-${id}"
+	}
+	
+	fun generateDocId(): String
+	{
+		if(id.isNullOrEmpty())
+			throw Exception("FamilyTree has not been saved to the database yet")
+		val safeName = this.name.replace("/", "", true).replace("\\", "", true)
+		return "${safeName}-$creator-${id}"
+	}
+	
 	fun populateRelationships()
 	{
 		populateChildren()
