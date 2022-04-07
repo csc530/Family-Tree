@@ -32,6 +32,7 @@ data class FamilyMember(
 	{
 		const val NULL_ID = "-1 null nope naddadada-ID"
 	}
+	//TODO add exclude set to prevent the errors in the console
 	
 	@get:Exclude
 	@field:Exclude
