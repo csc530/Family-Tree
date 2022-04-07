@@ -3,7 +3,6 @@ package com.csc530.familytree.controllers
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
@@ -108,20 +107,14 @@ class EditMemberActivity : AppCompatActivity()
 	
 	private fun setupImageUpload()
 	{
-		val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) {
-			if(it == null)
-				return@registerForActivityResult
-			val bitmap = BitmapFactory.decodeFile(it.toString())
-			binding.btnImg.setImageBitmap(bitmap)
-		}
-		val selectLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+		val resultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
 			binding.btnImg.setImageURI(uri)
 			binding.btnImg.tag = uri
 		}
 		
 		binding.btnImg.setOnClickListener {
 			if(intent.resolveActivity(packageManager) != null)
-				selectLauncher.launch("image/*")
+				resultLauncher.launch("image/*")
 		}
 		// * reset uploaded image; when long clicked
 		binding.btnImg.setOnLongClickListener {
@@ -237,7 +230,6 @@ class EditMemberActivity : AppCompatActivity()
 					null
 		
 		
-		//		val biography = binding.taOther.text.toString()
 		if(!validateData(firstName, lastName, birthdate, deathDate, mom, dad))
 			return null
 		
