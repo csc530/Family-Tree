@@ -26,6 +26,10 @@
 	<color name="Orange_Yellow_Crayola">#FFD972</color>
 	<color name="Sunglow">#FFC933</color>
 	<color name="Goldenrod">#E0A500</color>
+	
+	<color name="backgroundGreen">#38814C</color>
+	<color name="hint">#BFFFFFFF</color>
+	
 	<!--* FROM: https://material.io/design/color/the-color-system.html#tools-for-picking-colors-->
 	<color name="a100">#B9F6CA</color>
 	<color name="a200">#69F0AE</color>

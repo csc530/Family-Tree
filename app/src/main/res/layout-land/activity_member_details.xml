@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:padding="@dimen/containerPadding"
+                                                   tools:context=".controllers.MemberDetailsActivity">
+	
+	<TextView
+		android:id="@+id/txtFullName"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAlignment="center"
+		android:textSize="@dimen/titleSize"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.526"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="Christofer Columbine" />
+	
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/linearLayout"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent">
+		
+		<Button
+			android:id="@+id/btnClose"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/close"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toStartOf="@+id/btnEdit"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent" />
+		
+		<Button
+			android:id="@+id/btnEdit"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/edit"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toEndOf="@+id/btnClose"
+			app:layout_constraintTop_toTopOf="parent" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
+	
+	<ImageView
+		android:id="@+id/imgPortrait"
+		android:layout_width="wrap_content"
+		android:layout_height="100dp"
+		android:layout_marginTop="25dp"
+		android:contentDescription="@string/familyMember_image_description"
+		android:scaleType="centerInside"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/txtFullName"
+		app:srcCompat="@drawable/user" />
+	
+	<TableLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:orientation="vertical"
+		android:visibility="visible"
+		app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/imgPortrait">
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:orientation="vertical">
+			
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/birthday"
+				android:textAlignment="textEnd" />
+			
+			<TextView
+				android:id="@+id/txtBirthday"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="March 56 3242" />
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/deathday"
+				android:textAlignment="textEnd" />
+			
+			<TextView
+				android:id="@+id/txtDeathday"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="-" />
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:orientation="vertical">
+			
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/age"
+				android:textAlignment="textEnd" />
+			
+			<TextView
+				android:id="@+id/txtAge"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="672 years old" />
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/sex_no_colon"
+				android:textAlignment="textEnd" />
+			
+			<TextView
+				android:id="@+id/txtSex"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="Male" />
+		
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/partners"
+				android:textAlignment="textEnd" />
+			
+			<TextView
+				android:id="@+id/txtPartners"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="Patricya Kolan" />
+		
+		</TableRow>
+		
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center">
+			
+			
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/children"
+				android:textAlignment="textEnd" />
+			
+			<TextView
+				android:id="@+id/txtChildren"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="2"
+				android:textAlignment="center"
+				tools:text="None" />
+		
+		</TableRow>
+	
+	</TableLayout>
+	
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/fabDelete"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:clickable="true"
+		android:contentDescription="@string/delete_description"
+		app:backgroundTint="#EF5350"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@android:drawable/ic_delete" />
+</androidx.constraintlayout.widget.ConstraintLayout>

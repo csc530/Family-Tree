@@ -15,13 +15,16 @@
         <entry key="app/src/main/res/drawable/previous_back.xml" value="0.2885" />
         <entry key="app/src/main/res/drawable/refresh.xml" value="0.1215" />
         <entry key="app/src/main/res/drawable/tree_border.xml" value="0.291" />
+        <entry key="app/src/main/res/layout-land/activity_edit_member.xml" value="0.40625" />
+        <entry key="app/src/main/res/layout-land/activity_launch.xml" value="0.40625" />
+        <entry key="app/src/main/res/layout-land/activity_member_details.xml" value="0.40625" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_edit_details.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_edit_member.xml" value="0.1362397820163488" />
         <entry key="app/src/main/res/layout/activity_info.xml" value="0.35520833333333335" />
         <entry key="app/src/main/res/layout/activity_launch.xml" value="0.35572916666666665" />
         <entry key="app/src/main/res/layout/activity_load_tree.xml" value="0.1519756838905775" />
-        <entry key="app/src/main/res/layout/activity_member_details.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/activity_member_details.xml" value="0.40625" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.35625" />
         <entry key="app/src/main/res/layout/activity_tree.xml" value="0.32314814814814813" />
         <entry key="app/src/main/res/layout/activity_tree_test.xml" value="0.35625" />
