@@ -1,12 +1,15 @@
 package com.csc530.familytree.models
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Exclude
 import com.google.gson.Gson
 
 class FamilyTree(
 		var name: String = "",
 		var creator: String = "",
 		var contributors: Array<String>? = null,
+		@Exclude
+		@get:Exclude
 		var members: ArrayList<FamilyMember> = ArrayList<FamilyMember>(),
 		var created: Timestamp = Timestamp.now(),
 		var lastModified: Timestamp = Timestamp.now(),
@@ -17,6 +20,11 @@ class FamilyTree(
 	init
 	{
 		populateRelationships()
+	}
+	
+	fun getFamilyMembers(): Int
+	{
+		return members.size
 	}
 	
 	/**
@@ -48,15 +56,17 @@ class FamilyTree(
 	{
 		if(id.isNullOrEmpty())
 			throw Exception("FamilyTree has not been saved to the database yet")
-		val safeName = this.name.replace("/", "", true).replace("\\", "", true)
-		return "Trees/$safeName-${creator}-${id}"
+		return "Trees/" + generateDocId()
 	}
 	
 	fun generateDocId(): String
 	{
 		if(id.isNullOrEmpty())
 			throw Exception("FamilyTree has not been saved to the database yet")
-		val safeName = this.name.replace("/", "", true).replace("\\", "", true)
+		val safeName = this.name
+			.replace("/", "", true)
+			.replace("\\", "", true)
+			.replace(" ", "_", true)
 		return "${safeName}-$creator-${id}"
 	}
 	
@@ -132,5 +142,6 @@ class FamilyTree(
 					member.partners.add(child.mother ?: continue)
 			}
 	}
+	
 	
 }
