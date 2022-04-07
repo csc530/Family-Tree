@@ -13,7 +13,7 @@
 		<item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
 		<!-- Customize your theme here. -->
 		
-		<item name="android:background">@color/a100</item>
+		<item name="android:colorBackground">@color/a100</item>
 		<!--* font changes -->
 		<item name="fontFamily">sans-serif-medium</item>
 		<item name="android:letterSpacing">.01</item>
@@ -23,7 +23,11 @@
 		<item name="windowNoTitle">true</item>
 		<item name="windowActionBar">false</item>
 		<item name="windowActionBarOverlay">false</item>
-		<!--TODO: Add style to generalize a large font size and all caps for text-->
+		
+		<!--* Toasts-->
+		<item name="backgroundColor">@color/a100</item>
+		<item name="color">@color/black</item>
+	
 	</style>
 
 </resources>

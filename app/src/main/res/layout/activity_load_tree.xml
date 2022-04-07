@@ -12,11 +12,11 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="5dp"
-		android:layout_marginTop="5dp"
+		android:background="#00FFFFFF"
 		android:clickable="true"
 		app:fabSize="auto"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
 		app:maxImageSize="30dp"
 		app:srcCompat="@drawable/back" />
 	
@@ -41,6 +41,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:text="Select a family tree"
+		android:textSize="@dimen/titleSize"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
