@@ -45,7 +45,7 @@ data class FamilyMember(
 	@Exclude
 	fun getImageUri(): Uri?
 	{
-		return Uri.parse(image?: return null)
+		return Uri.parse(image ?: return null)
 	}
 	
 	override fun toString(): String
@@ -103,12 +103,21 @@ data class FamilyMember(
 		val fid = father
 		val gender = sex.name.lowercase(Locale.getDefault())
 		val img = image
-		return Node(id, pid, mid, fid, getFullName(), gender,img)
+		return Node(id, pid, mid, fid, getFullName(), gender, img)
 	}
 	
 	
 	fun getFullName(): String
 	{
 		return "$firstName $lastName".trim()
+	}
+	
+	fun generateDocId(): String
+	{
+		val safeName = getFullName()
+			.replace(' ', '_')
+			.replace("/", "", true)
+			.replace("\\", "", true)
+		return "$safeName-$id"
 	}
 }

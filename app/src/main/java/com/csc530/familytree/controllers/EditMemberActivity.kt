@@ -300,29 +300,50 @@ class EditMemberActivity : AppCompatActivity()
 				// ? delete old image in fireStorage if it exists
 				if(oldVersion?.image != null)
 					Firebase.storage.getReference(oldVersion.image!!).delete()
-				firebase.document(docPath).update("members", familyTree.members,
-				                                  "lastModified", familyTree.lastModified)
-					.addOnFailureListener { e ->
-						Log.w("DB Failure", "Error updating document", e)
-						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+				// * can't be null as this member is added above
+				val memberPath = familyTree.generateDocPath(member)!!
+				firebase.document(memberPath).set(member)
+					.addOnSuccessListener {
+						firebase.document(docPath).update("lastModified", familyTree.lastModified)
+							.addOnSuccessListener {
+								// * navigate back to member details; only when db update is totally successful
+								finish()
+							}
+							.addOnFailureListener { e ->
+								Log.w("DB Failure", "Error updating document", e)
+								Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+							}
+						Toast.makeText(this, "Member updated", Toast.LENGTH_SHORT).show()
+						finish()
 					}
-				// * navigate back to member details
-				finish()
+					.addOnFailureListener {
+						Toast.makeText(this, "Failed to update member", Toast.LENGTH_SHORT).show()
+					}
 			}
 			else
 			{
 				//generate a new member Id for them
 				member.id = collection.document().id
 				familyTree.members.add(member)
-				firebase.document(docPath)
-					.update("members", familyTree.members,
-					        "lastModified", familyTree.lastModified)
-					.addOnFailureListener { e ->
-						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
-						Log.e("DB Error", e.message ?: e.localizedMessage ?: e.toString())
+				// * can't be null as this member is added above
+				val memberPath = familyTree.generateDocPath(member)!!
+				firebase.document(memberPath).set(member)
+					.addOnSuccessListener {
+						firebase.document(docPath).update("lastModified", familyTree.lastModified)
+							.addOnSuccessListener {
+								// * navigate back to member details; only when db update is totally successful
+								finish()
+							}
+							.addOnFailureListener { e ->
+								Log.w("DB Failure", "Error updating document", e)
+								Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+							}
+						Toast.makeText(this, "Member added", Toast.LENGTH_SHORT).show()
+						finish()
 					}
-				//navigate back to family tree
-				activityManager.startActivity(TreeActivity::class.java, docPath)
+					.addOnFailureListener {
+						Toast.makeText(this, "Failed to add member", Toast.LENGTH_SHORT).show()
+					}
 			}
 		}
 			.addOnFailureListener {

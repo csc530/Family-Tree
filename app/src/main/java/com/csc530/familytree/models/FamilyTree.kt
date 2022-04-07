@@ -19,6 +19,31 @@ class FamilyTree(
 		populateRelationships()
 	}
 	
+	/**
+	 * Generate doc path to the family member within the the family tree
+	 *
+	 * @param familyMemberId Family member id to create a path to
+	 * @return null if the family member is not found with the tree, otherwise the path to the family member is returned
+	 */
+	fun generateDocPath(familyMemberId: String): String?
+	{
+		val familyMember = members.find { it.id == familyMemberId }
+		return if(familyMember == null) null
+		else
+			generateDocPath() + "/members/" + familyMember.generateDocId()
+	}
+	
+	/**
+	 * Generate doc path.
+	 *
+	 * @param familyMember Family member to create a path to
+	 * @return null if the family member is not found with the tree, otherwise the path to the family member is returned
+	 */
+	fun generateDocPath(familyMember: FamilyMember): String?
+	{
+		return generateDocPath(familyMember.id ?: return null)
+	}
+	
 	fun generateDocPath(): String
 	{
 		if(id.isNullOrEmpty())
