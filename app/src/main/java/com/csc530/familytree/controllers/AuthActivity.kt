@@ -5,15 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.csc530.familytree.databinding.ActivityAuthBinding
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.firebase.ui.auth.util.ExtraConstants
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ActionCodeSettings
-import com.google.firebase.auth.FirebaseAuth
 
 class AuthActivity : AppCompatActivity()
 {
@@ -23,60 +19,25 @@ class AuthActivity : AppCompatActivity()
 			registerForActivityResult(FirebaseAuthUIActivityResultContract()) { res ->
 				this.onSignInResult(res)
 			}
-	private lateinit var binding: ActivityAuthBinding
+	
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
 		/* ? The prebuilt login flow */
-		val actionCodeSettings = ActionCodeSettings.newBuilder()
-			.setAndroidPackageName(
-					/* yourPackageName= */
-					"com.csc530.familytree",
-					/* installIfNotAvailable= */
-					true,
-					/* minimumVersion= */
-					null)
-			.setHandleCodeInApp(true) // This must be set to true
-			.setUrl("https://google.com") // This URL needs to be whitelisted
-			.build()
 		// Choose authentication providers
 		val providers = arrayListOf(
 				AuthUI.IdpConfig.EmailBuilder()
-//					.enableEmailLinkSignIn()
-//					.setActionCodeSettings(actionCodeSettings)
 					.build(),
-				//			AuthUI.IdpConfig.PhoneBuilder().build(),
+				//AuthUI.IdpConfig.PhoneBuilder().build(),
 				AuthUI.IdpConfig.GoogleBuilder().build(),
-				//			AuthUI.IdpConfig.FacebookBuilder().build(),
-				//			AuthUI.IdpConfig.TwitterBuilder().build()
 		)
 		
-		lateinit var signInIntent: Intent
 		// Create and launch sign-in intent
-		if(AuthUI.canHandleIntent(intent))
-		{
-			val extras = intent.extras ?: return
-			val link = extras.getString(ExtraConstants.EMAIL_LINK_SIGN_IN)
-			if(link != null)
-			{
-				signInIntent = AuthUI.getInstance()
-					.createSignInIntentBuilder()
-					.setEmailLink(link)
-					.setAvailableProviders(providers)
-					.build()
-				signInLauncher.launch(signInIntent)
-			}
-		}
-		else
-			signInIntent = AuthUI.getInstance()
-				.createSignInIntentBuilder()
-				.setAvailableProviders(providers)
-				.build()
+		val signInIntent: Intent = AuthUI.getInstance()
+			.createSignInIntentBuilder()
+			.setAvailableProviders(providers)
+			.build()
 		signInLauncher.launch(signInIntent)
-		/*
-			TODO: add email link for password-less sign in authentication
-			https://firebase.google.com/docs/auth/android/email-link-auth?authuser=2#send_an_authentication_link_to_the_users_email_address
-		*/
 		
 	}
 	
@@ -90,70 +51,34 @@ class AuthActivity : AppCompatActivity()
 		if(result.resultCode == RESULT_OK)
 		{
 			// Successfully signed in
+			finish()
 			startActivity(Intent(this, LaunchActivity::class.java))
 		}
-		else
+		else // Sign in failed.
 		{
-			// Sign in failed.
-			// If response is null the user canceled the sign-in flow using the back button.
+			// * If response is null the user canceled the sign-in flow using the back button.
 			if(response == null)
 				startActivity(Intent(this, LaunchActivity::class.java))
-			// Otherwise check response.getError().getErrorCode() and handle the error.
+			// * Otherwise check response.getError().getErrorCode() and handle the error.
 			else
 			{
-				// * not null cuz as response not null and it wasn't successfully thus must have error
+				// * not null cuz as response is not null and it wasn't successfully thus must have error
 				val msg = when(response.error!!.errorCode)
 				          {
-					          ErrorCodes.ANONYMOUS_UPGRADE_MERGE_CONFLICT          ->
-					          {
-						          TODO()
-					          }
-					          ErrorCodes.DEVELOPER_ERROR                           ->
-					          {
-						          "Error, check the play store for updates"
-					          }
-					          ErrorCodes.EMAIL_LINK_CROSS_DEVICE_LINKING_ERROR     ->
-					          {
-						          
-						         TODO()
-					          }
-					          ErrorCodes.EMAIL_LINK_DIFFERENT_ANONYMOUS_USER_ERROR ->
-					          {
-						          TODO()
-					          }
-					          ErrorCodes.EMAIL_LINK_PROMPT_FOR_EMAIL_ERROR         ->
-					          {
-						          TODO()
-					          }
-					          ErrorCodes.EMAIL_LINK_WRONG_DEVICE_ERROR             ->
-					          {
-						          TODO()
-					          }
-					          ErrorCodes.EMAIL_MISMATCH_ERROR                      ->
-					          {
-						          TODO()
-					          }
-					          ErrorCodes.ERROR_GENERIC_IDP_RECOVERABLE_ERROR       ->
-					          {
-						          TODO()
-					          }
-					          ErrorCodes.ERROR_USER_DISABLED                       ->
-					          {
-						          TODO()
-					          }
-					          ErrorCodes.INVALID_EMAIL_LINK_ERROR                  -> "This sign in link is no longer valid"
-					          ErrorCodes.NO_NETWORK                                ->
-					          {
-						          "Poor network connection."
-					          }
-					          ErrorCodes.PLAY_SERVICES_UPDATE_CANCELLED            -> "Play services update required"
-					          ErrorCodes.PROVIDER_ERROR                            -> "Login provider error."
-					          ErrorCodes.UNKNOWN_ERROR                             -> "Error"
-					          else                                                 -> "ERROR."
+					          ErrorCodes.DEVELOPER_ERROR                   -> "Error, check the play store for updates"
+					          ErrorCodes.EMAIL_LINK_PROMPT_FOR_EMAIL_ERROR -> "Please enter your email"
+					          ErrorCodes.EMAIL_LINK_WRONG_DEVICE_ERROR     -> "Wrong device, please sign in with the correct device using the email link"
+					          ErrorCodes.EMAIL_MISMATCH_ERROR              -> "Email mismatch, please verify your email"
+					          ErrorCodes.ERROR_USER_DISABLED               -> "Your account has been disabled, please contact support"
+					          ErrorCodes.INVALID_EMAIL_LINK_ERROR          -> "This sign in link is no longer valid"
+					          ErrorCodes.NO_NETWORK                        -> "Poor network connection."
+					          ErrorCodes.PLAY_SERVICES_UPDATE_CANCELLED    -> "Play services update required"
+					          ErrorCodes.PROVIDER_ERROR                    -> "Login provider error."
+					          ErrorCodes.UNKNOWN_ERROR                     -> "Error"
+					          else                                         -> "ERROR"
 				          } + " Please try again later."
 				Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-				println(response.error)
-				Log.e("3rd-party login", response.error.toString())
+				Log.e("AuthActivity", msg, response.error)
 			}
 		}
 	}
