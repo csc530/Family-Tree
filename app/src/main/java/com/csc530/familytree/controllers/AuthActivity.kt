@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.csc530.familytree.R
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
@@ -36,6 +37,7 @@ class AuthActivity : AppCompatActivity()
 		val signInIntent: Intent = AuthUI.getInstance()
 			.createSignInIntentBuilder()
 			.setAvailableProviders(providers)
+			.setLogo(R.drawable.family_tree)
 			.build()
 		signInLauncher.launch(signInIntent)
 		
