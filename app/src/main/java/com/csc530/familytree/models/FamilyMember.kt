@@ -111,12 +111,4 @@ data class FamilyMember(
 		return "$firstName $lastName".trim()
 	}
 	
-	fun generateDocId(): String
-	{
-		val safeName = getFullName()
-			.replace(' ', '_')
-			.replace("/", "", true)
-			.replace("\\", "", true)
-		return "$safeName-$id"
-	}
 }

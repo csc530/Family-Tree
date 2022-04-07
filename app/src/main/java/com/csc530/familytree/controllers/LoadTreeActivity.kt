@@ -48,15 +48,15 @@ class LoadTreeActivity : AppCompatActivity()
 							Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show()
 						else
 						{
+							val db = FirebaseFirestore.getInstance().collection("Trees")
+							
 							// ? Delete old document with unchanged name
-							val db = FirebaseFirestore.getInstance()
-								.collection("Trees")
-							db.document(familyTree.generateDocId())
-								.delete()
+							db.document(familyTree.generateDocId()).delete()
+							
 							// ? Create new document with the changed name
 							familyTree.name = input.text.toString()
-							db.document(familyTree.generateDocId())
-								.set(familyTree)
+							db.document(familyTree.generateDocId()).set(familyTree)
+							
 							Snackbar.make(view, "Name changed", Snackbar.LENGTH_LONG).show()
 						}
 					}
@@ -82,25 +82,14 @@ class LoadTreeActivity : AppCompatActivity()
 				AlertDialog.Builder(this)
 					.setTitle("Are you sure you want to delete ${familyTree.name}?")
 					.setPositiveButton("Yes") { _, _ ->
-						val firestore = FirebaseFirestore.getInstance()
-						firestore.collection("$docPath/members").get()
-							.addOnSuccessListener { documents ->
-								
-								// ? Delete all members, from sub-collection
-								for(document in documents)
-									document.reference.delete()
-								
-								// ? Delete family tree, document (parent path of members collection)
-								firestore.document(docPath).delete()
-									.addOnSuccessListener {
-										Snackbar.make(binding.root, "Successfully Deleted", Snackbar.LENGTH_SHORT).show()
-									}
-									.addOnFailureListener {
-										failedToDelete(it)
-									}
+						FirebaseFirestore.getInstance().document(docPath).delete()
+							.addOnSuccessListener {
+								Snackbar.make(binding.root, "Deleted ${familyTree.name}", Snackbar.LENGTH_LONG).show()
 							}
-							.addOnFailureListener {
-								failedToDelete(it)
+							.addOnFailureListener { e ->
+								Log.e("LoadTreeActivity", "Failed to delete ${familyTree.name}", e)
+								Snackbar.make(binding.root, "Failed to delete ${familyTree.name}", Snackbar.LENGTH_LONG)
+									.show()
 							}
 					}
 					.setNegativeButton("No") { _, _ ->
@@ -108,11 +97,5 @@ class LoadTreeActivity : AppCompatActivity()
 					}
 					.show()
 			}
-	}
-	
-	private fun failedToDelete(it: Exception)
-	{
-		Snackbar.make(binding.root, "Failed to Delete", Snackbar.LENGTH_SHORT).show()
-		Log.e("Delete", it.message ?: it.localizedMessage, it)
 	}
 }

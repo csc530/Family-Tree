@@ -15,7 +15,7 @@ import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.views.FamilyMemberAdapter
 import com.csc530.familytree.views.FamilyTreeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 
@@ -63,24 +63,27 @@ class MemberDetailsActivity : AppCompatActivity()
 	
 	private fun deleteMember(docPath: String, memberId: String)
 	{
-		firebase.collection("$docPath/members").get()
+		firebase.document(docPath).get()
 			.addOnSuccessListener { result ->
-				for(memberDocument in result)
+				// * get the family tree
+				val familyTree = result.toObject(FamilyTree::class.java) ?: return@addOnSuccessListener
+				for(member in familyTree.members)
 					when(memberId)
 					{
-						memberDocument["id"]     -> memberDocument.reference.delete()
-							.addOnSuccessListener {
-								Snackbar.make(binding.root, "Member deleted", Snackbar.LENGTH_SHORT).show()
-							}
-							.addOnFailureListener {
-								Toast.makeText(this, "Failed to delete member", Toast.LENGTH_SHORT).show()
-							}
-						memberDocument["mother"] -> memberDocument.reference.update("mother", null)
-							.addOnSuccessListener {  }
-						memberDocument["father"] -> memberDocument.reference.update("father", null)
-							.addOnSuccessListener {  }
+						member.id     -> familyTree.members.remove(member)
+						member.mother -> member.mother = null
+						member.father -> member.father = null
 					}
-				finish()
+				firebase.document(docPath)
+					.update("lastModified", Timestamp.now(),
+					        "members", familyTree.members)
+					.addOnSuccessListener {
+						Toast.makeText(this, "Member deleted", Toast.LENGTH_SHORT).show()
+						finish()
+					}
+					.addOnFailureListener {
+						Toast.makeText(this, "Failed to delete member", Toast.LENGTH_SHORT).show()
+					}
 			}
 	}
 	
