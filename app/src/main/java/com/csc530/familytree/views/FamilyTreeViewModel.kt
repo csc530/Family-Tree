@@ -50,15 +50,10 @@ class FamilyTreeViewModel(docPath: String? = null) : ViewModel()
 				else if(snapshot != null)
 				{
 					val familyMembers = ArrayList<FamilyMember>()
-					for(doc in snapshot.documents)
-					{
-						val familyMember = doc.toObject(FamilyMember::class.java)
-						// *  add member to list if it's not null if it's is continue
-						familyMembers.add(familyMember ?: continue)
-					}
+					familyMembers.addAll(snapshot.toObjects(FamilyMember::class.java))
 					// * add the family members to the live data
 					members.value = familyMembers
-					familyTree.value?.members = familyMembers
+					familyTree.value?.members = members.value!!
 				}
 			}
 	}
@@ -101,20 +96,21 @@ class FamilyTreeViewModel(docPath: String? = null) : ViewModel()
 	 */
 	private fun getSingleTree(docPath: String)
 	{
-		firestore.document(docPath).addSnapshotListener { value, error ->
-			if(error != null)
-				Log.e(logTag, error.localizedMessage ?: error.message ?: error.toString())
-			else if(value != null)
-			{
-				// * add the family tree to the live data
-				familyTree.value = value.toObject(FamilyTree::class.java)
+		firestore.document(docPath)
+			.addSnapshotListener { tree, error ->
+				if(error != null)
+					Log.e(logTag, error.localizedMessage ?: error.message ?: error.toString())
+				else if(tree != null)
+				{
+					// * add the family tree to the live data
+					familyTree.value = tree.toObject(FamilyTree::class.java)
+				}
+				else
+				{
+					Log.e(logTag, "No tree returned")
+					familyTree.value = null
+				}
 			}
-			else
-			{
-				Log.e(logTag, "No value returned")
-				familyTree.value = null
-			}
-		}
 	}
 	
 	fun getFamilyTree(): MutableLiveData<FamilyTree?>

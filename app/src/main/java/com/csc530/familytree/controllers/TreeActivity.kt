@@ -10,17 +10,15 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.ActivityManager
+import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.models.WebAppInterface
 import com.csc530.familytree.views.FamilyTreeViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 class TreeActivity : AppCompatActivity()
 {
 	private lateinit var binding: ActivityTreeBinding
 	
-	//	private lateinit var familyTree: FamilyTree
 	private lateinit var activityManager: ActivityManager
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -29,10 +27,7 @@ class TreeActivity : AppCompatActivity()
 		setContentView(binding.root)
 		
 		activityManager = ActivityManager(this)
-		val auth = FirebaseAuth.getInstance()
-		val firebase = FirebaseFirestore.getInstance()
-		val collection = firebase.collection("Trees")
-		var docPath = intent.getStringExtra("docPath")
+		val docPath = intent.getStringExtra("docPath")
 		val wb = binding.webView
 		
 		val settings: WebSettings = wb.settings
@@ -57,39 +52,29 @@ class TreeActivity : AppCompatActivity()
 		if(docPath == null)
 			return activityManager.backToHome()
 		
-		val viewModel = FamilyTreeViewModel(docPath)
-		viewModel.getFamilyTree().observe(this) { familyTree ->
-			if(familyTree == null)
-				return@observe activityManager.backToHome("No tree found")
-			viewModel.getMembers().observe(this) { members ->
-				if(members == null)
-					return@observe activityManager.backToHome("No members found")
-				familyTree.members = members
-				wai.nodes.clear()
-				familyTree.populateRelationships()
-				if(familyTree.members.size > 0)
-				{
-					//? add view for each family member
-					for(member in familyTree.members)
-						wai.nodes.add(member.toNode())
-					wb.reload()
-				}
-				else // ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
-					wb.visibility = WebView.GONE
-			}
-			
-			binding.imgbtnHome.setOnClickListener {
-				activityManager.startActivity(LaunchActivity::class.java)
-			}
-			binding.imgbtnRefresh.setOnClickListener { wb.reload() }
-			// * "hard" refresh the view to reload the tree from db not just redraw the current tree
-			binding.imgbtnRefresh.setOnLongClickListener { recreate(); true }
-			binding.fabAdd.setOnClickListener {
-				val intent = Intent(this, EditMemberActivity::class.java)
-				intent.putExtra("docPath", docPath)
-				startActivity(intent)
-			}
+		FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
+			if(members == null) return@observe activityManager.backToHome("No members found")
+			val familyTree = FamilyTree(members = members)
+			wai.nodes.clear()
+			familyTree.populateRelationships()
+			//? add view for each family member
+			for(member in familyTree.members)
+				wai.nodes.add(member.toNode())
+			if(familyTree.members.isNullOrEmpty()) // ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
+				wb.visibility = WebView.GONE
+			wb.reload()
 		}
 		
+		binding.imgbtnHome.setOnClickListener {
+			activityManager.startActivity(LaunchActivity::class.java)
+		}
+		binding.imgbtnRefresh.setOnClickListener { wb.reload() }
+		// * "hard" refresh the view to reload the tree from db not just redraw the current tree
+		binding.imgbtnRefresh.setOnLongClickListener { recreate(); true }
+		binding.fabAdd.setOnClickListener {
+			val intent = Intent(this, EditMemberActivity::class.java)
+			intent.putExtra("docPath", docPath)
+			startActivity(intent)
+		}
 	}
 }
