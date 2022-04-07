@@ -3,6 +3,7 @@ package com.csc530.familytree.controllers
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -39,16 +40,22 @@ class LoadTreeActivity : AppCompatActivity()
 					.setTitle("Change Name")
 					.setView(input)
 					.setPositiveButton("OK") { _, _ ->
-						// ? Delete old document with unchanged name
-						val db = FirebaseFirestore.getInstance()
-							.collection("Trees")
-						db.document(familyTree.generateDocId())
-							.delete()
-						// ? Create new document with the changed name
-						familyTree.name = input.text.toString()
-						db.document(familyTree.generateDocId())
-							.set(familyTree)
-						Snackbar.make(view, "Name changed", Snackbar.LENGTH_LONG).show()
+						// ? validate name
+						if(input.text.isBlank())
+							Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show()
+						else
+						{
+							// ? Delete old document with unchanged name
+							val db = FirebaseFirestore.getInstance()
+								.collection("Trees")
+							db.document(familyTree.generateDocId())
+								.delete()
+							// ? Create new document with the changed name
+							familyTree.name = input.text.toString()
+							db.document(familyTree.generateDocId())
+								.set(familyTree)
+							Snackbar.make(view, "Name changed", Snackbar.LENGTH_LONG).show()
+						}
 					}
 					.setNegativeButton("Cancel") { _, _ ->
 						Snackbar.make(view, "Name not changed", Snackbar.LENGTH_LONG).show()

@@ -67,8 +67,7 @@ class LaunchActivity : AppCompatActivity()
 							.setIcon(android.R.drawable.stat_sys_warning)
 							.setTitle("Name Required")
 							.setMessage("Please enter a name for the family tree")
-							.setNeutralButton("OK") { dialogInterface, _ ->
-								dialogInterface.dismiss()
+							.setNeutralButton("OK") { _, _ ->
 								getName.show()
 							}
 							.show()
