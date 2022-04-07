@@ -11,8 +11,8 @@ import com.csc530.familytree.R
 import com.csc530.familytree.databinding.ActivityMemberDetailsBinding
 import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyMember
-import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.views.FamilyMemberAdapter
+import com.csc530.familytree.views.FamilyTreeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
@@ -62,70 +62,76 @@ class MemberDetailsActivity : AppCompatActivity()
 	
 	private fun populateMember(docPath: String, memberID: String)
 	{
-		firebase.document(docPath).get().addOnSuccessListener {
-			val familyTree = it.toObject(FamilyTree::class.java)
-			familyTree?.populateRelationships()
-			val member = familyTree?.findMemberByID(memberID)
-			if(member == null)
-			{
-				Toast.makeText(this, "Error, no such member", Toast.LENGTH_SHORT).show()
-				finish()
-				activityManager.startActivity(TreeActivity::class.java, docPath)
-			}
-			else
-			{
-				// ? bind member details to activity views
-				binding.txtFullName.text = member.getFullName()
-				binding.txtBirthday.text = member.getBirthday() ?: "-"
-				binding.txtDeathday.text = member.getDeathday() ?: "-"
-				//					binding.txtBiography.text = member.biography ?: "-"
-				if(member.getAge() != -1)
-					binding.txtAge.text = "${member.getAge()} years old"
+		FamilyTreeViewModel(docPath).getFamilyTree().observe(this) { familyTree ->
+			if(familyTree == null)
+				return@observe activityManager.backToHome("Error: Family tree could not be retrieved")
+			FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
+				if(members == null)
+					return@observe finish()
+				familyTree.members = members
+				familyTree.populateRelationships()
+				val member = familyTree.findMemberByID(memberID)
+				if(member == null)
+				{
+					Toast.makeText(this, "Error, no such member", Toast.LENGTH_SHORT).show()
+					finish()
+					activityManager.startActivity(TreeActivity::class.java, docPath)
+				}
 				else
-					binding.txtAge.text = "-"
-				
-				Picasso.get()
-					.load(member.getImageUri())
-					.placeholder(R.drawable.user)
-					.into(binding.imgPortrait)
-				
-				//set up children and partner to display total number
-				binding.txtChildren.text = "${member.children.size} kids"
-				binding.txtPartners.text = "${member.partners.size} partners"
-				
-				binding.txtSex.text = member.sex.toString()
-				
-				//when the click the text display each child in a recycler view
-				val kids = familyTree.getMembersByID(member.children)
-				if(kids.isNotEmpty())
-					binding.txtChildren.setOnClickListener {
-						showMembers(kids, "${member.getFullName()}'s Children", docPath)
-					}
-				val partners = familyTree.getMembersByID(member.partners)
-				if(partners.isNotEmpty())
-					binding.txtPartners.setOnClickListener {
-						showMembers(partners, "${member.getFullName()}'s Partners", docPath)
-					}
+				{
+					// ? bind member details to activity views
+					binding.txtFullName.text = member.getFullName()
+					binding.txtBirthday.text = member.getBirthday() ?: "-"
+					binding.txtDeathday.text = member.getDeathday() ?: "-"
+					//					binding.txtBiography.text = member.biography ?: "-"
+					if(member.getAge() != -1)
+						binding.txtAge.text = "${member.getAge()} years old"
+					else
+						binding.txtAge.text = "-"
+					
+					Picasso.get()
+						.load(member.getImageUri())
+						.placeholder(R.drawable.user)
+						.into(binding.imgPortrait)
+					
+					//set up children and partner to display total number
+					binding.txtChildren.text = "${member.children.size} kids"
+					binding.txtPartners.text = "${member.partners.size} partners"
+					
+					binding.txtSex.text = member.sex.toString()
+					
+					//when the click the text display each child in a recycler view
+					val kids = familyTree.getMembersByID(member.children)
+					if(kids.isNotEmpty())
+						binding.txtChildren.setOnClickListener {
+							showMembers(kids, "${member.getFullName()}'s Children", docPath)
+						}
+					val partners = familyTree.getMembersByID(member.partners)
+					if(partners.isNotEmpty())
+						binding.txtPartners.setOnClickListener {
+							showMembers(partners, "${member.getFullName()}'s Partners", docPath)
+						}
+				}
 			}
 		}
 	}
-	
-	private fun showMembers(members: List<FamilyMember>, title: String, docPath: String)
-	{
-		val dialog = MaterialAlertDialogBuilder(this)
-		dialog.setTitle(title)
-		val recycler = RecyclerView(this)
-		recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-		recycler.adapter = FamilyMemberAdapter(this, members, toMember(docPath))
-		dialog.setView(recycler)
-		dialog.setNeutralButton("Close") { dialogInterface, _ ->
-			dialogInterface.dismiss()
-		}.show()
+		
+		private fun showMembers(members: List<FamilyMember>, title: String, docPath: String)
+		{
+			val dialog = MaterialAlertDialogBuilder(this)
+			dialog.setTitle(title)
+			val recycler = RecyclerView(this)
+			recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+			recycler.adapter = FamilyMemberAdapter(this, members, toMember(docPath))
+			dialog.setView(recycler)
+			dialog.setNeutralButton("Close") { dialogInterface, _ ->
+				dialogInterface.dismiss()
+			}.show()
+		}
+		
+		private fun toMember(docPath: String): (FamilyMember, View) -> Unit = { familyMember: FamilyMember, _: View ->
+			val intent = Intent(this, MemberDetailsActivity::class.java)
+			intent.putExtra("memberId", familyMember.id)
+			activityManager.startActivity(intent, docPath)
+		}
 	}
-	
-	private fun toMember(docPath: String): (FamilyMember, View) -> Unit = { familyMember: FamilyMember, _: View ->
-		val intent = Intent(this, MemberDetailsActivity::class.java)
-		intent.putExtra("memberId", familyMember.id)
-		activityManager.startActivity(intent, docPath)
-	}
-}
