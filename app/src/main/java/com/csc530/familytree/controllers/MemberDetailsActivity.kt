@@ -15,6 +15,7 @@ import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.views.FamilyMemberAdapter
 import com.csc530.familytree.views.FamilyTreeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 
@@ -36,32 +37,54 @@ class MemberDetailsActivity : AppCompatActivity()
 		if(docPath == null || memberId == null)
 			return activityManager.backToHome()
 		
+		populateMemberDetails(docPath, memberId)
+		
 		binding.btnClose.setOnClickListener {
 			finish()
 		}
 		binding.btnEdit.setOnClickListener {
 			activityManager.startActivity(EditMemberActivity::class.java, docPath, memberId)
 		}
+		binding.fabDelete.setOnClickListener {
+			// * show a dialog to confirm deletion
+			MaterialAlertDialogBuilder(this)
+				.setTitle("Delete Member")
+				.setMessage("Are you sure you want to delete this member?")
+				.setPositiveButton("Yes") { _, _ ->
+					// * delete the member
+					deleteMember(docPath, memberId)
+				}
+				.setNegativeButton("No") { _, _ ->
+					// * do nothing
+				}
+				.show()
+		}
 	}
 	
-	override fun onStart()
+	private fun deleteMember(docPath: String, memberId: String)
 	{
-		//placed populate member so whenever they return from editing it will  with the current information
-		// without needing to keep refreshing the page with new info in the DB
-		super.onStart()
-		// * validate the doc path; this is to parse a family member and prevent errors
-		val docPath = intent.getStringExtra("docPath")
-		val memberId = intent.getStringExtra("memberId")
-		if(docPath == null || memberId == null)
-			activityManager.backToHome()
-		else
-			populateMember(docPath, memberId)
-		
+		firebase.collection("$docPath/members").get()
+			.addOnSuccessListener { result ->
+				for(memberDocument in result)
+					when(memberId)
+					{
+						memberDocument["id"]     -> memberDocument.reference.delete()
+							.addOnSuccessListener {
+								Snackbar.make(binding.root, "Member deleted", Snackbar.LENGTH_SHORT).show()
+								finish()
+							}
+							.addOnFailureListener {
+								Toast.makeText(this, "Failed to delete member", Toast.LENGTH_SHORT).show()
+							}
+						memberDocument["mother"] -> memberDocument.reference.update("mother", null)
+						memberDocument["father"] -> memberDocument.reference.update("father", null)
+					}
+			}
 	}
 	
 	val firebase = FirebaseFirestore.getInstance()
 	
-	private fun populateMember(docPath: String, memberID: String)
+	private fun populateMemberDetails(docPath: String, memberID: String)
 	{
 		FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
 			if(members == null) return@observe finish()
