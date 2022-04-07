@@ -62,19 +62,20 @@ class TreeActivity : AppCompatActivity()
 				wai.nodes.add(member.toNode())
 			if(familyTree.members.isNullOrEmpty()) // ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
 				wb.visibility = WebView.GONE
+			else
+				wb.visibility = WebView.VISIBLE
 			wb.reload()
 		}
-		
-		binding.imgbtnHome.setOnClickListener {
-			activityManager.startActivity(LaunchActivity::class.java)
-		}
-		binding.imgbtnRefresh.setOnClickListener { wb.reload() }
-		// * "hard" refresh the view to reload the tree from db not just redraw the current tree
-		binding.imgbtnRefresh.setOnLongClickListener { recreate(); true }
-		binding.fabAdd.setOnClickListener {
-			val intent = Intent(this, EditMemberActivity::class.java)
-			intent.putExtra("docPath", docPath)
-			startActivity(intent)
+			binding.imgbtnHome.setOnClickListener {
+				activityManager.startActivity(LaunchActivity::class.java)
+			}
+			binding.imgbtnRefresh.setOnClickListener { wb.reload() }
+			// * "hard" refresh the view to reload the tree from db not just redraw the current tree
+			binding.imgbtnRefresh.setOnLongClickListener { recreate(); true }
+			binding.fabAdd.setOnClickListener {
+				val intent = Intent(this, EditMemberActivity::class.java)
+				intent.putExtra("docPath", docPath)
+				startActivity(intent)
+			}
 		}
 	}
-}
