@@ -16,7 +16,8 @@
 		tools:layout_conversion_absoluteHeight="50dp"
 		tools:layout_conversion_absoluteWidth="355dp"
 		tools:layout_editor_absoluteX="0dp"
-		tools:layout_editor_absoluteY="0dp" />
+		tools:layout_editor_absoluteY="0dp"
+		android:contentDescription="@string/familyMember_image_description" />
 	
 	<TextView
 		android:id="@+id/txtFamMemberName"

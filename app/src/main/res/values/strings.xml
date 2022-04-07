@@ -33,7 +33,39 @@
 	<string name="attachment_summary_on">Automatically download attachments for incoming emails
 	</string>
 	<string name="attachment_summary_off">Only download attachments when manually requested</string>
-	<string name="first_name" formatted="false">Kane</string>
+	<string name="first_name_example" formatted="false">Kane</string>
 	<string name="add_member">Create family member</string>
 	<string name="edit_member">Edit family Member</string>
+	<string name="first_name">First Name:</string>
+	<string name="last_name">Last Name:</string>
+	<string name="last_name_example">Bupponoc</string>
+	<string name="sex">Sex:</string>
+	<string name="birthdate">Birthdate:</string>
+	<string name="birthdate_example">2020-12-15</string>
+	<string name="deathdate">Deathdate:</string>
+	<string name="deathdate_example">2022-03-08</string>
+	<string name="mother">Mother:</string>
+	<string name="father">Father:</string>
+	<string name="edit_or_add_family_member">Edit or Add Family Member</string>
+	<string name="confirm">Confirm</string>
+	<string name="familyMember_image_description">image dhowing the family member, by deafult a blank user icon</string>
+	<string name="instructions">Instructions</string>
+	<string name="refresh_tree_info_instruction">Long click the refresh button to \"hard\" refresh the page</string>
+	<string name="viewing_family_tree">Viewing family tree</string>
+	<string name="a_home_icon">A home icon</string>
+	<string name="a_back_arrow">a back arrow</string>
+	<string name="select_a_family_tree">Select a family tree</string>
+	<string name="close">Close</string>
+	<string name="edit">Edit</string>
+	<string name="deathday">Deathday</string>
+	<string name="birthday">Birthday</string>
+	<string name="age">Age</string>
+	<string name="sex_no_colon">Sex</string>
+	<string name="partners">Partners</string>
+	<string name="children">Children</string>
+	<string name="delete_description">a red x; delete icon</string>
+	<string name="add_descr">A plus icon; an add icon</string>
+	<string name="refresh_descr">a refresh icon. A circular arrow pointing back at its start</string>
+	<string name="pencil_descr">a pencil; an edit icon</string>
+	<string name="familyTree_descr">a family tree line graphic</string>
 </resources>

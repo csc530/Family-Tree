@@ -11,7 +11,7 @@
 		android:id="@+id/textView2"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Instructions"
+		android:text="@string/instructions"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
@@ -20,7 +20,7 @@
 		android:id="@+id/textView3"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Long click the refresh button to &quot;hard&quot; refresh the page"
+		android:text="@string/refresh_tree_info_instruction"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/textView5" />
@@ -30,7 +30,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="46dp"
-		android:text="Viewing family tree"
+		android:text="@string/viewing_family_tree"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -43,5 +43,6 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:srcCompat="@drawable/home" />
+		app:srcCompat="@drawable/home"
+		android:contentDescription="@string/a_home_icon" />
 </androidx.constraintlayout.widget.ConstraintLayout>

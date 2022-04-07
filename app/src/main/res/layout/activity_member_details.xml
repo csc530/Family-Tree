@@ -17,7 +17,7 @@
 		app:layout_constraintHorizontal_bias="0.526"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		tools:text="Chrisdtofer Columbine" />
+		tools:text="Christofer Columbine" />
 	
 	<androidx.constraintlayout.widget.ConstraintLayout
 		android:id="@+id/linearLayout"
@@ -31,7 +31,7 @@
 			android:id="@+id/btnClose"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Close"
+			android:text="@string/close"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toStartOf="@+id/btnEdit"
 			app:layout_constraintHorizontal_bias="0.5"
@@ -42,7 +42,7 @@
 			android:id="@+id/btnEdit"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="Edit"
+			android:text="@string/edit"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintHorizontal_bias="0.5"
@@ -59,7 +59,8 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/txtFullName"
-		app:srcCompat="@drawable/user" />
+		app:srcCompat="@drawable/user"
+		android:contentDescription="@string/familyMember_image_description" />
 	
 	<TableLayout
 		android:layout_width="match_parent"
@@ -82,8 +83,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:paddingEnd="5dp"
-				android:text="Birthday"
+				android:text="@string/birthday"
 				android:textAlignment="textEnd" />
 			
 			<TextView
@@ -104,8 +104,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:paddingEnd="5dp"
-				android:text="Deathday"
+				android:text="@string/deathday"
 				android:textAlignment="textEnd" />
 			
 			<TextView
@@ -126,8 +125,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:paddingEnd="5dp"
-				android:text="Age"
+				android:text="@string/age"
 				android:textAlignment="textEnd" />
 			
 			<TextView
@@ -148,8 +146,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:paddingEnd="5dp"
-				android:text="Sex"
+				android:text="@string/sex_no_colon"
 				android:textAlignment="textEnd" />
 			
 			<TextView
@@ -171,8 +168,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:paddingEnd="5dp"
-				android:text="Partners"
+				android:text="@string/partners"
 				android:textAlignment="textEnd" />
 			
 			<TextView
@@ -196,8 +192,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:paddingEnd="5dp"
-				android:text="Children"
+				android:text="@string/children"
 				android:textAlignment="textEnd" />
 			
 			<TextView
@@ -209,32 +204,7 @@
 				tools:text="None" />
 		
 		</TableRow>
-		
-		<TableRow
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:gravity="center"
-			android:orientation="horizontal"
-			android:scrollbars="vertical">
-			
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:paddingEnd="5dp"
-				android:text="Biography"
-				android:textAlignment="textEnd" />
-			
-			<TextView
-				android:id="@+id/txtBiography"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_weight="2"
-				android:scrollIndicators="end|right"
-				android:scrollbars="vertical"
-				android:textAlignment="center"
-				android:textAllCaps="false" />
-		</TableRow>
+	
 	</TableLayout>
 	
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -245,5 +215,6 @@
 		app:backgroundTint="#EF5350"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@android:drawable/ic_delete" />
+		app:srcCompat="@android:drawable/ic_delete"
+		android:contentDescription="@string/delete_description" />
 </androidx.constraintlayout.widget.ConstraintLayout>

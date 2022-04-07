@@ -28,7 +28,8 @@
 		app:fabSize="normal"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:rippleColor="#00FFFFFF" />
+		app:rippleColor="#00FFFFFF"
+		android:contentDescription="@string/add_descr" />
 	
 	<ImageButton
 		android:id="@+id/imgbtnHome"
@@ -37,7 +38,8 @@
 		android:background="#00FFFFFF"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@drawable/home" />
+		app:srcCompat="@drawable/home"
+		android:contentDescription="@string/a_home_icon" />
 	
 	<ImageButton
 		android:id="@+id/imgbtnRefresh"
@@ -46,6 +48,7 @@
 		android:background="#00FFFFFF"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@drawable/refresh" />
+		app:srcCompat="@drawable/refresh"
+		android:contentDescription="@string/refresh_descr" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

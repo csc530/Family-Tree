@@ -29,17 +29,18 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="First Name: " />
+				android:text="@string/first_name" />
 			
 			<EditText
 				android:id="@+id/edtFName"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:ems="10"
-				android:hint="Kylar"
+				android:hint="@string/first_name_example"
 				android:inputType="textPersonName|text"
 				android:singleLine="true"
-				android:textAlignment="center" />
+				android:textAlignment="center"
+				android:autofillHints="name" />
 		</TableRow>
 		
 		<TableRow
@@ -50,17 +51,18 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Last name:" />
+				android:text="@string/last_name" />
 			
 			<EditText
 				android:id="@+id/edtLName"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:ems="10"
-				android:hint="Bupponoc"
+				android:hint="@string/last_name_example"
 				android:inputType="textPersonName"
 				android:singleLine="true"
-				android:textAlignment="center" />
+				android:textAlignment="center"
+				android:autofillHints="name" />
 		
 		</TableRow>
 		
@@ -72,7 +74,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Sex" />
+				android:text="@string/sex" />
 			
 			<Spinner
 				android:id="@+id/sexSpinner"
@@ -95,7 +97,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Birthdate:" />
+				android:text="@string/birthdate" />
 			
 			<EditText
 				android:id="@+id/edt_birth_date"
@@ -103,9 +105,10 @@
 				android:layout_height="wrap_content"
 				android:ems="10"
 				android:enabled="true"
-				android:hint="2020-12-15"
+				android:hint="@string/birthdate_example"
 				android:inputType="date"
-				android:textAlignment="center" />
+				android:textAlignment="center"
+				android:autofillHints="date" />
 		
 		</TableRow>
 		
@@ -117,7 +120,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Deathdate:" />
+				android:text="@string/deathdate" />
 			
 			<EditText
 				android:id="@+id/edt_death_date"
@@ -125,9 +128,10 @@
 				android:layout_height="wrap_content"
 				android:ems="10"
 				android:enabled="true"
-				android:hint="2022-03-08"
+				android:hint="@string/deathdate_example"
 				android:inputType="date|none"
-				android:textAlignment="center" />
+				android:textAlignment="center"
+				android:autofillHints="date" />
 		
 		</TableRow>
 		
@@ -139,7 +143,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
-				android:text="Mother:" />
+				android:text="@string/mother" />
 			
 			<Spinner
 				android:id="@+id/spinMom"
@@ -159,7 +163,7 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Father:" />
+				android:text="@string/father" />
 			
 			<Spinner
 				android:id="@+id/spinDad"
@@ -178,7 +182,7 @@
 		android:id="@+id/txtEdtTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Edit or Add Family Member"
+		android:text="@string/edit_or_add_family_member"
 		android:textAlignment="center"
 		android:textSize="@dimen/titleSize"
 		app:layout_constraintEnd_toEndOf="parent"
@@ -191,7 +195,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="Confirm"
+		android:text="@string/confirm"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_bias="0.5"
@@ -203,7 +207,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:text="Cancel"
+		android:text="@string/fui_cancel"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@+id/btnSubmit"
 		app:layout_constraintHorizontal_bias="0.5"
@@ -219,6 +223,7 @@
 		android:src="@drawable/user"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/txtEdtTitle" />
+		app:layout_constraintTop_toBottomOf="@+id/txtEdtTitle"
+		android:contentDescription="@string/familyMember_image_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

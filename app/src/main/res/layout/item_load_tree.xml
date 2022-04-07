@@ -16,26 +16,25 @@
 	
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="2"
+		android:layout_height="50dp"
 		android:orientation="horizontal">
 		
 		<ImageButton
 			android:id="@+id/imgbtnEdit"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
+			android:layout_width="120dp"
+			android:layout_height="match_parent"
 			android:background="#00FFFFFF"
 			android:backgroundTint="#00FFFFFF"
+			android:contentDescription="@string/pencil_descr"
 			android:scaleType="centerInside"
 			app:srcCompat="@android:drawable/ic_menu_edit" />
 		
 		<ImageButton
 			android:id="@+id/imgbtnDelete"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
+			android:layout_width="120dp"
+			android:layout_height="match_parent"
 			android:background="#00FFFFFF"
+			android:contentDescription="@string/delete_description"
 			android:scaleType="centerInside"
 			app:srcCompat="@android:drawable/ic_delete" />
 	
@@ -43,18 +42,16 @@
 	
 	<ImageView
 		android:id="@+id/imgFamTreeImg"
-		android:layout_width="150dp"
-		android:layout_height="150dp"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
 		android:layout_weight="2"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
+		android:contentDescription="@string/familyTree_descr"
 		app:srcCompat="@drawable/family_tree_load" />
 	
 	<TextView
 		android:id="@+id/txtFamTreeName"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
 		android:layout_weight="1"
 		android:textAlignment="center"
 		android:textAllCaps="true"
@@ -66,8 +63,8 @@
 	
 	<TextView
 		android:id="@+id/txtCreationDate"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
 		android:layout_weight="1"
 		app:layout_constraintTop_toBottomOf="@+id/txtFamTreeName"
 		tools:layout_editor_absoluteX="120dp"
