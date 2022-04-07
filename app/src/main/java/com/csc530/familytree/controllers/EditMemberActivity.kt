@@ -89,7 +89,13 @@ class EditMemberActivity : AppCompatActivity()
 				setDate(birthDate as EditText, "Birth date")
 		}
 		
-		binding.btnCnfm.setOnClickListener {
+		binding.btnSubmit.setOnClickListener {
+			// * check if the form is locked to prevent multiple submissions
+			if(!binding.btnSubmit.isEnabled)
+				return@setOnClickListener
+			// * lock the form cancel and submit buttons; so that the user can't click them while the upload is in progress
+			// (creating duplicates or cancelling the upload)
+			binding.btnSubmit.isEnabled = false
 			val member = parseData(momAdapter, dadAdapter)
 			
 			//? write to db if logged in
@@ -309,15 +315,17 @@ class EditMemberActivity : AppCompatActivity()
 									.addOnSuccessListener {
 										// * navigate back to member details; only when db update is totally successful
 										finish()
+										Toast.makeText(this, "Member updated", Toast.LENGTH_SHORT).show()
 									}
 									.addOnFailureListener { e ->
+										binding.btnSubmit.isEnabled = true
 										Log.w("DB Failure", "Error updating document", e)
 										Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
 									}
-								Toast.makeText(this, "Member updated", Toast.LENGTH_SHORT).show()
-								finish()
 							}
-							.addOnFailureListener {
+							.addOnFailureListener { err ->
+								binding.btnSubmit.isEnabled = true
+								Log.w("DB Failure", "Error adding document", err)
 								Toast.makeText(this, "Failed to update member", Toast.LENGTH_SHORT).show()
 							}
 					}
@@ -334,16 +342,17 @@ class EditMemberActivity : AppCompatActivity()
 						firebase.document(docPath).update("lastModified", familyTree.lastModified)
 							.addOnSuccessListener {
 								// * navigate back to member details; only when db update is totally successful
+								Toast.makeText(this, "Member added", Toast.LENGTH_SHORT).show()
 								finish()
 							}
 							.addOnFailureListener { e ->
+								binding.btnSubmit.isEnabled = true
 								Log.w("DB Failure", "Error updating document", e)
 								Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
 							}
-						Toast.makeText(this, "Member added", Toast.LENGTH_SHORT).show()
-						finish()
 					}
 					.addOnFailureListener {
+						binding.btnSubmit.isEnabled = true
 						Toast.makeText(this, "Failed to add member", Toast.LENGTH_SHORT).show()
 					}
 			}
@@ -379,6 +388,8 @@ class EditMemberActivity : AppCompatActivity()
 		val uploadTask = imageRef.putBytes(baos.toByteArray())
 		uploadTask
 			.addOnFailureListener {
+				Log.e("Image Upload", "Failed to upload image", it)
+				binding.btnSubmit.isEnabled = true
 				Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
 			}
 			.addOnSuccessListener {

@@ -187,7 +187,7 @@
 		tools:text="Edit or Add Family Member" />
 	
 	<Button
-		android:id="@+id/btnCnfm"
+		android:id="@+id/btnSubmit"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
@@ -205,7 +205,7 @@
 		android:layout_weight="1"
 		android:text="Cancel"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@+id/btnCnfm"
+		app:layout_constraintEnd_toStartOf="@+id/btnSubmit"
 		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/tblMemberFrm" />
