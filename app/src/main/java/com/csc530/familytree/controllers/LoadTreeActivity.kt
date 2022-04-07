@@ -82,13 +82,25 @@ class LoadTreeActivity : AppCompatActivity()
 				AlertDialog.Builder(this)
 					.setTitle("Are you sure you want to delete ${familyTree.name}?")
 					.setPositiveButton("Yes") { _, _ ->
-						FirebaseFirestore.getInstance().document(docPath).delete()
-							.addOnSuccessListener {
-								Snackbar.make(binding.root, "Successfully Deleted", Snackbar.LENGTH_SHORT).show()
+						val firestore = FirebaseFirestore.getInstance()
+						firestore.collection("$docPath/members").get()
+							.addOnSuccessListener { documents ->
+								
+								// ? Delete all members, from sub-collection
+								for(document in documents)
+									document.reference.delete()
+								
+								// ? Delete family tree, document (parent path of members collection)
+								firestore.document(docPath).delete()
+									.addOnSuccessListener {
+										Snackbar.make(binding.root, "Successfully Deleted", Snackbar.LENGTH_SHORT).show()
+									}
+									.addOnFailureListener {
+										failedToDelete(it)
+									}
 							}
 							.addOnFailureListener {
-								Snackbar.make(binding.root, "Failed to Delete", Snackbar.LENGTH_SHORT).show()
-								Log.e("Delete", it.message ?: it.localizedMessage, it)
+								failedToDelete(it)
 							}
 					}
 					.setNegativeButton("No") { _, _ ->
@@ -96,5 +108,11 @@ class LoadTreeActivity : AppCompatActivity()
 					}
 					.show()
 			}
+	}
+	
+	private fun failedToDelete(it: Exception)
+	{
+		Snackbar.make(binding.root, "Failed to Delete", Snackbar.LENGTH_SHORT).show()
+		Log.e("Delete", it.message ?: it.localizedMessage, it)
 	}
 }
