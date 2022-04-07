@@ -14,7 +14,6 @@ import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.models.WebAppInterface
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -33,7 +32,6 @@ class TreeActivity : AppCompatActivity()
 		activityManager = ActivityManager(this)
 		val auth = FirebaseAuth.getInstance()
 		val firebase = FirebaseFirestore.getInstance()
-		val treeName = this.intent.getStringExtra("treeName")
 		val collection = firebase.collection("Trees")
 		var docPath = intent.getStringExtra("docPath")
 		val wb = binding.webView
@@ -56,56 +54,37 @@ class TreeActivity : AppCompatActivity()
 		wb.addJavascriptInterface(wai, "Android")
 		binding.webView.loadUrl("file:///android_asset/familyTree.html")
 		//create new family tree if no tree name is given
-		if(auth.currentUser != null)
-		{
-			// * logic if they just created a new Family tree
-			if(docPath == null && treeName != null)
+		// * logic for loading a pre-existing family-tree
+		if(docPath == null)
+			return activityManager.backToHome()
+		firebase.document(docPath).addSnapshotListener { snapshot, error ->
+			if(error != null)
+				Log.e("TreeActivity", "Error getting document: $error")
+			else if(snapshot == null)
+				Snackbar
+					.make(binding.root, "Error please try again later, please hard refresh the page (click and hold refresh button)", Snackbar.LENGTH_LONG)
+					.show()
+			else
 			{
-				// ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
-				wb.visibility = WebView.GONE
-				
-				familyTree = FamilyTree(treeName, auth.currentUser!!.uid, created = Timestamp.now(), lastModified = Timestamp.now())
-				familyTree.id = collection.document().id
-				val docID = "$treeName-${auth.currentUser!!.uid}-${familyTree.id}"
-				collection.document(docID)
-					.set(familyTree)
-					.addOnSuccessListener {
-						docPath = collection.document(docID).path
-						intent.putExtra("docPath", docPath)
-					}
-					.addOnFailureListener {
-						activityManager.backToHome(this)
-					}
-			}
-			// * logic for loading a pre-existing family-tree
-			else if(docPath != null)
-				firebase.document(docPath!!).addSnapshotListener { snapshot, error ->
-					if(error != null)
-						Log.e("TreeActivity", "Error getting document: $error")
-					else if(snapshot == null)
-						Snackbar
-							.make(binding.root, "Error please try again later, please hard refresh the page (click and hold refresh button)", Snackbar.LENGTH_LONG)
-							.show()
-					else
-					{
-						familyTree = snapshot.toObject(FamilyTree::class.java)!!
-						println(familyTree)
-						wai.nodes.clear()
-						familyTree.populateRelationships()
-						if(familyTree.members.size > 0)
-						{
-							//? add view for each family member
-							for(member in familyTree.members)
-								wai.nodes.add(member.toNode())
-							wb.reload()
-						}
-						else
-							// ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
-							wb.visibility = WebView.GONE
-					}
+				familyTree = snapshot.toObject(FamilyTree::class.java)!!
+				println(familyTree)
+				wai.nodes.clear()
+				familyTree.populateRelationships()
+				if(familyTree.members.size > 0)
+				{
+					//? add view for each family member
+					for(member in familyTree.members)
+						wai.nodes.add(member.toNode())
+					wb.reload()
 				}
+				else
+				// ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
+					wb.visibility = WebView.GONE
+			}
 		}
-		binding.imgbtnHome.setOnClickListener { activityManager.startActivity(LaunchActivity::class.java) }
+		binding.imgbtnHome.setOnClickListener {
+			activityManager.startActivity(LaunchActivity::class.java)
+		}
 		binding.imgbtnRefresh.setOnClickListener { wb.reload() }
 		// * "hard" refresh the view to reload the tree from db not just redraw the current tree
 		binding.imgbtnRefresh.setOnLongClickListener { recreate(); true }

@@ -8,12 +8,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.csc530.familytree.databinding.ActivityLaunchBinding
 import com.csc530.familytree.models.ActivityManager
+import com.csc530.familytree.models.FamilyTree
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
 class LaunchActivity : AppCompatActivity()
@@ -51,30 +53,28 @@ class LaunchActivity : AppCompatActivity()
 					.create()
 				//TODO refactor using with/or something
 				val editTxtFamTreeName = EditText(getName.context)
-				editTxtFamTreeName.hint = "The Johnson's"
-				editTxtFamTreeName.setSingleLine()
-				editTxtFamTreeName.inputType = InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE
-				editTxtFamTreeName.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
+				editTxtFamTreeName.apply {
+					hint = "The Johnson's"
+					setSingleLine()
+					inputType = InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE
+				}
 				getName.setView(editTxtFamTreeName)
 				getName.setButton(AlertDialog.BUTTON_POSITIVE, "Create") { dialogInterface, button ->
-//					? ensure that a family tree name is entered
-					if(editTxtFamTreeName.text.toString().isEmpty())
+					//	? ensure that a family tree name is entered
+					if(editTxtFamTreeName.text.toString().isBlank())
 					{
 						AlertDialog.Builder(getName.context)
-							//							.setIcon(R.drawable.warning/)
+							.setIcon(android.R.drawable.stat_sys_warning)
 							.setTitle("Name Required")
 							.setMessage("Please enter a name for the family tree")
-							.setNeutralButton("OK"){dialogInterface,_->
+							.setNeutralButton("OK") { dialogInterface, _ ->
 								dialogInterface.dismiss()
 								getName.show()
 							}
 							.show()
-						return@setButton
 					}
-					dialogInterface.dismiss()
-					val intent = Intent(this, TreeActivity::class.java)
-					intent.putExtra("treeName", editTxtFamTreeName.text.toString())
-					startActivity(intent)
+					else
+						createFamilyTree(editTxtFamTreeName.text.toString())
 				}
 				getName.show()
 			}
@@ -97,6 +97,21 @@ class LaunchActivity : AppCompatActivity()
 			ActivityManager.launchActivity(this, InfoActivity::class.java)
 		}
 		
+	}
+	
+	private fun createFamilyTree(name: String)
+	{
+		val collection = FirebaseFirestore.getInstance().collection("Trees")
+		val familyTree = FamilyTree(name, auth.currentUser!!.uid, created = Timestamp.now(), lastModified = Timestamp.now())
+		familyTree.id = collection.document().id
+		collection.document(familyTree.generateDocId())
+			.set(familyTree)
+			.addOnSuccessListener {
+				ActivityManager.launchActivity(this, TreeActivity::class.java, familyTree.generateDocPath())
+			}
+			.addOnFailureListener {
+				Snackbar.make(this, binding.root, "Failed to create family tree", Snackbar.LENGTH_SHORT).show()
+			}
 	}
 	
 	

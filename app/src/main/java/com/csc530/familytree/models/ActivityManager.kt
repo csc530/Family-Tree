@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.controllers.LaunchActivity
 
 class ActivityManager(
-		val context: Context,
+		private val activity: AppCompatActivity,
 )
 {
 	companion object
@@ -22,16 +22,22 @@ class ActivityManager(
 			intent.putExtra("docPath", docPath)
 			context.startActivity(intent)
 		}
+		
+		fun toHome(activity: AppCompatActivity)
+		{
+			activity.finish()
+			activity.startActivity(Intent(activity, LaunchActivity::class.java))
+		}
 	}
 	
 	/**
 	 * Redirects back to homepage
 	 * Back to home.
 	 */
-	fun backToHome(activity: AppCompatActivity)
+	fun backToHome()
 	{
 		activity.finish()
-		context.startActivity(Intent(context, LaunchActivity::class.java))
+		activity.startActivity(Intent(activity, LaunchActivity::class.java))
 	}
 	
 	/**
@@ -44,7 +50,7 @@ class ActivityManager(
 	fun startActivity(intent: Intent, docPath: String)
 	{
 		intent.putExtra("docPath", docPath)
-		context.startActivity(intent)
+		activity.startActivity(intent)
 	}
 	
 	/**
@@ -55,7 +61,7 @@ class ActivityManager(
 	 */
 	fun startActivity(intent: Intent)
 	{
-		context.startActivity(intent)
+		activity.startActivity(intent)
 	}
 	
 	/**
@@ -66,7 +72,7 @@ class ActivityManager(
 	 */
 	fun startActivity(activityClass: Class<*>)
 	{
-		context.startActivity(Intent(context, activityClass))
+		activity.startActivity(Intent(activity, activityClass))
 	}
 	
 	/**
@@ -80,9 +86,9 @@ class ActivityManager(
 	 */
 	fun startActivity(clazz: Class<*>, docPath: String)
 	{
-		val intent = Intent(context, clazz)
+		val intent = Intent(activity, clazz)
 		intent.putExtra("docPath", docPath)
-		context.startActivity(intent)
+		activity.startActivity(intent)
 	}
 	
 	/**
@@ -96,9 +102,9 @@ class ActivityManager(
 	 */
 	fun startActivity(clazz: Class<*>, docPath: String, memberId: String)
 	{
-		val intent = Intent(context, clazz)
+		val intent = Intent(activity, clazz)
 		intent.putExtra("docPath", docPath)
 		intent.putExtra("memberId", memberId)
-		context.startActivity(intent)
+		activity.startActivity(intent)
 	}
 }
