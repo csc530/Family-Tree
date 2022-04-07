@@ -9,7 +9,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
-class FamilyTreeViewModel(val treePath: String? = null) : ViewModel()
+class FamilyTreeViewModel(val docPath: String? = null) : ViewModel()
 {
 	private val familyTrees = MutableLiveData<List<FamilyTree>>()
 	private var auth: FirebaseAuth = Firebase.auth
@@ -21,17 +21,14 @@ class FamilyTreeViewModel(val treePath: String? = null) : ViewModel()
 	init
 	{
 		val userID = auth.currentUser?.uid
-		if(treePath != null)
+		if(docPath != null)
 		// * query firestore for specific family tree (and its changes)
-			FirebaseFirestore.getInstance().collection("Trees")
-				.document(treePath)
+			FirebaseFirestore.getInstance()
+				.document(docPath)
 				.addSnapshotListener { value, error ->
 					if(error != null)
-					{
 						Log.e("Firestore DB", error.localizedMessage ?: error.message ?: error.toString())
-						return@addSnapshotListener
-					}
-					if(value != null)
+					else if(value != null)
 						familyTree.value = value.toObject(FamilyTree::class.java)
 				}
 		else
@@ -40,22 +37,18 @@ class FamilyTreeViewModel(val treePath: String? = null) : ViewModel()
 				.whereEqualTo("creator", userID)
 				.addSnapshotListener { documents, error ->
 					if(error != null)
-					{
 						Log.w("Firestore DB", error.localizedMessage ?: error.message ?: error.toString())
-						return@addSnapshotListener
-					}
-					
-					//loop over the documents and create Tree objects
-					documents?.let {
-						val tress = ArrayList<FamilyTree>()
-						for(document in documents)
-						{
-							//convert the JSON document into a Project object
-							val familyTree = document.toObject(FamilyTree::class.java)
-							tress.add(familyTree)
+					else
+						documents?.let {
+							val tress = ArrayList<FamilyTree>()
+							for(document in documents)
+							{
+								//convert the JSON document into a Project object
+								val familyTree = document.toObject(FamilyTree::class.java)
+								tress.add(familyTree)
+							}
+							familyTrees.value = tress
 						}
-						familyTrees.value = tress
-					}
 				}
 	}
 	

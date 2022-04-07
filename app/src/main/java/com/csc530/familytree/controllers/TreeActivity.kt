@@ -3,7 +3,6 @@ package com.csc530.familytree.controllers
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -11,9 +10,8 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.ActivityManager
-import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.models.WebAppInterface
-import com.google.android.material.snackbar.Snackbar
+import com.csc530.familytree.views.FamilyTreeViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -21,7 +19,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class TreeActivity : AppCompatActivity()
 {
 	private lateinit var binding: ActivityTreeBinding
-	private lateinit var familyTree: FamilyTree
+	
+	//	private lateinit var familyTree: FamilyTree
 	private lateinit var activityManager: ActivityManager
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
@@ -57,31 +56,21 @@ class TreeActivity : AppCompatActivity()
 		// * logic for loading a pre-existing family-tree
 		if(docPath == null)
 			return activityManager.backToHome()
-		firebase.document(docPath).addSnapshotListener { snapshot, error ->
-			if(error != null)
-				Log.e("TreeActivity", "Error getting document: $error")
-			else if(snapshot == null)
-				Snackbar
-					.make(binding.root, "Error please try again later, please hard refresh the page (click and hold refresh button)", Snackbar.LENGTH_LONG)
-					.show()
-			else
+		
+		FamilyTreeViewModel(docPath).getFamilyTree().observe(this) { familyTree ->
+			wai.nodes.clear()
+			familyTree.populateRelationships()
+			if(familyTree.members.size > 0)
 			{
-				familyTree = snapshot.toObject(FamilyTree::class.java)!!
-				println(familyTree)
-				wai.nodes.clear()
-				familyTree.populateRelationships()
-				if(familyTree.members.size > 0)
-				{
-					//? add view for each family member
-					for(member in familyTree.members)
-						wai.nodes.add(member.toNode())
-					wb.reload()
-				}
-				else
-				// ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
-					wb.visibility = WebView.GONE
+				//? add view for each family member
+				for(member in familyTree.members)
+					wai.nodes.add(member.toNode())
+				wb.reload()
 			}
+			else // ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
+				wb.visibility = WebView.GONE
 		}
+		
 		binding.imgbtnHome.setOnClickListener {
 			activityManager.startActivity(LaunchActivity::class.java)
 		}
