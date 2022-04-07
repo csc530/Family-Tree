@@ -43,7 +43,7 @@ class EditMemberActivity : AppCompatActivity()
 		binding = ActivityEditMemberBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		
-		val docPath = intent.getStringExtra("docPath") ?: return activityManager.backToHome(this)
+		val docPath = intent.getStringExtra("docPath") ?: return activityManager.backToHome()
 		val memberId = intent.getStringExtra("memberId")
 		
 		// ? setup spinners
@@ -328,7 +328,7 @@ class EditMemberActivity : AppCompatActivity()
 			.addOnFailureListener {
 				Toast.makeText(this, "Could not find family tree, please try again later", Toast.LENGTH_SHORT).show()
 				Log.e("DB Error", it.message ?: it.localizedMessage ?: it.toString())
-				activityManager.backToHome(this)
+				activityManager.backToHome()
 			}
 	}
 	

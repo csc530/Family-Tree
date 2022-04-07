@@ -35,7 +35,7 @@ class MemberDetailsActivity : AppCompatActivity()
 		val docPath = intent.getStringExtra("docPath")
 		val memberId = intent.getStringExtra("memberId")
 		if(docPath == null || memberId == null)
-			activityManager.backToHome(this)
+			activityManager.backToHome()
 		else
 		{
 			binding.btnClose.setOnClickListener {

@@ -37,7 +37,7 @@ class WebAppInterface(private val activity: AppCompatActivity)
 	{
 		val docPath = activity.intent.getStringExtra("docPath")
 		if(docPath == null)
-			activityManager.backToHome(activity)
+			activityManager.backToHome()
 		else
 		{
 			val intent = Intent(activity, MemberDetailsActivity::class.java)
