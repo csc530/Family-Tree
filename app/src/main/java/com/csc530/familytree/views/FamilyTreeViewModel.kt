@@ -3,17 +3,22 @@ package com.csc530.familytree.views
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.csc530.familytree.models.FamilyMember
 import com.csc530.familytree.models.FamilyTree
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
-class FamilyTreeViewModel(val docPath: String? = null) : ViewModel()
+
+class FamilyTreeViewModel(docPath: String? = null) : ViewModel()
 {
-	private val familyTrees = MutableLiveData<List<FamilyTree>>()
+	private val logTag = "Firestore DB"
+	private val familyTrees = MutableLiveData<List<FamilyTree>?>()
 	private var auth: FirebaseAuth = Firebase.auth
-	private val familyTree = MutableLiveData<FamilyTree>()
+	private val familyTree = MutableLiveData<FamilyTree?>()
+	private val firestore = FirebaseFirestore.getInstance()
+	
 	
 	/**
 	 * This is called after the constructor runs and can be used to setup our live data
@@ -22,42 +27,89 @@ class FamilyTreeViewModel(val docPath: String? = null) : ViewModel()
 	{
 		val userID = auth.currentUser?.uid
 		if(docPath != null)
-		// * query firestore for specific family tree (and its changes)
-			FirebaseFirestore.getInstance()
-				.document(docPath)
-				.addSnapshotListener { value, error ->
-					if(error != null)
-						Log.e("Firestore DB", error.localizedMessage ?: error.message ?: error.toString())
-					else if(value != null)
-						familyTree.value = value.toObject(FamilyTree::class.java)
-				}
+			getSingleTree(docPath)
 		else
-		// * Query the DB to get all the family trees for a specific user
-			FirebaseFirestore.getInstance().collection("Trees")
-				.whereEqualTo("creator", userID)
-				.addSnapshotListener { documents, error ->
-					if(error != null)
-						Log.w("Firestore DB", error.localizedMessage ?: error.message ?: error.toString())
-					else
-						documents?.let {
-							val tress = ArrayList<FamilyTree>()
-							for(document in documents)
-							{
-								//convert the JSON document into a Project object
-								val familyTree = document.toObject(FamilyTree::class.java)
-								tress.add(familyTree)
-							}
-							familyTrees.value = tress
-						}
-				}
+			getFamilyTrees(userID)
 	}
 	
-	fun getFamilyTree(): MutableLiveData<FamilyTree>
+	/**
+	 * Query the DB to get all the family trees for a specific user
+	 * @param userID The user's ID
+	 */
+	private fun getFamilyTrees(userID: String?)
+	{
+		firestore
+			.collection("Trees")
+			.whereEqualTo("creator", userID)
+			.addSnapshotListener { documents, error ->
+				if(error != null)
+					Log.w(logTag, error.localizedMessage ?: error.message ?: error.toString())
+				else if(documents != null)
+				{
+					val trees = ArrayList<FamilyTree>()
+					for(document in documents)
+					{
+						//convert the JSON document into a Project object
+						val familyTree = document.toObject(FamilyTree::class.java)
+						trees.add(familyTree)
+					}
+					familyTrees.value = trees
+				}
+				else
+				{
+					Log.w(logTag, "No documents found")
+					familyTrees.value = null
+				}
+			}
+	}
+	
+	/**
+	 * query firestore for specific family tree (and its changes)
+	 *
+	 * @receiver [FamilyTreeViewModel]
+	 */
+	private fun getSingleTree(docPath: String)
+	{
+		firestore.document(docPath).addSnapshotListener { value, error ->
+			if(error != null)
+				Log.e(logTag, error.localizedMessage ?: error.message ?: error.toString())
+			else if(value != null)
+			{
+				// * add the family tree to the live data
+				familyTree.value = value.toObject(FamilyTree::class.java)
+				// ? get the sub collection of members to get the family members for this tree (live)
+				firestore.collection("$docPath/members")
+					.addSnapshotListener { snapshot, err ->
+						if(err != null)
+							Log.e(logTag, err.localizedMessage ?: err.message ?: err.toString())
+						else if(snapshot != null)
+						{
+							val members = ArrayList<FamilyMember>()
+							for(doc in snapshot.documents)
+							{
+								val familyMember = doc.toObject(FamilyMember::class.java)
+								// *  add member to list if it's not null if it's is continue
+								members.add(familyMember ?: continue)
+							}
+							// * add the family members to the live data as live data
+							familyTree.value?.members = members
+						}
+					}
+			}
+			else
+			{
+				Log.e(logTag, "No value returned")
+				familyTree.value = null
+			}
+		}
+	}
+	
+	fun getFamilyTree(): MutableLiveData<FamilyTree?>
 	{
 		return familyTree
 	}
 	
-	fun getFamilyTrees(): MutableLiveData<List<FamilyTree>>
+	fun getFamilyTrees(): MutableLiveData<List<FamilyTree>?>
 	{
 		return familyTrees
 	}

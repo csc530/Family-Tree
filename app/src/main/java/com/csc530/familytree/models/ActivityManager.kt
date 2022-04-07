@@ -2,6 +2,7 @@ package com.csc530.familytree.models
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.controllers.LaunchActivity
 
@@ -16,6 +17,7 @@ class ActivityManager(
 			val intent = Intent(context, activity)
 			context.startActivity(intent)
 		}
+		
 		fun launchActivity(context: Context, activity: Class<out AppCompatActivity>, docPath: String)
 		{
 			val intent = Intent(context, activity)
@@ -38,6 +40,18 @@ class ActivityManager(
 	{
 		activity.finish()
 		activity.startActivity(Intent(activity, LaunchActivity::class.java))
+	}
+	
+	/**
+	 * Redirects back to homepage
+	 * Back to home.
+	 * @param msg Message to display in a toast of the reason for redirecting back to home.
+	 */
+	fun backToHome(msg: String)
+	{
+		activity.finish()
+		activity.startActivity(Intent(activity, LaunchActivity::class.java))
+		Toast.makeText(activity, msg, Toast.LENGTH_LONG).show()
 	}
 	
 	/**

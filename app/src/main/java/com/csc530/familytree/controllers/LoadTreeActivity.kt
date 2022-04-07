@@ -31,6 +31,9 @@ class LoadTreeActivity : AppCompatActivity()
 		
 		val familyTreeViewModel: FamilyTreeViewModel by viewModels()
 		familyTreeViewModel.getFamilyTrees().observe(this) { familyTrees ->
+			if(familyTrees == null)
+				return@observe activityManager.backToHome("No Family Trees Found")
+			
 			binding.recyclerTree.adapter = FamilyTreeAdapter(this, familyTrees, onTreeClick(false), onTreeClick(true))
 			{ familyTree, view ->
 				// * show dialog to change name of selected family Tree

@@ -58,6 +58,8 @@ class TreeActivity : AppCompatActivity()
 			return activityManager.backToHome()
 		
 		FamilyTreeViewModel(docPath).getFamilyTree().observe(this) { familyTree ->
+			if(familyTree == null)
+				return@observe activityManager.backToHome("No tree found")
 			wai.nodes.clear()
 			familyTree.populateRelationships()
 			if(familyTree.members.size > 0)
