@@ -17,7 +17,6 @@ class FamilyTreeViewModel(docPath: String? = null) : ViewModel()
 	private val familyTrees = MutableLiveData<List<FamilyTree>?>()
 	private var auth: FirebaseAuth = Firebase.auth
 	private val familyTree = MutableLiveData<FamilyTree?>()
-	private val members = MutableLiveData<ArrayList<FamilyMember>?>()
 	private val firestore = FirebaseFirestore.getInstance()
 	
 	
@@ -28,35 +27,11 @@ class FamilyTreeViewModel(docPath: String? = null) : ViewModel()
 	{
 		val userID = auth.currentUser?.uid
 		if(docPath != null)
-		{
 			getSingleTree(docPath)
-			getFamilyMembers(docPath)
-		}
 		else
 			getFamilyTrees(userID)
 	}
 	
-	/**
-	 * Get the sub collection of members for the given tree by its document path
-	 *
-	 * @param docPath Document path to a family tree
-	 */
-	private fun getFamilyMembers(docPath: String)
-	{
-		firestore.collection("$docPath/members")
-			.addSnapshotListener { snapshot, err ->
-				if(err != null)
-					Log.e(logTag, err.localizedMessage ?: err.message ?: err.toString())
-				else if(snapshot != null)
-				{
-					val familyMembers = ArrayList<FamilyMember>()
-					familyMembers.addAll(snapshot.toObjects(FamilyMember::class.java))
-					// * add the family members to the live data
-					members.value = familyMembers
-					familyTree.value?.members = members.value!!
-				}
-			}
-	}
 	
 	/**
 	 * Query the DB to get all the family trees for a specific user
@@ -121,11 +96,6 @@ class FamilyTreeViewModel(docPath: String? = null) : ViewModel()
 	fun getFamilyTrees(): MutableLiveData<List<FamilyTree>?>
 	{
 		return familyTrees
-	}
-	
-	fun getMembers(): MutableLiveData<ArrayList<FamilyMember>?>
-	{
-		return members
 	}
 	
 }

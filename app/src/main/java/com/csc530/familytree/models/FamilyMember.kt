@@ -20,7 +20,6 @@ data class FamilyMember(
 		var lastName: String? = "????",
 		var birthEpochDay: Long? = null,
 		var deathEpochDay: Long? = null,
-		//		var biography: String? = null,
 		var image: String? = null,
 		var id: String? = null,
 		var mother: String? = null,

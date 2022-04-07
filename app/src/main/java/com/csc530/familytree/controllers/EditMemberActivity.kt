@@ -52,23 +52,23 @@ class EditMemberActivity : AppCompatActivity()
 		// * populate form with current member details if they are updating a member
 		if(memberId != null)
 		{
-			FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
-				if(members == null)
-					return@observe finish()
-				val member = members.find { it.id == memberId } ?: return@observe finish()
-				binding.txtEdtTitle.text = resources.getText(R.string.edit_member)
-				binding.edtFName.setText(member.firstName)
-				binding.edtLName.setText(member.lastName)
-				binding.sexSpinner.setSelection(member.sex.ordinal)
-				if(member.getBirthDate() != null)
-					binding.edtBirthDate.setText(member.getBirthDate().toString())
-				if(member.getDeathDate() != null)
-					binding.edtDeathDate.setText(member.getDeathDate().toString())
-				Picasso.get()
-					.load(member.getImageUri())
-					.placeholder(R.drawable.user)
-					.into(binding.btnImg)
-			}
+			firebase.document(docPath).get()
+				.addOnSuccessListener {
+					val member = it.toObject(FamilyTree::class.java)?.findMemberByID(memberId)
+					             ?: return@addOnSuccessListener activityManager.backToHome()
+					binding.txtEdtTitle.text = resources.getText(R.string.edit_member)
+					binding.edtFName.setText(member.firstName)
+					binding.edtLName.setText(member.lastName)
+					binding.sexSpinner.setSelection(member.sex.ordinal)
+					if(member.getBirthDate() != null)
+						binding.edtBirthDate.setText(member.getBirthDate().toString())
+					if(member.getDeathDate() != null)
+						binding.edtDeathDate.setText(member.getDeathDate().toString())
+					Picasso.get()
+						.load(member.getImageUri())
+						.placeholder(R.drawable.user)
+						.into(binding.btnImg)
+				}
 		}
 		else
 			binding.txtEdtTitle.text = resources.getText(R.string.add_member)
@@ -173,26 +173,28 @@ class EditMemberActivity : AppCompatActivity()
 		}
 		
 		// ? populate spinners with family members; by sex of males being fathers and females mothers and unknown in both spinners
-		FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
-			if(members == null)
+		FamilyTreeViewModel(docPath).getFamilyTree().observe(this) { familyTree ->
+			if(familyTree == null)
 				return@observe finish()
 			momAdapter.add(FamilyMember("Select", "Mother", id = FamilyMember.NULL_ID))
-			momAdapter.addAll(members.filter { it.sex != SexEnum.MALE })
+			momAdapter.addAll(familyTree.members.filter { it.sex != SexEnum.MALE })
 			dadAdapter.add(FamilyMember("Select", "Father", id = FamilyMember.NULL_ID))
-			dadAdapter.addAll(members.filter { it.sex != SexEnum.FEMALE })
+			dadAdapter.addAll(familyTree.members.filter { it.sex != SexEnum.FEMALE })
+			
+			val currentMember = familyTree.findMemberByID(memberId ?: FamilyMember.NULL_ID)
+			
 			if(memberId != null)
 			{
 				// * remove themself from being their own parent
-				momAdapter.remove(members.find { it.id == memberId })
-				dadAdapter.remove(members.find { it.id == memberId })
+				momAdapter.remove(currentMember)
+				dadAdapter.remove(currentMember)
 			}
 			
 			// ? set spinners to selected member's parents
-			val member = members.find { it.id == memberId }
-			if(member != null)
+			if(currentMember != null)
 			{
-				val dad = members.find { it.id == member.father }
-				val mom = members.find { it.id == member.mother }
+				val dad = familyTree.findMemberByID(currentMember.father)
+				val mom = familyTree.findMemberByID(currentMember.mother)
 				binding.spinDad.setSelection(dadAdapter.getPosition(dad))
 				binding.spinMom.setSelection(momAdapter.getPosition(mom))
 			}
@@ -301,33 +303,17 @@ class EditMemberActivity : AppCompatActivity()
 				if(oldVersion?.image != null)
 					Firebase.storage.getReference(oldVersion.image!!).delete()
 				// * delete old member document; by (unique) id (in case the name and hence forth the doc id changed
-				firebase.collection(familyTree.generateDocPath() + "/members")
-					.whereEqualTo("id", memberId)
-					.get()
-					.addOnSuccessListener { oldMemberDocs ->
-						for(doc in oldMemberDocs)
-							doc.reference.delete()
-						// * can't be null as this member is added above
-						val memberPath = familyTree.generateDocPath(member)!!
-						firebase.document(memberPath).set(member)
-							.addOnSuccessListener {
-								firebase.document(docPath).update("lastModified", familyTree.lastModified)
-									.addOnSuccessListener {
-										// * navigate back to member details; only when db update is totally successful
-										finish()
-										Toast.makeText(this, "Member updated", Toast.LENGTH_SHORT).show()
-									}
-									.addOnFailureListener { e ->
-										binding.btnSubmit.isEnabled = true
-										Log.w("DB Failure", "Error updating document", e)
-										Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
-									}
-							}
-							.addOnFailureListener { err ->
-								binding.btnSubmit.isEnabled = true
-								Log.w("DB Failure", "Error adding document", err)
-								Toast.makeText(this, "Failed to update member", Toast.LENGTH_SHORT).show()
-							}
+				firebase.document(docPath).update("lastModified", familyTree.lastModified,
+				                                  "members", familyTree.members)
+					.addOnSuccessListener {
+						// * navigate back to member details; only when db update is totally successful
+						finish()
+						Toast.makeText(this, "Member updated", Toast.LENGTH_SHORT).show()
+					}
+					.addOnFailureListener { e ->
+						binding.btnSubmit.isEnabled = true
+						Log.w("DB Failure", "Error updating document", e)
+						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
 					}
 			}
 			else
@@ -335,32 +321,24 @@ class EditMemberActivity : AppCompatActivity()
 				//generate a new member Id for them
 				member.id = collection.document().id
 				familyTree.members.add(member)
-				// * can't be null as this member is added above
-				val memberPath = familyTree.generateDocPath(member)!!
-				firebase.document(memberPath).set(member)
+				firebase.document(docPath).update("lastModified", familyTree.lastModified,
+				                                  "members", familyTree.members)
 					.addOnSuccessListener {
-						firebase.document(docPath).update("lastModified", familyTree.lastModified)
-							.addOnSuccessListener {
-								// * navigate back to member details; only when db update is totally successful
-								Toast.makeText(this, "Member added", Toast.LENGTH_SHORT).show()
-								finish()
-							}
-							.addOnFailureListener { e ->
-								binding.btnSubmit.isEnabled = true
-								Log.w("DB Failure", "Error updating document", e)
-								Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
-							}
+						// * navigate back to member details; only when db update is totally successful
+						Toast.makeText(this, "Member added", Toast.LENGTH_SHORT).show()
+						finish()
 					}
-					.addOnFailureListener {
+					.addOnFailureListener { e ->
 						binding.btnSubmit.isEnabled = true
-						Toast.makeText(this, "Failed to add member", Toast.LENGTH_SHORT).show()
+						Log.w("DB Failure", "Error updating document", e)
+						Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
 					}
 			}
 		}
-			.addOnFailureListener {
-				Toast.makeText(this, "Could not find family tree, please try again later", Toast.LENGTH_SHORT).show()
-				Log.e("DB Error", it.message ?: it.localizedMessage ?: it.toString())
-				activityManager.backToHome()
+			.addOnFailureListener { e ->
+				binding.btnSubmit.isEnabled = true
+				Log.w("DB Failure", "Error getting document", e)
+				Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
 			}
 	}
 	

@@ -71,14 +71,16 @@ class MemberDetailsActivity : AppCompatActivity()
 						memberDocument["id"]     -> memberDocument.reference.delete()
 							.addOnSuccessListener {
 								Snackbar.make(binding.root, "Member deleted", Snackbar.LENGTH_SHORT).show()
-								finish()
 							}
 							.addOnFailureListener {
 								Toast.makeText(this, "Failed to delete member", Toast.LENGTH_SHORT).show()
 							}
 						memberDocument["mother"] -> memberDocument.reference.update("mother", null)
+							.addOnSuccessListener {  }
 						memberDocument["father"] -> memberDocument.reference.update("father", null)
+							.addOnSuccessListener {  }
 					}
+				finish()
 			}
 	}
 	
@@ -86,10 +88,8 @@ class MemberDetailsActivity : AppCompatActivity()
 	
 	private fun populateMemberDetails(docPath: String, memberID: String)
 	{
-		FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
-			if(members == null) return@observe finish()
-			val familyTree = FamilyTree(members = members)
-			val member = familyTree.findMemberByID(memberID)
+		FamilyTreeViewModel(docPath).getFamilyTree().observe(this) { familyTree ->
+			val member = familyTree?.findMemberByID(memberID)
 			if(member == null)
 			{
 				Toast.makeText(this, "Error, no such member", Toast.LENGTH_SHORT).show()

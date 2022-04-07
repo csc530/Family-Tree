@@ -1,15 +1,12 @@
 package com.csc530.familytree.models
 
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.Exclude
 import com.google.gson.Gson
 
 class FamilyTree(
 		var name: String = "",
 		var creator: String = "",
 		var contributors: Array<String>? = null,
-		@Exclude
-		@get:Exclude
 		var members: ArrayList<FamilyMember> = ArrayList<FamilyMember>(),
 		var created: Timestamp = Timestamp.now(),
 		var lastModified: Timestamp = Timestamp.now(),
@@ -82,7 +79,7 @@ class FamilyTree(
 	 * @param id Id of desired family member
 	 * @return [FamilyMember] or null if not found
 	 */
-	fun findMemberByID(id: String): FamilyMember?
+	fun findMemberByID(id: String?): FamilyMember?
 	{
 		for(member in members)
 			if(member.id == id)

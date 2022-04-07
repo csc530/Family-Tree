@@ -52,9 +52,9 @@ class TreeActivity : AppCompatActivity()
 		if(docPath == null)
 			return activityManager.backToHome()
 		
-		FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
-			if(members == null) return@observe activityManager.backToHome("No members found")
-			val familyTree = FamilyTree(members = members)
+		FamilyTreeViewModel(docPath).getFamilyTree().observe(this) { familyTree ->
+			if(familyTree == null)
+				return@observe activityManager.backToHome("Error loading family tree.")
 			wai.nodes.clear()
 			familyTree.populateRelationships()
 			//? add view for each family member
