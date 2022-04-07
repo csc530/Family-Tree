@@ -57,33 +57,39 @@ class TreeActivity : AppCompatActivity()
 		if(docPath == null)
 			return activityManager.backToHome()
 		
-		FamilyTreeViewModel(docPath).getFamilyTree().observe(this) { familyTree ->
+		val viewModel = FamilyTreeViewModel(docPath)
+		viewModel.getFamilyTree().observe(this) { familyTree ->
 			if(familyTree == null)
 				return@observe activityManager.backToHome("No tree found")
-			wai.nodes.clear()
-			familyTree.populateRelationships()
-			if(familyTree.members.size > 0)
-			{
-				//? add view for each family member
-				for(member in familyTree.members)
-					wai.nodes.add(member.toNode())
-				wb.reload()
+			viewModel.getMembers().observe(this) { members ->
+				if(members == null)
+					return@observe activityManager.backToHome("No members found")
+				familyTree.members = members
+				wai.nodes.clear()
+				familyTree.populateRelationships()
+				if(familyTree.members.size > 0)
+				{
+					//? add view for each family member
+					for(member in familyTree.members)
+						wai.nodes.add(member.toNode())
+					wb.reload()
+				}
+				else // ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
+					wb.visibility = WebView.GONE
 			}
-			else // ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
-				wb.visibility = WebView.GONE
+			
+			binding.imgbtnHome.setOnClickListener {
+				activityManager.startActivity(LaunchActivity::class.java)
+			}
+			binding.imgbtnRefresh.setOnClickListener { wb.reload() }
+			// * "hard" refresh the view to reload the tree from db not just redraw the current tree
+			binding.imgbtnRefresh.setOnLongClickListener { recreate(); true }
+			binding.fabAdd.setOnClickListener {
+				val intent = Intent(this, EditMemberActivity::class.java)
+				intent.putExtra("docPath", docPath)
+				startActivity(intent)
+			}
 		}
 		
-		binding.imgbtnHome.setOnClickListener {
-			activityManager.startActivity(LaunchActivity::class.java)
-		}
-		binding.imgbtnRefresh.setOnClickListener { wb.reload() }
-		// * "hard" refresh the view to reload the tree from db not just redraw the current tree
-		binding.imgbtnRefresh.setOnLongClickListener { recreate(); true }
-		binding.fabAdd.setOnClickListener {
-			val intent = Intent(this, EditMemberActivity::class.java)
-			intent.putExtra("docPath", docPath)
-			startActivity(intent)
-		}
 	}
-	
 }

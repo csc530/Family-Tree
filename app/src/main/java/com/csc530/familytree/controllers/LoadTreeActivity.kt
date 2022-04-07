@@ -16,7 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class LoadTreeActivity : AppCompatActivity()
 {
-	lateinit var binding: ActivityLoadTreeBinding
+	private lateinit var binding: ActivityLoadTreeBinding
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
