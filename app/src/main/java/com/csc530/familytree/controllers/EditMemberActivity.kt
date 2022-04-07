@@ -18,6 +18,7 @@ import com.csc530.familytree.models.ActivityManager
 import com.csc530.familytree.models.FamilyMember
 import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.models.SexEnum
+import com.csc530.familytree.views.FamilyTreeViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -51,10 +52,10 @@ class EditMemberActivity : AppCompatActivity()
 		// * populate form with current member details if they are updating a member
 		if(memberId != null)
 		{
-			firebase.document(docPath).get().addOnSuccessListener {
-				val member = it.toObject(FamilyTree::class.java)?.findMemberByID(memberId)
-				if(member == null)
-					return@addOnSuccessListener finish()
+			FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
+				if(members == null)
+					return@observe finish()
+				val member = members.find { it.id == memberId } ?: return@observe finish()
 				binding.txtEdtTitle.text = resources.getText(R.string.edit_member)
 				binding.edtFName.setText(member.firstName)
 				binding.edtLName.setText(member.lastName)
@@ -63,7 +64,6 @@ class EditMemberActivity : AppCompatActivity()
 					binding.edtBirthDate.setText(member.getBirthDate().toString())
 				if(member.getDeathDate() != null)
 					binding.edtDeathDate.setText(member.getDeathDate().toString())
-				//				binding.taOther.setText(member.biography)
 				Picasso.get()
 					.load(member.getImageUri())
 					.placeholder(R.drawable.user)
@@ -96,10 +96,7 @@ class EditMemberActivity : AppCompatActivity()
 			if(auth.currentUser != null && member != null)
 				uploadToDB(member, docPath, memberId)
 			else
-			{
-				//TODO: write to file if not logged in and read from file on scene change
-				//			intent.putExtra("member", member)
-			}
+				activityManager.backToHome("Please login to add a member")
 		}
 	}
 	
@@ -170,31 +167,28 @@ class EditMemberActivity : AppCompatActivity()
 		}
 		
 		// ? populate spinners with family members; by sex of males being fathers and females mothers and unknown in both spinners
-		firebase.document(docPath).get().addOnSuccessListener { snapshot ->
-			val tree = snapshot.toObject(FamilyTree::class.java)
-			val members = tree?.members
-			if(members != null)
+		FamilyTreeViewModel(docPath).getMembers().observe(this) { members ->
+			if(members == null)
+				return@observe finish()
+			momAdapter.add(FamilyMember("Select", "Mother", id = FamilyMember.NULL_ID))
+			momAdapter.addAll(members.filter { it.sex != SexEnum.MALE })
+			dadAdapter.add(FamilyMember("Select", "Father", id = FamilyMember.NULL_ID))
+			dadAdapter.addAll(members.filter { it.sex != SexEnum.FEMALE })
+			if(memberId != null)
 			{
-				momAdapter.add(FamilyMember("Select", "Mother", id = FamilyMember.NULL_ID))
-				momAdapter.addAll(members.filter { it.sex != SexEnum.MALE })
-				dadAdapter.add(FamilyMember("Select", "Father", id = FamilyMember.NULL_ID))
-				dadAdapter.addAll(members.filter { it.sex != SexEnum.FEMALE })
-				if(memberId != null)
-				{
-					// * remove themself from being their own parent
-					momAdapter.remove(tree.findMemberByID(memberId))
-					dadAdapter.remove(tree.findMemberByID(memberId))
-				}
-				
-				// ? set spinners to selected member's parents
-				val member = tree.findMemberByID(memberId ?: FamilyMember.NULL_ID)
-				if(member != null)
-				{
-					val dad = tree.findMemberByID(member.father ?: FamilyMember.NULL_ID)
-					val mom = tree.findMemberByID(member.mother ?: FamilyMember.NULL_ID)
-					binding.spinDad.setSelection(dadAdapter.getPosition(dad))
-					binding.spinMom.setSelection(momAdapter.getPosition(mom))
-				}
+				// * remove themself from being their own parent
+				momAdapter.remove(members.find { it.id == memberId })
+				dadAdapter.remove(members.find { it.id == memberId })
+			}
+			
+			// ? set spinners to selected member's parents
+			val member = members.find { it.id == memberId }
+			if(member != null)
+			{
+				val dad = members.find { it.id == member.father }
+				val mom = members.find { it.id == member.mother }
+				binding.spinDad.setSelection(dadAdapter.getPosition(dad))
+				binding.spinMom.setSelection(momAdapter.getPosition(mom))
 			}
 			
 		}
@@ -300,24 +294,32 @@ class EditMemberActivity : AppCompatActivity()
 				// ? delete old image in fireStorage if it exists
 				if(oldVersion?.image != null)
 					Firebase.storage.getReference(oldVersion.image!!).delete()
-				// * can't be null as this member is added above
-				val memberPath = familyTree.generateDocPath(member)!!
-				firebase.document(memberPath).set(member)
-					.addOnSuccessListener {
-						firebase.document(docPath).update("lastModified", familyTree.lastModified)
+				// * delete old member document; by (unique) id (in case the name and hence forth the doc id changed
+				firebase.collection(familyTree.generateDocPath() + "/members")
+					.whereEqualTo("id", memberId)
+					.get()
+					.addOnSuccessListener { oldMemberDocs ->
+						for(doc in oldMemberDocs)
+							doc.reference.delete()
+						// * can't be null as this member is added above
+						val memberPath = familyTree.generateDocPath(member)!!
+						firebase.document(memberPath).set(member)
 							.addOnSuccessListener {
-								// * navigate back to member details; only when db update is totally successful
+								firebase.document(docPath).update("lastModified", familyTree.lastModified)
+									.addOnSuccessListener {
+										// * navigate back to member details; only when db update is totally successful
+										finish()
+									}
+									.addOnFailureListener { e ->
+										Log.w("DB Failure", "Error updating document", e)
+										Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+									}
+								Toast.makeText(this, "Member updated", Toast.LENGTH_SHORT).show()
 								finish()
 							}
-							.addOnFailureListener { e ->
-								Log.w("DB Failure", "Error updating document", e)
-								Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show()
+							.addOnFailureListener {
+								Toast.makeText(this, "Failed to update member", Toast.LENGTH_SHORT).show()
 							}
-						Toast.makeText(this, "Member updated", Toast.LENGTH_SHORT).show()
-						finish()
-					}
-					.addOnFailureListener {
-						Toast.makeText(this, "Failed to update member", Toast.LENGTH_SHORT).show()
 					}
 			}
 			else
