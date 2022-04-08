@@ -7,7 +7,13 @@ import com.csc530.familytree.models.FamilyTree
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-
+/**
+ * Family tree view model to handle the data flow between the view and the model of [FamilyTree]s
+ *
+ * @constructor Create [FamilyTreeViewModel] instance
+ *
+ * @param docPath Document path to a specific family tree to load
+ */
 class FamilyTreeViewModel(docPath: String? = null) : ViewModel()
 {
 	private val logTag = "Firestore DB"

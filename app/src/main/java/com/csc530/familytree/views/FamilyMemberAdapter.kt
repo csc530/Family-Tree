@@ -11,7 +11,15 @@ import com.csc530.familytree.R
 import com.csc530.familytree.models.FamilyMember
 import com.squareup.picasso.Picasso
 
-class FamilyMemberAdapter(val content: Context,
+/**
+ * Family member adapter for RecyclerView to display a list of family members.
+ * showing their name and image
+ * @property context the context of the activity
+ * @property members the list of family members to display
+ * @property itemListener the onItemClickListener for each of the adapters child views
+ * @constructor Create [FamilyMemberAdapter] with the context and list of family members
+ */
+class FamilyMemberAdapter(val context: Context,
                           private val members: List<FamilyMember>,
                           private val itemListener: (FamilyMember, View) -> Unit)
 	: RecyclerView.Adapter<FamilyMemberAdapter.FamilyMemberViewHolder>()
@@ -24,7 +32,7 @@ class FamilyMemberAdapter(val content: Context,
 	}
 	
 	/**
-	 * Called when RecyclerView needs a new [ViewHolder] of the given type to represent
+	 * Called when RecyclerView needs a new [RecyclerView.ViewHolder] of the given type to represent
 	 * an item.
 	 *
 	 *
@@ -65,7 +73,7 @@ class FamilyMemberAdapter(val content: Context,
 	
 	/**
 	 * Called by RecyclerView to display the data at the specified position. This method should
-	 * update the contents of the [ViewHolder.itemView] to reflect the item at the given
+	 * update the contents of the [RecyclerView.ViewHolder.itemView] to reflect the item at the given
 	 * position.
 	 *
 	 *
@@ -74,7 +82,7 @@ class FamilyMemberAdapter(val content: Context,
 	 * invalidated or the new position cannot be determined. For this reason, you should only
 	 * use the `position` parameter while acquiring the related data item inside
 	 * this method and should not keep a copy of it. If you need the position of an item later
-	 * on (e.g. in a click listener), use [ViewHolder.getAdapterPosition] which will
+	 * on (e.g. in a click listener), use [RecyclerView.ViewHolder.getAdapterPosition] which will
 	 * have the updated adapter position.
 	 *
 	 * Override [.onBindViewHolder] instead if Adapter can
