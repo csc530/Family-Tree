@@ -47,6 +47,7 @@ class FamilyTreeViewModel(docPath: String? = null) : ViewModel()
 		firestore
 			.collection("Trees")
 			.whereEqualTo("creator", userID)
+			.orderBy("name")
 			.addSnapshotListener { documents, error ->
 				if(documents != null)
 					familyTrees.value = documents.toObjects(FamilyTree::class.java)

@@ -6,16 +6,25 @@
                                                    android:layout_height="match_parent"
                                                    tools:context=".controllers.TreeActivity">
 	
-	<WebView
-		android:id="@+id/webView"
+	<FrameLayout
 		android:layout_width="0dp"
 		android:layout_height="0dp"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent">
-	
-	</WebView>
+		
+		<WebView
+			android:id="@+id/webView"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
+		
+		</WebView>
+	</FrameLayout>
 	
 	<com.google.android.material.floatingactionbutton.FloatingActionButton
 		android:id="@+id/fabAdd"
@@ -23,32 +32,32 @@
 		android:layout_height="wrap_content"
 		android:layout_margin="10dp"
 		android:clickable="true"
+		android:contentDescription="@string/add_descr"
 		android:foreground="@drawable/plus_button"
 		android:tint="#00FFFFFF"
 		app:fabSize="normal"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:rippleColor="#00FFFFFF"
-		android:contentDescription="@string/add_descr" />
+		app:rippleColor="#00FFFFFF" />
 	
 	<ImageButton
 		android:id="@+id/imgbtnHome"
 		android:layout_width="50dp"
 		android:layout_height="50dp"
 		android:background="#00FFFFFF"
+		android:contentDescription="@string/a_home_icon"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@drawable/home"
-		android:contentDescription="@string/a_home_icon" />
+		app:srcCompat="@drawable/home" />
 	
 	<ImageButton
 		android:id="@+id/imgbtnRefresh"
 		android:layout_width="50dp"
 		android:layout_height="50dp"
 		android:background="#00FFFFFF"
+		android:contentDescription="@string/refresh_descr"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@drawable/refresh"
-		android:contentDescription="@string/refresh_descr" />
+		app:srcCompat="@drawable/refresh" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

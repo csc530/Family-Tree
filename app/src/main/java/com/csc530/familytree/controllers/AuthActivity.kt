@@ -10,7 +10,6 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
-import com.google.firebase.auth.ActionCodeSettings
 
 class AuthActivity : AppCompatActivity()
 {
@@ -27,8 +26,7 @@ class AuthActivity : AppCompatActivity()
 		/* ? The prebuilt login flow */
 		// Choose authentication providers
 		val providers = arrayListOf(
-				AuthUI.IdpConfig.EmailBuilder()
-					.build(),
+				AuthUI.IdpConfig.EmailBuilder().build(),
 				//AuthUI.IdpConfig.PhoneBuilder().build(),
 				AuthUI.IdpConfig.GoogleBuilder().build(),
 		)

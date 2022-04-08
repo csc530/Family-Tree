@@ -4,6 +4,8 @@ The continuous and final assignment for (2022W) COMP-3025G-WAB - Mobile and Perv
 
 ## When marking
 
+If you installed the app from the play store, you may be unable to login with google but email works fine; if you installed the app from the github, you should be able to login with google.
+
 Please ignore all the fluff in the console about 
 ```txt
 W/Firestore: (24.1.0) [CustomClassMapper]: No setter/field for age found on class com.csc530.familytree.models.FamilyMember (fields/setters are case sensitive!)

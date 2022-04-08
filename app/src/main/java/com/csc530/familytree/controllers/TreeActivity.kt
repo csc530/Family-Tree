@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityTreeBinding
 import com.csc530.familytree.models.ActivityManager
-import com.csc530.familytree.models.FamilyTree
 import com.csc530.familytree.models.WebAppInterface
 import com.csc530.familytree.views.FamilyTreeViewModel
 
@@ -42,11 +40,11 @@ class TreeActivity : AppCompatActivity()
 		settings.databaseEnabled = true
 		wb.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
 		binding.webView.settings.builtInZoomControls = true
-		wb.webViewClient = WebViewClient() // tells page not to open links in android browser and instead open them in this webview
 		
 		// ? add the interface for the JS to redirect within the android application
 		val wai = WebAppInterface(this)
 		wb.addJavascriptInterface(wai, "Android")
+		
 		// ? load the html file to display family tree
 		binding.webView.loadUrl("file:///android_asset/familyTree.html")
 		
