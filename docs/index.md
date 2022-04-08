@@ -1,10 +1,10 @@
 # Family Tree App
 
+##  [DOWNLOAD THE APP NOW](https://play.google.com/store/apps/details?id=com.csc530.familytree)
+
 ## Overview
 
 [Full PDF (t4chnical) of App Overview](../App-Overview.pdf "PDF of App-Overview")
-
-I created this app using Google and IntelliJ's Android studio IDE and a whole lot blood, sweat, and debuggin with my tears😭
 
 ## Design Prototype
 
@@ -21,15 +21,15 @@ I created this app using Google and IntelliJ's Android studio IDE and a whole lo
 
 - [x] Create/Start project
 - [x] Create Google play developer profile
-- [ ] Have developer profile verifed (so I can finally upload an app cha!)
+- [x] Have developer profile verifed (so I can finally upload an app cha!)
 - [x] Create activities
-- [ ] Implement basic functionality
-- [ ] Have congruent DB CRUD operations and sync
+- [x] Implement basic functionality
+- [x] Have congruent DB CRUD operations and sync
 - [ ] Add bonus sync across user functionality
-- [ ]  Add bonus genetic funcitonality
-- [ ] Polish design and code
-- [ ] Finalize name for the app
-- [ ] Upload to play store
+~~- [ ]  Add bonus genetic funcitonality~~
+- [x] Polish design and code
+- [x] Finalize name for the app
+- [x] Upload to play store
 
 
 [My google play store page](https://play.google.com/store/apps/dev?id=5489529430402084829)
