@@ -109,6 +109,8 @@ class EditMemberActivity : AppCompatActivity()
 			//? write to db if logged in
 			if(auth.currentUser != null && member != null)
 				uploadToDB(member, docPath, memberId)
+			else if(member != null)
+				binding.btnSubmit.isEnabled = true
 			else
 				activityManager.backToHome("Please login to add a member")
 		}
