@@ -2,6 +2,15 @@
 
 The continuous and final assignment for (2022W) COMP-3025G-WAB - Mobile and Pervasive Computing. A family tree app for android.
 
+## When marking
+
+Please ignore all the fluff in the console about 
+```txt
+W/Firestore: (24.1.0) [CustomClassMapper]: No setter/field for age found on class com.csc530.familytree.models.FamilyMember (fields/setters are case sensitive!)
+W/Firestore: (24.1.0) [CustomClassMapper]: No setter/field for birthday found on class com.csc530.familytree.models.FamilyMember (fields/setters are case sensitive!)aidl
+```
+firestore is trying to set the fields of functions which don't have any
+
 ## About
 
 A family tree app to diagram the relationships of a family from parents to children as far as grand uncles to 5^th^ cousins 3 times removed
