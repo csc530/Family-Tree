@@ -26,6 +26,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
+import java.time.DateTimeException
 import java.time.LocalDate
 import java.util.*
 
@@ -63,12 +64,13 @@ class EditMemberActivity : AppCompatActivity()
 					binding.edtFName.setText(member.firstName)
 					binding.edtLName.setText(member.lastName)
 					binding.sexSpinner.setSelection(member.sex.ordinal)
-					binding.edtBirthDate.setText("${member.getBirthDate()?:""}")
-					binding.edtDeathDate.setText("${member.getDeathDate()?:""}")
+					binding.edtBirthDate.setText("${member.getBirthDate() ?: ""}")
+					binding.edtDeathDate.setText("${member.getDeathDate() ?: ""}")
 					Picasso.get()
 						.load(member.getImageUri())
 						.placeholder(R.drawable.user)
 						.into(binding.btnImg)
+					binding.btnImg.tag = member.image
 				}
 		}
 		else
@@ -259,13 +261,14 @@ class EditMemberActivity : AppCompatActivity()
 					fatherAdapter.getItem(binding.spinDad.selectedItemPosition)
 				else
 					null
+		val image = binding.btnImg.tag as? String
 		
 		// ? check if data is valid
 		if(!validateData(birthdate, deathDate, mom, dad))
 			return null
 		
 		// ? create family member object and return it
-		val member = FamilyMember(firstName, lastName, birthdate, deathDate, sex = sex)
+		val member = FamilyMember(firstName, lastName, birthdate, deathDate, image,sex = sex)
 		member.mother = mom?.id
 		member.father = dad?.id
 		return member
@@ -348,9 +351,10 @@ class EditMemberActivity : AppCompatActivity()
 				familyTree.members.remove(oldVersion)
 				familyTree.members.add(member)
 				
-				// ? delete old image in fireStorage if it exists and upload new one or deleting it
-				if(oldVersion?.image != null && oldVersion.image != member.image)
-					Firebase.storage.getReference(oldVersion.image!!).delete()
+				// ? delete old image in fireStorage if it exists and they are removing this one
+				// ? if they are uploading a new image, it will overwrite the old one; because they'll have the same name
+				if(oldVersion?.image != null && member.image == null)
+					Firebase.storage.getReferenceFromUrl(oldVersion.image!!).delete()
 				
 				// * update the member in the tree
 				firebase.document(docPath).update("lastModified", familyTree.lastModified,
@@ -474,8 +478,17 @@ class EditMemberActivity : AppCompatActivity()
 			val datepicker = date.datePicker
 			if(datepicker.month !in 1..13 && datepicker.dayOfMonth < 1)
 				return@setButton
-			val selectedDate = LocalDate.of(datepicker.year, datepicker.month, datepicker.dayOfMonth)
-			value.setText(selectedDate.toString())
+			// * sometimes an error is thrown if the date is selected to fast and the values are mixed up
+			try
+			{
+				val selectedDate = LocalDate.of(datepicker.year, datepicker.month, datepicker.dayOfMonth)
+				value.setText(selectedDate.toString())
+			}
+			catch(e: DateTimeException)
+			{
+				Toast.makeText(this, e.localizedMessage, Toast.LENGTH_SHORT).show()
+			}
+			
 		}
 		date.setButton(DialogInterface.BUTTON_NEUTRAL, "Clear") { _, _ ->
 			value.text = null
