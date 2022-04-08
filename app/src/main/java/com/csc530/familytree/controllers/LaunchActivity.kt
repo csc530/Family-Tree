@@ -1,7 +1,6 @@
 package com.csc530.familytree.controllers
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.widget.Button
@@ -20,7 +19,6 @@ import com.google.firebase.ktx.Firebase
 
 class LaunchActivity : AppCompatActivity()
 {
-	private lateinit var auth: FirebaseAuth
 	private lateinit var binding: ActivityLaunchBinding
 	
 	override fun onCreate(savedInstanceState: Bundle?)
@@ -29,9 +27,9 @@ class LaunchActivity : AppCompatActivity()
 		binding = ActivityLaunchBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		
-		auth = Firebase.auth
+		val user = Firebase.auth.currentUser
 		// ? Remove the login and sign up text with a log out button if they are signed in
-		if(auth.currentUser != null)
+		if(user != null)
 		{
 			binding.txtLogin.visibility = TextView.GONE
 			binding.txtOr.visibility = TextView.GONE
@@ -42,27 +40,32 @@ class LaunchActivity : AppCompatActivity()
 		
 		//Switch intents on button click
 		binding.btnNewTree.setOnClickListener {
-			//!!! temporary until InfoActivity learn to make local saves of family trees
-			if(auth.currentUser == null)
+			if(user == null)
 				Snackbar.make(this, binding.root, "Please log in or signup to continue", Snackbar.LENGTH_SHORT).show()
 			else
 			{
+				// ? Create a dialog to enter a name for the new tree
 				val getName = AlertDialog.Builder(this)
 					.setTitle("Name family tree")
 					.setMessage("What would you like to call this family tree?")
+					.setNegativeButton("Cancel", null)
 					.create()
-				//TODO refactor using with/or something
+				
+				// * Create edit text to capture family tree name
 				val editTxtFamTreeName = EditText(getName.context)
 				editTxtFamTreeName.apply {
 					hint = "The Johnson's"
 					setSingleLine()
 					inputType = InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE
 				}
+				
+				// * Add edit text to dialog
 				getName.setView(editTxtFamTreeName)
-				getName.setButton(AlertDialog.BUTTON_POSITIVE, "Create") { dialogInterface, button ->
+				getName.setButton(AlertDialog.BUTTON_POSITIVE, "Create") { _, _ ->
 					//	? ensure that a family tree name is entered
 					if(editTxtFamTreeName.text.toString().isBlank())
 					{
+						// * Show error message
 						AlertDialog.Builder(getName.context)
 							.setIcon(android.R.drawable.stat_sys_warning)
 							.setTitle("Name Required")
@@ -73,21 +76,21 @@ class LaunchActivity : AppCompatActivity()
 							.show()
 					}
 					else
-						createFamilyTree(editTxtFamTreeName.text.toString())
+						createFamilyTree(editTxtFamTreeName.text.toString(), user.uid)
 				}
+				// * Show dialog
 				getName.show()
 			}
 		}
 		binding.btnLoadTree.setOnClickListener {
-			val intent = Intent(this, LoadTreeActivity::class.java)
-			startActivity(intent)
+			ActivityManager.launchActivity(this, LoadTreeActivity::class.java)
 		}
 		//switch intents to authentication if they selected login or signup
 		binding.vllAuth.setOnClickListener {
-			val intent = Intent(this, AuthActivity::class.java)
-			startActivity(intent)
+			ActivityManager.launchActivity(this, AuthActivity::class.java)
 		}
 		binding.btnLogout.setOnClickListener {
+			// * Logout of firebase/account and reload home screen
 			FirebaseAuth.getInstance().signOut()
 			this.recreate()
 		}
@@ -98,11 +101,13 @@ class LaunchActivity : AppCompatActivity()
 		
 	}
 	
-	private fun createFamilyTree(name: String)
+	private fun createFamilyTree(name: String, uid: String)
 	{
 		val collection = FirebaseFirestore.getInstance().collection("Trees")
-		val familyTree = FamilyTree(name, auth.currentUser!!.uid, created = Timestamp.now(), lastModified = Timestamp.now())
+		// * Create a new family tree
+		val familyTree = FamilyTree(name, uid, created = Timestamp.now(), lastModified = Timestamp.now())
 		familyTree.id = collection.document().id
+		// * Add family tree to firebase
 		collection.document(familyTree.generateDocId())
 			.set(familyTree)
 			.addOnSuccessListener {

@@ -41,17 +41,20 @@ class TreeActivity : AppCompatActivity()
 		settings.cacheMode = WebSettings.LOAD_NO_CACHE
 		settings.databaseEnabled = true
 		wb.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
-		binding.webView.settings.builtInZoomControls = true;
+		binding.webView.settings.builtInZoomControls = true
 		wb.webViewClient = WebViewClient() // tells page not to open links in android browser and instead open them in this webview
 		
+		// ? add the interface for the JS to redirect within the android application
 		val wai = WebAppInterface(this)
 		wb.addJavascriptInterface(wai, "Android")
+		// ? load the html file to display family tree
 		binding.webView.loadUrl("file:///android_asset/familyTree.html")
-		//create new family tree if no tree name is given
-		// * logic for loading a pre-existing family-tree
-		if(docPath == null)
-			return activityManager.backToHome()
 		
+		// * go home if no path to a tree is provided
+		if(docPath == null)
+			return activityManager.backToHome("No family tree provided.")
+		
+		// * load the family tree live from the database
 		FamilyTreeViewModel(docPath).getFamilyTree().observe(this) { familyTree ->
 			if(familyTree == null)
 				return@observe activityManager.backToHome("Error loading family tree.")
@@ -60,7 +63,10 @@ class TreeActivity : AppCompatActivity()
 			//? add view for each family member
 			for(member in familyTree.members)
 				wai.nodes.add(member.toNode())
-			if(familyTree.members.isNullOrEmpty()) // ? Hide webView so they can't add a node with balkan's native functionality; this causes errors as it's not registered to db
+			
+			// ? Hide webView so they can't add a node with balkan's native functionality
+			// * this causes errors as it's not registered to db
+			if(familyTree.members.isNullOrEmpty())
 				wb.visibility = WebView.GONE
 			else
 				wb.visibility = WebView.VISIBLE

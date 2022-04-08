@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.databinding.ActivityLoadTreeBinding
@@ -20,25 +19,26 @@ class LoadTreeActivity : AppCompatActivity()
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
-		
-		
 		binding = ActivityLoadTreeBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		val activityManager = ActivityManager(this)
+		
 		binding.fabBackToLaunch.setOnClickListener {
 			activityManager.startActivity(LaunchActivity::class.java)
 		}
 		
-		val familyTreeViewModel: FamilyTreeViewModel by viewModels()
-		familyTreeViewModel.getFamilyTrees().observe(this) { familyTrees ->
-			if(familyTrees == null)
-				return@observe activityManager.backToHome("No Family Trees Found")
+		FamilyTreeViewModel().getFamilyTrees().observe(this) { familyTrees ->
+			if(familyTrees == null) return@observe activityManager.backToHome("No Family Trees Found")
 			
+			// * setup recycler view adapter
 			binding.recyclerTree.adapter = FamilyTreeAdapter(this, familyTrees, onTreeClick(false), onTreeClick(true))
+			// * on click listener for the recycler view's item edit button
 			{ familyTree, view ->
 				// * show dialog to change name of selected family Tree
+				// * setup edit text field to capture new tree name
 				val input = EditText(this)
 				input.setText(familyTree.name)
+				// * setup dialog to show edit text field
 				AlertDialog.Builder(this)
 					.setTitle("Change Name")
 					.setView(input)
@@ -66,21 +66,29 @@ class LoadTreeActivity : AppCompatActivity()
 					.show()
 			}
 		}
-		
 	}
 	
+	/**
+	 * On click listener for the Family Tree recycler view's
+	 * Used if the recycler view item is clicked or it's delete button is clicked
+	 * @param delete True if the delete button is clicked, false if the item is clicked
+	 * @return On click listener for the Family Tree recycler view's item
+	 */
 	private fun onTreeClick(delete: Boolean): FamilyTreeAdapter.FamilyTreeClickListener
 	{
+		// * on click listener for the recycler view's item; navigate to the Family Tree activity
 		if(!delete)
 			return FamilyTreeAdapter.FamilyTreeClickListener { familyTree, _ ->
 				val docPath = familyTree.generateDocPath()
 				ActivityManager.launchActivity(this, TreeActivity::class.java, docPath)
 			}
-		else
+		else // ? on click listener for the recycler view's item's delete button; delete the Family Tree
 			return FamilyTreeAdapter.FamilyTreeClickListener { familyTree, _ ->
 				val docPath = familyTree.generateDocPath()
+				// * show confirmation dialog
 				AlertDialog.Builder(this)
 					.setTitle("Are you sure you want to delete ${familyTree.name}?")
+					// * on positive button click, delete the Family Tree
 					.setPositiveButton("Yes") { _, _ ->
 						FirebaseFirestore.getInstance().document(docPath).delete()
 							.addOnSuccessListener {

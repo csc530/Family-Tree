@@ -11,7 +11,7 @@ class InfoActivity : AppCompatActivity()
 	override fun onCreate(savedInstanceState: Bundle?)
 	{
 		super.onCreate(savedInstanceState)
-		binding = com.csc530.familytree.databinding.ActivityInfoBinding.inflate(layoutInflater)
+		binding = ActivityInfoBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 		binding.fabHome.setOnClickListener {
 			ActivityManager.launchActivity(this, LaunchActivity::class.java)

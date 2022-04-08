@@ -41,9 +41,9 @@
 	<string name="last_name_example">Bupponoc</string>
 	<string name="sex">Sex:</string>
 	<string name="birthdate">Birthdate:</string>
-	<string name="birthdate_example">2020-12-15</string>
+	<string name="birthdate_example">2020–12–15</string>
 	<string name="deathdate">Deathdate:</string>
-	<string name="deathdate_example">2022-03-08</string>
+	<string name="deathdate_example">2022–03–08</string>
 	<string name="mother">Mother:</string>
 	<string name="father">Father:</string>
 	<string name="edit_or_add_family_member">Edit or Add Family Member</string>
@@ -68,4 +68,7 @@
 	<string name="refresh_descr">a refresh icon. A circular arrow pointing back at its start</string>
 	<string name="pencil_descr">a pencil; an edit icon</string>
 	<string name="familyTree_descr">a family tree line graphic</string>
+	<string name="age_placeholder">%d years old</string>
+	<string name="children_placeholder">%d kid(s)</string>
+	<string name="partners_placeholder">%d partner(s)</string>
 </resources>
