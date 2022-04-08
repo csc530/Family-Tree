@@ -71,4 +71,5 @@
 	<string name="age_placeholder">%d years old</string>
 	<string name="children_placeholder">%d kid(s)</string>
 	<string name="partners_placeholder">%d partner(s)</string>
+	<string name="date_created_placeholder">Created: %s</string>
 </resources>

@@ -15,23 +15,23 @@ import java.util.*
 
 class FamilyTreeAdapter(
 		val context: Context,
-		val familyTrees: List<FamilyTree>,
-		val itemClickListener: FamilyTreeClickListener,
-		val itemDeleteListener: FamilyTreeClickListener,
-		val itemEditListener: FamilyTreeClickListener,
-		)
-	: RecyclerView.Adapter<FamilyTreeAdapter.FamilyTreeViewHolder>()
+		private val familyTrees: List<FamilyTree>,
+		private val itemClickListener: FamilyTreeClickListener,
+		private val itemDeleteListener: FamilyTreeClickListener,
+		private val itemEditListener: FamilyTreeClickListener,
+) : RecyclerView.Adapter<FamilyTreeAdapter.FamilyTreeViewHolder>()
 {
 	
-fun	interface FamilyTreeClickListener {
+	fun interface FamilyTreeClickListener
+	{
 		fun onItemClick(familyTree: FamilyTree, view: View)
 	}
 	
 	inner class FamilyTreeViewHolder(view: View) : RecyclerView.ViewHolder(view)
 	{
-		val image: ImageView = itemView.findViewById<ImageView>(R.id.imgFamTreeImg)
-		val title: TextView = itemView.findViewById<TextView>(R.id.txtFamTreeName)
-		val dateCreated: TextView = itemView.findViewById<TextView>(R.id.txtCreationDate)
+		val image: ImageView = itemView.findViewById(R.id.imgFamTreeImg)
+		val title: TextView = itemView.findViewById(R.id.txtFamTreeName)
+		val dateCreated: TextView = itemView.findViewById(R.id.txtCreationDate)
 	}
 	
 	/**
@@ -99,11 +99,14 @@ fun	interface FamilyTreeClickListener {
 	{
 		val familyTree = familyTrees[position]
 		with(holder) {
-			//bind the properties of the family tree to the view
+			// ? bind the properties of the family tree to the view
+			// * bind image and name properties
 			image.setImageResource(familyTree.image ?: R.drawable.family_tree_load)
 			title.text = familyTree.name
-			val date = familyTree.created.toDate()
-			dateCreated.text = "Created: ${DateFormat.getDateTimeInstance().format(date)}"
+			// * bind date created property
+			val date = DateFormat.getDateInstance(DateFormat.FULL).format(familyTree.created.toDate())
+			dateCreated.text = context.getString(R.string.date_created_placeholder, date)
+			// * set the on click listeners for the view
 			itemView.setOnClickListener {
 				itemClickListener.onItemClick(familyTree, it)
 			}
@@ -116,8 +119,4 @@ fun	interface FamilyTreeClickListener {
 		}
 	}
 	
-	fun getFamilyTree(position: Int): FamilyTree
-	{
-		return familyTrees[position]
-	}
-	}
+}

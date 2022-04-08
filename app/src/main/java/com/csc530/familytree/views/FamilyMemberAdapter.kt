@@ -12,15 +12,15 @@ import com.csc530.familytree.models.FamilyMember
 import com.squareup.picasso.Picasso
 
 class FamilyMemberAdapter(val content: Context,
-                          val members: List<FamilyMember>,
-                          val itemListener: (FamilyMember, View) -> Unit)
+                          private val members: List<FamilyMember>,
+                          private val itemListener: (FamilyMember, View) -> Unit)
 	: RecyclerView.Adapter<FamilyMemberAdapter.FamilyMemberViewHolder>()
 {
 	
 	inner class FamilyMemberViewHolder(view: View) : RecyclerView.ViewHolder(view)
 	{
-		val image: ImageView = itemView.findViewById<ImageView>(R.id.imgFamMemberPortrait)
-		val fullName: TextView = itemView.findViewById<TextView>(R.id.txtFamMemberName)
+		val image: ImageView = itemView.findViewById(R.id.imgFamMemberPortrait)
+		val fullName: TextView = itemView.findViewById(R.id.txtFamMemberName)
 	}
 	
 	/**
@@ -89,11 +89,14 @@ class FamilyMemberAdapter(val content: Context,
 		val familyMember = members[position]
 		with(holder) {
 			//bind the properties of the family tree to the view
+			// * bind image using Picasso
 			Picasso.get()
 				.load(familyMember.getImageUri())
 				.placeholder(R.drawable.user)
 				.into(image)
+			// * bind full name
 			fullName.text = familyMember.getFullName()
+			// * bind click listener
 			itemView.setOnClickListener {
 				itemListener.invoke(familyMember, it)
 			}
