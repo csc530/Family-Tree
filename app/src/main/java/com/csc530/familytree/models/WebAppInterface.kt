@@ -13,16 +13,20 @@ import java.lang.reflect.Type
 class WebAppInterface(private val activity: AppCompatActivity)
 {
 	private val activityManager = ActivityManager(activity)
-	var nodes: ArrayList<Node?> = ArrayList<Node?>()
+	var nodes: ArrayList<Node?> = ArrayList()
 	
+	/**
+	 * Return a JSON string of the nodes to be used within BalkanJSTree
+	 * javascript file
+	 * @return A JSON string of the nodes
+	 */
 	@JavascriptInterface
 	fun getNodes(): String
 	{
 		val gson = Gson()
 		val typeOf: Type = object : TypeToken<ArrayList<Node>>()
 		{}.type
-		val json = gson.toJson(nodes, typeOf)
-		return json
+		return gson.toJson(nodes, typeOf)
 	}
 	
 	/** Show a toast from the web page  */
@@ -32,8 +36,14 @@ class WebAppInterface(private val activity: AppCompatActivity)
 		Toast.makeText(activity, toast, Toast.LENGTH_LONG).show()
 	}
 	
+	/**
+	 * Navigates to the MemberDetailsActivity
+	 * from the tree activity; to be called from JS file using BalkanJSTree
+	 *
+	 * @param memberId id of the member to display in the details activity
+	 */
 	@JavascriptInterface
-	fun showDetails(memberId: String): Unit
+	fun showDetails(memberId: String)
 	{
 		val docPath = activity.intent.getStringExtra("docPath")
 		if(docPath == null)

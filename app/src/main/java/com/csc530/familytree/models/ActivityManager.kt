@@ -6,18 +6,38 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.csc530.familytree.controllers.LaunchActivity
 
+/**
+ * ActivityManager is a singleton class that manages the activities in the application.
+ * @property activity the current activity to navigate from
+ * @constructor Create [ActivityManager] object.
+ * @author Christofer Cousins
+ */
 class ActivityManager(
 		private val activity: AppCompatActivity,
 )
 {
+	/**
+	 * Navigate to the different activities in the application without instantiating an [ActivityManager] object.
+	 */
 	companion object
 	{
+		/**
+		 * Navigate to the different activities in the application without instantiating an [ActivityManager] object.
+		 * @param context the current activity
+		 * @param activity the class of the activity to navigate to
+		 */
 		fun launchActivity(context: Context, activity: Class<out AppCompatActivity>)
 		{
 			val intent = Intent(context, activity)
 			context.startActivity(intent)
 		}
 		
+		/**
+		 * Navigate to the different activities in the application without instantiating an [ActivityManager] object.
+		 * @param context the current activity
+		 * @param activity the class of the activity to navigate to
+		 * @param docPath [FamilyTree] document path to pass to the activity as an extra
+		 */
 		fun launchActivity(context: Context, activity: Class<out AppCompatActivity>, docPath: String)
 		{
 			val intent = Intent(context, activity)
@@ -25,16 +45,12 @@ class ActivityManager(
 			context.startActivity(intent)
 		}
 		
-		fun toHome(activity: AppCompatActivity)
-		{
-			activity.finish()
-			activity.startActivity(Intent(activity, LaunchActivity::class.java))
-		}
 	}
 	
 	/**
 	 * Redirects back to homepage
 	 * Back to home.
+	 * Finishes the current activity and returns home
 	 */
 	fun backToHome()
 	{
@@ -44,7 +60,7 @@ class ActivityManager(
 	
 	/**
 	 * Redirects back to homepage
-	 * Back to home.
+	 * Back to home; finishes the current activity and returns home
 	 * @param msg Message to display in a toast of the reason for redirecting back to home.
 	 */
 	fun backToHome(msg: String)
