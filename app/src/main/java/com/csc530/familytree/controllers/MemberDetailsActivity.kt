@@ -41,6 +41,10 @@ class MemberDetailsActivity : AppCompatActivity()
 		
 		populateMemberDetails(docPath, memberId)
 		
+		binding.imgHome.setOnClickListener {
+			finish()
+			activityManager.startActivity(TreeActivity::class.java, docPath)
+		}
 		binding.btnClose.setOnClickListener {
 			finish()
 		}

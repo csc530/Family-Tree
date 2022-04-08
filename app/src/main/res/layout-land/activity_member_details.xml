@@ -13,9 +13,9 @@
 		android:layout_height="wrap_content"
 		android:textAlignment="center"
 		android:textSize="@dimen/titleSize"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.526"
-		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toStartOf="@+id/fabDelete"
+		app:layout_constraintHorizontal_bias="0.5"
+		app:layout_constraintStart_toEndOf="@+id/imgHome"
 		app:layout_constraintTop_toTopOf="parent"
 		tools:text="Christofer Columbine" />
 	
@@ -217,4 +217,13 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
 		app:srcCompat="@android:drawable/ic_delete" />
+	
+	<ImageView
+		android:id="@+id/imgHome"
+		android:layout_width="55dp"
+		android:layout_height="55dp"
+		android:contentDescription="@string/a_home_icon"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@drawable/family_tree_load" />
 </androidx.constraintlayout.widget.ConstraintLayout>
