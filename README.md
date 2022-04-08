@@ -13,7 +13,7 @@ firestore is trying to set the fields of functions which don't have any
 
 ## About
 
-A family tree app to diagram the relationships of a family from parents to children as far as grand uncles to 5^th^ cousins 3 times removed
+A family tree app to diagram the relationships of a family from parents to children
 
 ![A family tree with 2 parents and 3 children](/../assignment-tasks/docs/img/example@1x.png)
 
@@ -22,8 +22,6 @@ A family tree app to diagram the relationships of a family from parents to child
 Please visit [my GitHub page](https://csc530.github.io/Family-Tree/) for more details regarding my app and it's development😇
 
 Or you may visit the assignment details branch (`assignment-tasks`) [README](/../../assignment-tasks/README.md) in the for more information on required and met criteria on COMP3025 final (and continuous) project
-
-TODO: Add privacy policy as per google analytics from [Firebase](https://www.google.com/analytics/terms/us.html)
 
 ## Credits
 
