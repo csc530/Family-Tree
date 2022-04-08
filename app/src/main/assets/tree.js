@@ -8,10 +8,11 @@ var family = new FamilyTree(document.getElementById("tree"), {
         img_0: 'img'
     },
     nodes: JSON.parse(Android.getNodes()),
-    mouseScrool: FamilyTree.action.none
+    mouseScrool: FamilyTree.action.none,
+    scaleInitial: FamilyTree.match.boundary
 });
 
-familyTree.on('click', function (sender, args) {
+family.on('click', function (sender, args) {
     Android.showDetails(args.node.id);
     return false;
 });

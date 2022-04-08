@@ -36,10 +36,13 @@ class TreeActivity : AppCompatActivity()
 		//Ref. http://stackoverflow.com/questions/10097233/optimal-webview-settings-for-  html5-support
 		wb.isFocusable = true
 		wb.isFocusableInTouchMode = true
-		settings.cacheMode = WebSettings.LOAD_NO_CACHE
 		settings.databaseEnabled = true
 		wb.scrollBarStyle = View.SCROLLBARS_INSIDE_OVERLAY
-		binding.webView.settings.builtInZoomControls = true
+		settings.builtInZoomControls = true
+		settings.displayZoomControls = false
+		settings.useWideViewPort = true
+		settings.loadWithOverviewMode = true
+		settings.setSupportZoom(true)
 		
 		// ? add the interface for the JS to redirect within the android application
 		val wai = WebAppInterface(this)
